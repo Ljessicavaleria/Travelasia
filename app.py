@@ -6,18 +6,27 @@ import os
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "travelasia-secret-key-2024")
 
-# Configuración de MongoDB Atlas
+# Configuración de MongoDB Atlas - CORREGIDO
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/travelasia_db")
 
 try:
-    client = MongoClient(MONGO_URI)
+    client = MongoClient(
+        MONGO_URI,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+        serverSelectionTimeoutMS=5000,
+        connectTimeoutMS=10000,
+        socketTimeoutMS=10000
+    )
+    # Test the connection
+    client.admin.command('ismaster')
     db = client.travelasia_db
     destinos_collection = db.destinos
     print("✅ Conectado a MongoDB Atlas - TravelAsia")
 except Exception as e:
     db = None
     destinos_collection = None
-    print(f"❌ Error conectando a MongoDB: {e}")
+    print(f"⚠️ MongoDB no disponible: {e}")
 
 # DATOS DE TODOS LOS TOURS PREDEFINIDOS
 TOURS_PREDEFINIDOS = {
@@ -147,13 +156,15 @@ TOURS_PREDEFINIDOS = {
 def index():
     """Página principal con diseño TravelAsia"""
     destinos = []
-    if db is not None:
-        try:
+    try:
+        if db is not None:
             destinos = list(destinos_collection.find())
-        except Exception as e:
-            flash(f"Error cargando destinos: {e}", "danger")
+        else:
+            flash("⚠️ Modo demo: Base de datos temporalmente no disponible", "info")
+    except Exception as e:
+        flash(f"⚠️ Error cargando destinos: {str(e)[:100]}...", "warning")
     
-    return render_template("index.html", destinos=destinos)
+    return render_template("index.html", destinos=destinos, tours=TOURS_PREDEFINIDOS)
 
 @app.route("/new", methods=["GET", "POST"])
 def create():
@@ -324,4 +335,5 @@ def procesar_cotizacion():
         return redirect(url_for("index"))
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port, debug=False)

@@ -6,27 +6,29 @@ import os
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "travelasia-secret-key-2024")
 
-# Configuración de MongoDB Atlas - CORREGIDO
+# Configuración de MongoDB Atlas 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/travelasia_db")
 
 try:
+    # Conexión específica para Render
     client = MongoClient(
         MONGO_URI,
         tls=True,
         tlsAllowInvalidCertificates=True,
-        serverSelectionTimeoutMS=5000,
-        connectTimeoutMS=10000,
-        socketTimeoutMS=10000
+        tlsInsecure=True,  # ESTA LÍNEA ES CLAVE
+        connectTimeoutMS=30000,
+        socketTimeoutMS=30000,
+        serverSelectionTimeoutMS=30000
     )
-    # Test the connection
-    client.admin.command('ismaster')
+    # Test de conexión simple
+    client.server_info()
     db = client.travelasia_db
     destinos_collection = db.destinos
     print("✅ Conectado a MongoDB Atlas - TravelAsia")
 except Exception as e:
     db = None
     destinos_collection = None
-    print(f"⚠️ MongoDB no disponible: {e}")
+    print(f"⚠️ MongoDB no disponible, modo demo activado: {e}")
 
 # DATOS DE TODOS LOS TOURS PREDEFINIDOS
 TOURS_PREDEFINIDOS = {

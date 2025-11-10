@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="destination-detail-card">
+                <!-- Imagen del destino -->
+                {% if destino.imagen %}
+                <img src="{{ destino.imagen }}" class="detail-image" alt="{{ destino.nombre }}">
+                {% else %}
+                <div class="detail-image bg-light d-flex align-items-center justify-content-center text-muted">
+                    <div class="text-center">
+                        <h3>🌏</h3>
+                        <p>Imagen no disponible</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Encabezado -->
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h1 class="display-4 fw-bold text-dark">{{ destino.nombre }}</h1>
+                        <div class="destination-meta">
+                            <span class="location fs-4">
+                                {% if destino.ciudad %}{{ destino.ciudad }}, {% endif %}{{ destino.pais }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="rating fs-3">
+                        {% for i in range(destino.calificacion) %}⭐{% endfor %}
+                        {% for i in range(5 - destino.calificacion) %}☆{% endfor %}
+                    </div>
+                </div>
+
+                <!-- Información rápida -->
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <strong>💰 Presupuesto:</strong><br>
+                        <span class="fs-5 fw-bold text-primary">${{ destino.presupuesto }} USD</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>📅 Mejor época:</strong><br>
+                        <span class="fs-5">{{ destino.mejor_epoca }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>🌏 Ubicación:</strong><br>
+                        <span class="fs-5">{{ destino.pais }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>⭐ Calificación:</strong><br>
+                        <span class="fs-5">{{ destino.calificacion }}/5 estrellas</span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="description-section">
+                    <h3 class="border-bottom pb-2">Descripción</h3>
+                    <p class="fs-5 lh-base">{{ destino.descripcion }}</p>
+                </div>
+
+                <!-- Actividades -->
+                {% if destino.actividades %}
+                <div class="activities-section">
+                    <h3 class="border-bottom pb-2">Actividades Principales</h3>
+                    <p class="fs-5 lh-base">{{ destino.actividades }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Botones de acción -->
+                <div class="action-buttons mt-4">
+                    <a href="{{ url_for('edit', id=destino._id) }}" class="btn btn-warning">Editar Destino</a>
+                    <form action="{{ url_for('delete', id=destino._id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-danger" 
+                                onclick="return confirm('¿Estás seguro de que quieres eliminar {{ destino.nombre }}?')">
+                            Eliminar
+                        </button>
+                    </form>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">← Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

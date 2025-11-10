@@ -1,0 +1,437 @@
+/* ===== VARIABLES Y CONFIGURACIÓN ===== */
+:root {
+    --primary-color: #e74c3c;
+    --secondary-color: #3498db;
+    --accent-color: #f39c12;
+    --dark-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --success-color: #27ae60;
+    --danger-color: #c0392b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ===== NAVBAR ===== */
+.custom-navbar {
+    background: rgba(44, 62, 80, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
+
+.navbar-brand h2 {
+    color: var(--accent-color);
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    font-weight: 500;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--accent-color) !important;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+    padding: 80px 0;
+    color: white;
+    text-align: left;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.search-form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== CARACTERÍSTICAS PRINCIPALES ===== */
+.features-section {
+    padding: 60px 0;
+    background: white;
+}
+
+.feature-item {
+    padding: 30px 20px;
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+}
+
+/* ÍCONOS PERSONALIZADOS */
+.feature-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.8rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.feature-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.feature-icon i {
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+}
+
+.feature-item h4 {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.feature-item p {
+    color: #666;
+}
+
+/* ===== DESTINOS INTERACTIVOS ===== */
+.destinations-section {
+    padding: 60px 0;
+    background: var(--light-color);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--dark-color);
+    font-weight: bold;
+    font-size: 2.5rem;
+}
+
+/* Enlaces para tarjetas */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.destination-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    border-left: 5px solid var(--accent-color);
+}
+
+.destination-card.interactive {
+    cursor: pointer;
+}
+
+.destination-card.interactive:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.destination-image {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 15px;
+}
+
+.country-code {
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.destination-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.destination-content h4 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.city {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+}
+
+.info {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.rating {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+/* ===== ITINERARIOS SECTION ===== */
+.itineraries-section {
+    padding: 60px 0;
+    background: white;
+}
+
+.itinerary-card {
+    background: var(--light-color);
+    padding: 25px;
+    border-radius: 12px;
+    height: 100%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.itinerary-card:hover {
+    transform: translateY(-5px);
+}
+
+.duration {
+    background: var(--primary-color);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.itinerary-card h4 {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+}
+
+.countries {
+    margin-bottom: 1rem;
+}
+
+.country-tag {
+    background: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: #666;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* ===== TESTIMONIOS SECTION ===== */
+.testimonials-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 0;
+    color: white;
+}
+
+.testimonial-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    height: 100%;
+}
+
+.testimonial-card .author {
+    color: #f39c12;
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+
+/* ===== FORMULARIOS ===== */
+.form-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.form-label {
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* ===== BOTONES ===== */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #c0392b);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    background: linear-gradient(135deg, var(--primary-color), #c0392b);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--accent-color), #e67e22);
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color), #922b21);
+    border: none;
+}
+
+/* ===== ALERTAS FLASH ===== */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin: 20px 0;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, var(--success-color), #229954);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, var(--danger-color), #922b21);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, var(--secondary-color), #2874a6);
+    color: white;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, var(--accent-color), #e67e22);
+    color: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .search-form {
+        margin-top: 2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .destination-image {
+        height: 180px;
+    }
+    
+    .destination-content {
+        padding: 15px;
+    }
+    
+    .destination-content h4 {
+        font-size: 1.1rem;
+    }
+    
+    .feature-item {
+        padding: 20px 15px;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-card">
+                <h2 class="text-center mb-4">Agregar Nuevo Destino Asiático</h2>
+                
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre del Destino *</label>
+                            <input type="text" class="form-control" name="nombre" required 
+                                   placeholder="Ej: Tokio, Gran Muralla, Bali">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">País *</label>
+                            <input type="text" class="form-control" name="pais" required 
+                                   placeholder="Ej: Japón, Tailandia, China">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Ciudad/Región</label>
+                            <input type="text" class="form-control" name="ciudad" 
+                                   placeholder="Ej: Tokio, Bangkok, Beijing">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mejor Época</label>
+                            <select class="form-select" name="mejor_epoca">
+                                <option value="Primavera">Primavera</option>
+                                <option value="Verano">Verano</option>
+                                <option value="Otoño">Otoño</option>
+                                <option value="Invierno">Invierno</option>
+                                <option value="Todo el año" selected>Todo el año</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Presupuesto (USD)</label>
+                            <input type="number" class="form-control" name="presupuesto" min="0" 
+                                   placeholder="1500">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Calificación (1-5) *</label>
+                            <input type="number" class="form-control" name="calificacion" min="1" max="5" 
+                                   value="4" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Actividades Principales</label>
+                            <textarea class="form-control" name="actividades" rows="3" 
+                                      placeholder="Ej: Visitar templos, comida callejera, trekking..."></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Descripción *</label>
+                            <textarea class="form-control" name="descripcion" rows="4" required
+                                      placeholder="Describe el destino, qué hace especial, experiencias únicas..."></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">URL de Imagen</label>
+                            <input type="text" class="form-control" name="imagen" 
+                                   placeholder="https://ejemplo.com/imagen.jpg">
+                            <small class="form-text text-muted">Pega la URL de una imagen del destino (opcional)</small>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100">Agregar Destino</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">← Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

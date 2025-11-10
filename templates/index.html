@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="hero-title">Vive Asia como nunca antes</h1>
+                <p class="hero-subtitle">Tours personalizados y experiencias únicas en el continente asiático</p>
+                <a href="#destinos" class="btn btn-primary btn-lg">🎯 Ver Destinos</a>
+            </div>
+            <div class="col-md-6">
+                <div class="search-form">
+                    <h4 class="text-center mb-4">🌏 Cotiza tu viaje</h4>
+                    <form action="{{ url_for('procesar_cotizacion') }}" method="POST">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Destino</label>
+                                <select class="form-select" name="pais" required>
+                                    <option value="">Selecciona un destino</option>
+                                    <option value="japon">Japón - Desde $1,500</option>
+                                    <option value="tailandia">Tailandia - Desde $1,200</option>
+                                    <option value="vietnam">Vietnam - Desde $900</option>
+                                    <option value="china">China - Desde $1,100</option>
+                                    <option value="corea">Corea del Sur - Desde $1,300</option>
+                                    <option value="indonesia">Indonesia - Desde $800</option>
+                                    <option value="malasia">Malasia - Desde $950</option>
+                                    <option value="singapur">Singapur - Desde $1,400</option>
+                                    <option value="india">India - Desde $850</option>
+                                    <option value="filipinas">Filipinas - Desde $1,100</option>
+                                    <option value="sri-lanka">Sri Lanka - Desde $950</option>
+                                    <option value="camboya">Camboya - Desde $750</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Personas</label>
+                                <select class="form-select" name="personas" required>
+                                    <option value="1">1 persona</option>
+                                    <option value="2" selected>2 personas</option>
+                                    <option value="3">3 personas</option>
+                                    <option value="4">4 personas</option>
+                                    <option value="5">5+ personas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Noches</label>
+                                <select class="form-select" name="noches" required>
+                                    <option value="5">5 noches</option>
+                                    <option value="7" selected>7 noches</option>
+                                    <option value="10">10 noches</option>
+                                    <option value="14">14 noches</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Categoría</label>
+                                <select class="form-select" name="categoria" required>
+                                    <option value="economico">Económico</option>
+                                    <option value="estandar" selected>Estándar</option>
+                                    <option value="premium">Premium</option>
+                                    <option value="lujo">Lujo</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">💰 Cotizar Ahora</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CARACTERÍSTICAS PRINCIPALES -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">¿Por qué elegir TravelAsia?</h2>
+        <div class="row text-center">
+            <div class="col-md-3 col-sm-6 feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h4>RUTAS MULTI-PAÍS</h4>
+                <p>Planifica viajes por varios países en un solo itinerario perfecto</p>
+            </div>
+            <div class="col-md-3 col-sm-6 feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <h4>PRESUPUESTOS MULTI-DIVISA</h4>
+                <p>Calcula costos en diferentes monedas asiáticas automáticamente</p>
+            </div>
+            <div class="col-md-3 col-sm-6 feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h4>VISAS Y DOCS</h4>
+                <p>Información actualizada sobre requisitos de visa para cada país</p>
+            </div>
+            <div class="col-md-3 col-sm-6 feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h4>COLABORATIVO</h4>
+                <p>Planifica con amigos y familiares en tiempo real</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DESTINOS POPULARES INTERACTIVOS - 3 FILAS DE 4 -->
+<section id="destinos" class="destinations-section">
+    <div class="container">
+        <h2 class="section-title">Destinos Populares de Asia</h2>
+        <p class="text-center mb-5">Haz clic en cualquier destino para ver tours disponibles y cotizar</p>
+        
+        <!-- PRIMERA FILA -->
+        <div class="row">
+            <!-- Japón -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='japon') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')">
+                            <div class="country-code">JP</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>JAPÓN</h4>
+                            <p class="city">Tokio</p>
+                            <p class="info">15 tours disponibles</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Tailandia -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='tailandia') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=500')">
+                            <div class="country-code">TH</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>TAILANDIA</h4>
+                            <p class="city">Bangkok</p>
+                            <p class="info">12 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Vietnam -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='vietnam') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=500')">
+                            <div class="country-code">VN</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>VIETNAM</h4>
+                            <p class="city">Halong Bay</p>
+                            <p class="info">10 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- China -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='china') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=500')">
+                            <div class="country-code">CN</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>CHINA</h4>
+                            <p class="city">Gran Muralla</p>
+                            <p class="info">18 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- SEGUNDA FILA -->
+        <div class="row">
+            <!-- Corea del Sur -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='corea') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1534274867514-d5b47ef89ed7?w=500')">
+                            <div class="country-code">KR</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>COREA DEL SUR</h4>
+                            <p class="city">Seúl</p>
+                            <p class="info">14 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Indonesia -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='indonesia') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=500')">
+                            <div class="country-code">ID</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>INDONESIA</h4>
+                            <p class="city">Bali</p>
+                            <p class="info">11 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Malasia -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='malasia') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=500')">
+                            <div class="country-code">MY</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>MALASIA</h4>
+                            <p class="city">Kuala Lumpur</p>
+                            <p class="info">9 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Singapur -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='singapur') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=500')">
+                            <div class="country-code">SG</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>SINGAPUR</h4>
+                            <p class="city">Singapur</p>
+                            <p class="info">13 tours disponibles</p>
+                            <div class="rating">★★★★★</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- TERCERA FILA -->
+        <div class="row">
+            <!-- India -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='india') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=500')">
+                            <div class="country-code">IN</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>INDIA</h4>
+                            <p class="city">Taj Mahal</p>
+                            <p class="info">16 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Filipinas -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='filipinas') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1558642084-fd07fae5282e?w=500')">
+                            <div class="country-code">PH</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>FILIPINAS</h4>
+                            <p class="city">Palawan</p>
+                            <p class="info">8 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Sri Lanka -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='sri-lanka') }}" class="card-link">
+                    <div class="destination-card interactive">
+                      <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1573804633921-5c87f5d3a1c9?w=500')">
+                            <div class="country-code">LK</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>SRI LANKA</h4>
+                            <p class="city">Colombo</p>
+                            <p class="info">7 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Camboya -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <a href="{{ url_for('cotizar_tour', pais='camboya') }}" class="card-link">
+                    <div class="destination-card interactive">
+                        <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=500')">
+                            <div class="country-code">KH</div>
+                        </div>
+                        <div class="destination-content">
+                            <h4>CAMBOYA</h4>
+                            <p class="city">Angkor Wat</p>
+                            <p class="info">6 tours disponibles</p>
+                            <div class="rating">★★★★☆</div>
+                            <div class="btn btn-sm btn-outline-primary mt-2">Cotizar Tour</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MIS DESTINOS GUARDADOS -->
+<section class="itineraries-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title mb-0">Mis Destinos Guardados</h2>
+            <a href="{{ url_for('create') }}" class="btn btn-primary">
+                ➕ Agregar Destino
+            </a>
+        </div>
+
+        {% if destinos %}
+        <div class="row">
+            {% for destino in destinos %}
+            <div class="col-md-4 mb-4">
+                <div class="itinerary-card">
+                    <div class="duration">${{ destino.presupuesto }} USD</div>
+                    <h4>{{ destino.nombre }}</h4>
+                    <div class="countries">
+                        <span class="country-tag">{{ destino.pais }}</span>
+                        {% if destino.ciudad %}
+                        <span class="country-tag">{{ destino.ciudad }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="details">
+                        <span>⭐ {{ destino.calificacion }}/5</span>
+                        <span>{{ destino.mejor_epoca }}</span>
+                    </div>
+                    <p class="text-muted small">{{ destino.descripcion[:100] }}{% if destino.descripcion|length > 100 %}...{% endif %}</p>
+                    <div class="action-buttons">
+                        <a href="{{ url_for('view', id=destino._id) }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                        <a href="{{ url_for('edit', id=destino._id) }}" class="btn btn-sm btn-outline-warning">Editar</a>
+                        <form action="{{ url_for('delete', id=destino._id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                    onclick="return confirm('¿Eliminar {{ destino.nombre }}?')">
+                                Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted">No hay destinos guardados todavía.</p>
+            <a href="{{ url_for('create') }}" class="btn btn-primary">➕ Agregar Mi Primer Destino</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="section-title text-white">Lo que dicen nuestros viajeros</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p>"La cotización fue exacta y el tour por Japón superó todas mis expectativas."</p>
+                    <p class="author">- Carlos, México</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p>"Fácil de cotizar y pagar. Tailandia fue una experiencia increíble."</p>
+                    <p class="author">- Ana, España</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p>"La plataforma es muy intuitiva. Ya estoy planeando mi próximo viaje a Vietnam."</p>
+                    <p class="author">- Luis, Argentina</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

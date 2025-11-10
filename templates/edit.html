@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-card">
+                <h2 class="text-center mb-4">Editar Destino: {{ destino.nombre }}</h2>
+                
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre del Destino *</label>
+                            <input type="text" class="form-control" name="nombre" 
+                                   value="{{ destino.nombre }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">País *</label>
+                            <input type="text" class="form-control" name="pais" 
+                                   value="{{ destino.pais }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Ciudad/Región</label>
+                            <input type="text" class="form-control" name="ciudad" 
+                                   value="{{ destino.ciudad }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mejor Época</label>
+                            <select class="form-select" name="mejor_epoca">
+                                <option value="Primavera" {% if destino.mejor_epoca == 'Primavera' %}selected{% endif %}>Primavera</option>
+                                <option value="Verano" {% if destino.mejor_epoca == 'Verano' %}selected{% endif %}>Verano</option>
+                                <option value="Otoño" {% if destino.mejor_epoca == 'Otoño' %}selected{% endif %}>Otoño</option>
+                                <option value="Invierno" {% if destino.mejor_epoca == 'Invierno' %}selected{% endif %}>Invierno</option>
+                                <option value="Todo el año" {% if destino.mejor_epoca == 'Todo el año' %}selected{% endif %}>Todo el año</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Presupuesto (USD)</label>
+                            <input type="number" class="form-control" name="presupuesto" 
+                                   value="{{ destino.presupuesto }}" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Calificación (1-5) *</label>
+                            <input type="number" class="form-control" name="calificacion" 
+                                   value="{{ destino.calificacion }}" min="1" max="5" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Actividades Principales</label>
+                            <textarea class="form-control" name="actividades" rows="3">{{ destino.actividades }}</textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Descripción *</label>
+                            <textarea class="form-control" name="descripcion" rows="4" required>{{ destino.descripcion }}</textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">URL de Imagen</label>
+                            <input type="text" class="form-control" name="imagen" 
+                                   value="{{ destino.imagen }}">
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-warning w-100">Guardar Cambios</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">← Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

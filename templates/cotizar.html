@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="tour-detail-card">
+                <img src="{{ tour.imagen }}" class="tour-detail-image" alt="{{ tour.nombre }}">
+                <h1>{{ tour.nombre }}</h1>
+                <div class="tour-meta">
+                    <span class="badge bg-primary">{{ tour.pais }}</span>
+                    <span class="badge bg-secondary">{{ tour.ciudad }}</span>
+                    <span class="badge bg-success">{{ tour.duracion }}</span>
+                </div>
+                <p class="tour-description">{{ tour.descripcion }}</p>
+                
+                <h4>💰 Precio Base: ${{ tour.precio_base }} USD por persona</h4>
+                
+                <h5>Incluye:</h5>
+                <ul>
+                    {% for item in tour.incluye %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="cotizacion-form">
+                <h4>Cotiza este Tour</h4>
+                <form action="{{ url_for('procesar_cotizacion') }}" method="POST">
+                    <input type="hidden" name="pais" value="{{ tour.pais.lower() }}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Personas</label>
+                        <select class="form-select" name="personas" required>
+                            <option value="1">1 persona</option>
+                            <option value="2" selected>2 personas</option>
+                            <option value="3">3 personas</option>
+                            <option value="4">4 personas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Duración</label>
+                        <select class="form-select" name="noches" required>
+                            <option value="5">5 noches</option>
+                            <option value="7" selected>7 noches</option>
+                            <option value="10">10 noches</option>
+                            <option value="14">14 noches</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Categoría</label>
+                        <select class="form-select" name="categoria" required>
+                            <option value="economico">Económico (-20%)</option>
+                            <option value="estandar" selected>Estándar</option>
+                            <option value="premium">Premium (+50%)</option>
+                            <option value="lujo">Lujo (+100%)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Calcular Cotización</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

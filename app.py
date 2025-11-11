@@ -10,25 +10,16 @@ app.secret_key = os.environ.get("FLASK_SECRET", "travelasia-secret-key-2024")
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/travelasia_db")
 
 try:
-    # Conexión específica para Render
-    client = MongoClient(
-        MONGO_URI,
-        tls=True,
-        tlsAllowInvalidCertificates=True,
-        tlsInsecure=True,  # ESTA LÍNEA ES CLAVE
-        connectTimeoutMS=30000,
-        socketTimeoutMS=30000,
-        serverSelectionTimeoutMS=30000
-    )
-    # Test de conexión simple
-    client.server_info()
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client.travelasia_db
     destinos_collection = db.destinos
-    print("✅ Conectado a MongoDB Atlas - TravelAsia")
+    # Test simple de conexión
+    db.command('ping')
+    print("✅ ¡CONECTADO A MONGODB ATLAS! - TravelAsia")
 except Exception as e:
     db = None
     destinos_collection = None
-    print(f"⚠️ MongoDB no disponible, modo demo activado: {e}")
+    print(f"❌ Error MongoDB: {e}")
 
 # DATOS DE TODOS LOS TOURS PREDEFINIDOS
 TOURS_PREDEFINIDOS = {

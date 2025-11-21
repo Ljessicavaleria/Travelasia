@@ -1,9 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- HERO SECTION -->
-<section class="hero-section">
-    <div class="container">
+<!-- HERO SECTION CON VIDEO -->
+<section class="video-hero">
+    <video autoplay muted loop playsinline class="video-background">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-asian-woman-visiting-a-japanese-temple-41537-large.mp4" type="video/mp4">
+        <!-- Imagen de respaldo -->
+        <img src="https://images.unsplash.com/photo-1540959733332-8ab49d8055c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Templo Asiático">
+    </video>
+    
+    <div class="hero-overlay"></div>
+    
+    <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-md-6">
                 <h1 class="hero-title">Vive Asia como nunca antes</h1>
@@ -494,3 +502,16 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Script para el video de fondo
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.querySelector('.video-background');
+        video.play().catch(function(error) {
+            console.log('Video autoplay bloqueado:', error);
+        });
+    });
+</script>
+{% endblock %}

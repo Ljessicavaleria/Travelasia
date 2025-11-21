@@ -1,30 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- HERO SECTION CON VIDEO -->
-<section class="video-hero">
-    <video autoplay muted loop playsinline class="video-background">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-asian-woman-visiting-a-japanese-temple-41537-large.mp4" type="video/mp4">
-        <!-- Imagen de respaldo -->
-        <img src="https://images.unsplash.com/photo-1540959733332-8ab49d8055c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Templo Asiático">
-    </video>
-    
-    <div class="hero-overlay"></div>
-    
-    <div class="container hero-content">
+<!-- HERO SECTION CON VIDEO - VERSIÓN MEJORADA -->
+<section class="video-hero" style="
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                url('https://images.unsplash.com/photo-1540959733332-8ab49d8055c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+">
+    <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="hero-title">Vive Asia como nunca antes</h1>
-                <p class="hero-subtitle">Tours personalizados y experiencias únicas en el continente asiático</p>
+                <h1 class="display-4 fw-bold mb-4">Vive Asia como nunca antes</h1>
+                <p class="lead mb-4">Tours personalizados y experiencias únicas en el continente asiático</p>
                 <a href="#destinos" class="btn btn-primary btn-lg">🎯 Ver Destinos</a>
             </div>
             <div class="col-md-6">
-                <div class="search-form">
-                    <h4 class="text-center mb-4">🌏 Cotiza tu viaje</h4>
+                <div class="search-form bg-white rounded p-4 shadow">
+                    <h4 class="text-center mb-4 text-dark">🌏 Cotiza tu viaje</h4>
                     <form action="{{ url_for('procesar_cotizacion') }}" method="POST">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label class="form-label">Destino</label>
+                                <label class="form-label text-dark">Destino</label>
                                 <select class="form-select" name="pais" required>
                                     <option value="">Selecciona un destino</option>
                                     <option value="japon">Japón - Desde $1,500</option>
@@ -42,7 +46,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Personas</label>
+                                <label class="form-label text-dark">Personas</label>
                                 <select class="form-select" name="personas" required>
                                     <option value="1">1 persona</option>
                                     <option value="2" selected>2 personas</option>
@@ -52,7 +56,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Noches</label>
+                                <label class="form-label text-dark">Noches</label>
                                 <select class="form-select" name="noches" required>
                                     <option value="5">5 noches</option>
                                     <option value="7" selected>7 noches</option>
@@ -61,7 +65,7 @@
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Categoría</label>
+                                <label class="form-label text-dark">Categoría</label>
                                 <select class="form-select" name="categoria" required>
                                     <option value="economico">Económico</option>
                                     <option value="estandar" selected>Estándar</option>
@@ -502,16 +506,4 @@
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // Script para el video de fondo
-    document.addEventListener('DOMContentLoaded', function() {
-        const video = document.querySelector('.video-background');
-        video.play().catch(function(error) {
-            console.log('Video autoplay bloqueado:', error);
-        });
-    });
-</script>
 {% endblock %}

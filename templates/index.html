@@ -1,9 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- HERO SECTION CON IMAGEN -->
+<!-- HERO SECTION CON VIDEO -->
 <section class="video-hero">
-    <div class="container">
+    <video autoplay muted loop playsinline class="video-background">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-asian-woman-visiting-a-japanese-temple-41537-large.mp4" type="video/mp4">
+        <!-- Imagen de respaldo -->
+        <img src="https://images.unsplash.com/photo-1540959733332-8ab49d8055c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Templo Asiático">
+    </video>
+    
+    <div class="hero-overlay"></div>
+    
+    <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-md-6">
                 <h1 class="hero-title">Vive Asia como nunca antes</h1>
@@ -11,12 +19,61 @@
                 <a href="#destinos" class="btn btn-primary btn-lg">🎯 Ver Destinos</a>
             </div>
             <div class="col-md-6">
-                <!-- TU IMAGEN LOCAL AGREGADA AQUÍ -->
-                <div class="text-center">
-                    <img src="{{ url_for('static', filename='images/image.png') }}" 
-                         alt="Travel Asia" 
-                         class="img-fluid rounded shadow"
-                         style="max-height: 400px;">
+                <div class="search-form">
+                    <h4 class="text-center mb-4">🌏 Cotiza tu viaje</h4>
+                    <form action="{{ url_for('procesar_cotizacion') }}" method="POST">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Destino</label>
+                                <select class="form-select" name="pais" required>
+                                    <option value="">Selecciona un destino</option>
+                                    <option value="japon">Japón - Desde $1,500</option>
+                                    <option value="tailandia">Tailandia - Desde $1,200</option>
+                                    <option value="vietnam">Vietnam - Desde $900</option>
+                                    <option value="china">China - Desde $1,100</option>
+                                    <option value="corea">Corea del Sur - Desde $1,300</option>
+                                    <option value="indonesia">Indonesia - Desde $800</option>
+                                    <option value="malasia">Malasia - Desde $950</option>
+                                    <option value="singapur">Singapur - Desde $1,400</option>
+                                    <option value="india">India - Desde $850</option>
+                                    <option value="filipinas">Filipinas - Desde $1,100</option>
+                                    <option value="sri-lanka">Sri Lanka - Desde $950</option>
+                                    <option value="camboya">Camboya - Desde $750</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Personas</label>
+                                <select class="form-select" name="personas" required>
+                                    <option value="1">1 persona</option>
+                                    <option value="2" selected>2 personas</option>
+                                    <option value="3">3 personas</option>
+                                    <option value="4">4 personas</option>
+                                    <option value="5">5+ personas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Noches</label>
+                                <select class="form-select" name="noches" required>
+                                    <option value="5">5 noches</option>
+                                    <option value="7" selected>7 noches</option>
+                                    <option value="10">10 noches</option>
+                                    <option value="14">14 noches</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Categoría</label>
+                                <select class="form-select" name="categoria" required>
+                                    <option value="economico">Económico</option>
+                                    <option value="estandar" selected>Estándar</option>
+                                    <option value="premium">Premium</option>
+                                    <option value="lujo">Lujo</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">💰 Cotizar Ahora</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -445,4 +502,16 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Script para el video de fondo
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.querySelector('.video-background');
+        video.play().catch(function(error) {
+            console.log('Video autoplay bloqueado:', error);
+        });
+    });
+</script>
 {% endblock %}

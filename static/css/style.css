@@ -7,10 +7,6 @@
     --light-color: #ecf0f1;
     --success-color: #27ae60;
     --danger-color: #c0392b;
-    --purple-color: #8A2BE2;
-    --pink-color: #FF69B4;
-    --light-purple: #9370DB;
-    --light-pink: #DA70D6;
 }
 
 * {
@@ -25,52 +21,6 @@ body {
     color: #333;
     min-height: 100vh;
     line-height: 1.6;
-}
-
-/* ===== HERO CON MONTE FUJI ===== */
-.monte-fuji-hero {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.85), rgba(255, 105, 180, 0.85)), 
-                url('https://images.unsplash.com/photo-1545569341-9eb8b30979d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: white;
-    padding: 100px 0;
-    position: relative;
-    overflow: hidden;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-}
-
-.monte-fuji-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, var(--purple-color), var(--pink-color), var(--light-purple), var(--light-pink));
-    opacity: 0.6;
-    z-index: 1;
-}
-
-.monte-fuji-hero .container {
-    position: relative;
-    z-index: 2;
-}
-
-.monte-fuji-hero .hero-title {
-    font-size: 3.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-}
-
-.monte-fuji-hero .hero-subtitle {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
 }
 
 /* ===== HERO CON VIDEO ===== */
@@ -127,175 +77,25 @@ body {
     color: #2c3e50 !important;
 }
 
-/* MEJORAS PARA FORMULARIOS CON TEMA MORADO/ROSA */
-.search-form {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.search-form h4 {
-    color: var(--purple-color);
-    font-weight: bold;
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.form-label {
-    color: var(--dark-color);
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.form-select {
-    border: 2px solid #e9ecef;
-    border-radius: 12px;
-    padding: 12px 15px;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.form-select:focus {
-    border-color: var(--purple-color);
-    box-shadow: 0 0 0 0.3rem rgba(138, 43, 226, 0.2);
-}
-
-/* BOTONES MEJORADOS CON GRADIENTE MORADO/ROSA */
-.btn-primary {
-    background: linear-gradient(135deg, var(--purple-color), var(--pink-color));
-    border: none;
-    padding: 12px 30px;
-    border-radius: 12px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
-    color: white;
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
-    background: linear-gradient(135deg, #7B1FA2, #E91E63);
-    color: white;
-}
-
-/* TARJETAS CON EFECTO GLASS */
-.glass-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    padding: 25px;
-    color: white;
-    transition: transform 0.3s ease;
-    height: 100%;
-}
-
-.glass-card:hover {
-    transform: translateY(-5px);
-}
-
-/* SECCIONES CON FONDO MORADO/ROSA */
-.purple-pink-section {
-    background: linear-gradient(135deg, var(--purple-color) 0%, var(--pink-color) 100%);
-    color: white;
-    padding: 80px 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.purple-pink-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('https://images.unsplash.com/photo-1545569341-9eb8b30979d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
-    background-size: cover;
-    background-position: center;
-    opacity: 0.1;
-}
-
-.purple-pink-section .container {
-    position: relative;
-    z-index: 2;
-}
-
-/* MEJORAS PARA LAS CARACTERÍSTICAS */
-.features-section .glass-card {
-    text-align: center;
-}
-
-.features-section .feature-icon {
-    background: linear-gradient(135deg, var(--purple-color), var(--pink-color));
-    color: white;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    font-size: 1.8rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-}
-
-.features-section .feature-icon:hover {
-    transform: scale(1.1) rotate(5deg);
-}
-
-/* MEJORAS PARA DESTINOS CON TEMA MORADO/ROSA */
-.destination-card.interactive:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(138, 43, 226, 0.2);
-    border-left: 5px solid var(--pink-color);
-}
-
-.country-code {
-    background: rgba(138, 43, 226, 0.9);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-/* MEJORAS PARA TESTIMONIOS */
-.testimonials-section .glass-card {
-    text-align: center;
-}
-
-.testimonials-section .author {
-    color: var(--accent-color);
-    font-weight: bold;
-    margin-top: 1rem;
-    margin-bottom: 0;
-}
-
-/* Responsive para el hero con monte fuji */
+/* Responsive para el hero con video */
 @media (max-width: 768px) {
-    .monte-fuji-hero {
-        padding: 80px 0;
-        background-attachment: scroll;
-        min-height: auto;
+    .video-hero {
+        height: auto;
+        min-height: 100vh;
+        padding: 100px 0;
     }
     
-    .monte-fuji-hero .hero-title {
+    .video-hero .hero-title {
         font-size: 2.5rem;
         text-align: center;
     }
     
-    .monte-fuji-hero .hero-subtitle {
+    .video-hero .hero-subtitle {
         font-size: 1.2rem;
         text-align: center;
     }
     
-    .monte-fuji-hero .search-form {
+    .video-hero .search-form {
         margin-top: 2rem;
         padding: 20px;
     }
@@ -345,6 +145,13 @@ body {
     font-size: 1.2rem;
     opacity: 0.9;
     margin-bottom: 2rem;
+}
+
+.search-form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* ===== COLLAGE CULTURAL ===== */
@@ -488,6 +295,11 @@ body {
     cursor: pointer;
 }
 
+.destination-card.interactive:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
 .destination-image {
     height: 200px;
     background-size: cover;
@@ -497,6 +309,15 @@ body {
     align-items: flex-start;
     justify-content: flex-start;
     padding: 15px;
+}
+
+.country-code {
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.8rem;
 }
 
 .destination-content {
@@ -625,6 +446,12 @@ body {
     margin: 20px 0;
 }
 
+.form-label {
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
 .form-control, .form-select {
     border: 2px solid #e9ecef;
     border-radius: 8px;
@@ -635,6 +462,22 @@ body {
 .form-control:focus, .form-select:focus {
     border-color: var(--secondary-color);
     box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* ===== BOTONES ===== */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #c0392b);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    background: linear-gradient(135deg, var(--primary-color), #c0392b);
 }
 
 .btn-warning {

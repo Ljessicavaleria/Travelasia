@@ -4,103 +4,337 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vive Asia como nunca antes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="hero">
-            <div class="collage">
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1540959733332-0d2cd6c61113?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1528164344705-47542687000d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1534008757030-27299c4371b6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1513415564515-763d91423b1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1531572753322-ad063cecc140?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-                <div class="collage-item" style="background-image: url('https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-            </div>
-            <div class="overlay">
-                <h1>Vive Asia como nunca antes</h1>
-                <p class="subtitle">Tours personalizados y experiencias únicas en el continente asiático</p>
-                <a href="#" class="btn">Ver Destinos</a>
-            </div>
-        </div>
-        
-        <div class="content">
-            <div class="form-section">
-                <h2>Planifica tu viaje</h2>
-                
-                <div class="form-group">
-                    <label for="destination">Destino</label>
-                    <select id="destination">
-                        <option value="">Seleccione un destino</option>
-                        <option value="japon">Japón</option>
-                        <option value="tailandia">Tailandia</option>
-                        <option value="india">India</option>
-                        <option value="china">China</option>
-                        <option value="vietnam">Vietnam</option>
-                        <option value="corea">Corea del Sur</option>
-                        <option value="indonesia">Indonesia</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Personas</label>
-                    <select>
-                        <option>2 personas</option>
-                        <option>1 persona</option>
-                        <option>3 personas</option>
-                        <option>4 personas</option>
-                        <option>5+ personas</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>Noches</label>
-                    <select>
-                        <option>7 noches</option>
-                        <option>5 noches</option>
-                        <option>10 noches</option>
-                        <option>14 noches</option>
-                        <option>21+ noches</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">Categoría</label>
-                    <select id="category">
-                        <option value="">Seleccione una categoría</option>
-                        <option value="aventura">Aventura</option>
-                        <option value="cultural">Cultural</option>
-                        <option value="gastronomico">Gastronómico</option>
-                        <option value="playa">Playa y Relax</option>
-                        <option value="luna">Luna de miel</option>
-                    </select>
-                </div>
-                
-                <button class="btn" style="width: 100%;">Buscar Experiencias</button>
-            </div>
-            
-            <div class="info-section">
-                <div>
-                    <h2>Descubre la diversidad de Asia</h2>
-                    <p>Desde los templos ancestrales de Angkor Wat en Camboya hasta los rascacielos futuristas de Tokio, Asia ofrece una increíble diversidad de experiencias que cautivarán todos tus sentidos.</p>
-                    
-                    <p>Nuestros expertos en viajes han creado itinerarios únicos que combinan los destinos más emblemáticos con experiencias auténticas lejos de las rutas turísticas convencionales.</p>
-                </div>
-                
-                <div class="testimonial">
-                    <p>"Mi viaje a Japón con esta agencia superó todas mis expectativas. Cada detalle estaba cuidadosamente planeado y las experiencias locales fueron simplemente increíbles."</p>
-                    <div class="author">Cristina Abura</div>
-                </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <h2><i class="fas fa-globe-asia me-2"></i>AsiaTravel</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#destinos">Destinos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#itinerarios">Itinerarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonios">Testimonios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contacto">Contacto</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </div>
+    </nav>
 
+    <!-- Hero con Video -->
+    <section class="video-hero" id="inicio">
+        <video autoplay muted loop class="video-background">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-tourist-resort-in-thailand-41513-large.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Vive Asia como nunca antes</h1>
+                    <p class="hero-subtitle">Tours personalizados y experiencias únicas en el continente asiático</p>
+                    <a href="#destinos" class="btn btn-primary btn-lg">Ver Destinos</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="search-form">
+                        <h3 class="mb-4">Planifica tu viaje</h3>
+                        <div class="mb-3">
+                            <label for="destination" class="form-label">Destino</label>
+                            <select id="destination" class="form-select">
+                                <option value="">Seleccione un destino</option>
+                                <option value="japon">Japón</option>
+                                <option value="tailandia">Tailandia</option>
+                                <option value="india">India</option>
+                                <option value="china">China</option>
+                                <option value="vietnam">Vietnam</option>
+                                <option value="corea">Corea del Sur</option>
+                                <option value="indonesia">Indonesia</option>
+                            </select>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Personas</label>
+                                <select class="form-select">
+                                    <option>2 personas</option>
+                                    <option>1 persona</option>
+                                    <option>3 personas</option>
+                                    <option>4 personas</option>
+                                    <option>5+ personas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Noches</label>
+                                <select class="form-select">
+                                    <option>7 noches</option>
+                                    <option>5 noches</option>
+                                    <option>10 noches</option>
+                                    <option>14 noches</option>
+                                    <option>21+ noches</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="category" class="form-label">Categoría</label>
+                            <select id="category" class="form-select">
+                                <option value="">Seleccione una categoría</option>
+                                <option value="aventura">Aventura</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="gastronomico">Gastronómico</option>
+                                <option value="playa">Playa y Relax</option>
+                                <option value="luna">Luna de miel</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100">Buscar Experiencias</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collage Cultural -->
+    <section class="cultural-collage">
+        <div class="container">
+            <h2 class="section-title">Descubre la Diversidad de Asia</h2>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1540959733332-0d2cd6c61113?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="Japón">
+                        <div class="culture-overlay">
+                            <h5>Japón</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="Tailandia">
+                        <div class="culture-overlay">
+                            <h5>Tailandia</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1534008757030-27299c4371b6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="China">
+                        <div class="culture-overlay">
+                            <h5>China</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="India">
+                        <div class="culture-overlay">
+                            <h5>India</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1513415564515-763d91423b1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="Vietnam">
+                        <div class="culture-overlay">
+                            <h5>Vietnam</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="Corea">
+                        <div class="culture-overlay">
+                            <h5>Corea del Sur</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="culture-card">
+                        <img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="culture-img" alt="Indonesia">
+                        <div class="culture-overlay">
+                            <h5>Indonesia</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinos Interactivos -->
+    <section class="destinations-section" id="destinos">
+        <div class="container">
+            <h2 class="section-title">Destinos Populares</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <a href="#" class="card-link">
+                        <div class="destination-card interactive">
+                            <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')">
+                                <div class="country-code">JP</div>
+                            </div>
+                            <div class="destination-content">
+                                <h4>Tokio</h4>
+                                <div class="city">Japón</div>
+                                <div class="info">Descubre la perfecta armonía entre tradición y modernidad</div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#" class="card-link">
+                        <div class="destination-card interactive">
+                            <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1528181304800-259b08848526?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')">
+                                <div class="country-code">TH</div>
+                            </div>
+                            <div class="destination-content">
+                                <h4>Bangkok</h4>
+                                <div class="city">Tailandia</div>
+                                <div class="info">La ciudad de los templos brillantes y la vida nocturna vibrante</div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="#" class="card-link">
+                        <div class="destination-card interactive">
+                            <div class="destination-image" style="background-image: url('https://images.unsplash.com/photo-1531058020387-3be344556be6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')">
+                                <div class="country-code">IN</div>
+                            </div>
+                            <div class="destination-content">
+                                <h4>Delhi</h4>
+                                <div class="city">India</div>
+                                <div class="info">Una mezcla fascinante de historia, cultura y colores vibrantes</div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características Principales -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">¿Por Qué Elegirnos?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h4>Itinerarios Personalizados</h4>
+                        <p>Creamos viajes a medida que se adaptan a tus intereses, presupuesto y estilo de viaje.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h4>Guías Locales Expertos</h4>
+                        <p>Conectamos con guías locales que conocen los secretos mejor guardados de cada destino.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Viaje Seguro y Protegido</h4>
+                        <p>Ofrecemos asistencia 24/7 y todos nuestros servicios incluyen seguros de viaje.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="testimonials-section" id="testimonios">
+        <div class="container">
+            <h2 class="section-title">Lo Que Dicen Nuestros Viajeros</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"Mi viaje a Japón superó todas mis expectativas. Cada detalle estaba cuidadosamente planeado y las experiencias locales fueron simplemente increíbles."</p>
+                        <div class="author">Cristina Abura</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"La organización del viaje a Tailandia fue impecable. Los guías locales hicieron que cada experiencia fuera auténtica y memorable."</p>
+                        <div class="author">Miguel Torres</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"Nunca imaginé que India podría ser tan fascinante. Gracias a la agencia, descubrí lugares que no aparecen en las guías turísticas."</p>
+                        <div class="author">Laura Méndez</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>AsiaTravel</h5>
+                    <p>Tu puerta de entrada a experiencias únicas en el continente asiático.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p>Contacto: info@asiatravel.com</p>
+                    <p>Teléfono: +34 912 345 678</p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2023 AsiaTravel. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Efecto de parallax suave para el collage
+        // Efecto de parallax suave para el hero
         window.addEventListener('scroll', function() {
             const scrolled = window.pageYOffset;
-            const hero = document.querySelector('.hero');
+            const hero = document.querySelector('.video-hero');
             hero.style.transform = 'translateY(' + (scrolled * 0.5) + 'px)';
         });
     </script>

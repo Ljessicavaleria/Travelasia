@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "travelasia-secret-key-2024")
@@ -13,12 +15,14 @@ try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client.travelasia_db
     destinos_collection = db.destinos
+    usuarios_collection = db.usuarios  # 👈 NUEVA COLECCIÓN DE USUARIOS
     # Test simple de conexión
     db.command('ping')
     print("✅ ¡CONECTADO A MONGODB ATLAS! - TravelAsia")
 except Exception as e:
     db = None
     destinos_collection = None
+    usuarios_collection = None
     print(f"❌ Error MongoDB: {e}")
 
 # DATOS DE TODOS LOS TOURS PREDEFINIDOS
@@ -326,6 +330,113 @@ def procesar_cotizacion():
     except Exception as e:
         flash(f"Error en la cotización: {e}", "danger")
         return redirect(url_for("index"))
+
+# =============================================
+# SISTEMA DE USUARIOS - NUEVAS RUTAS
+# =============================================
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Registro de nuevos usuarios"""
+    if request.method == "POST":
+        nombre = request.form.get("nombre", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
+        tipo_usuario = request.form.get("tipo_usuario", "viajero")
+        
+        # Validaciones básicas
+        if not nombre or not email or not password:
+            flash("❌ Todos los campos son obligatorios", "danger")
+            return redirect(url_for("register"))
+        
+        if len(password) < 6:
+            flash("❌ La contraseña debe tener al menos 6 caracteres", "danger")
+            return redirect(url_for("register"))
+        
+        # Verificar si el usuario ya existe
+        if db is not None:
+            usuario_existente = usuarios_collection.find_one({"email": email})
+            if usuario_existente:
+                flash("❌ Este email ya está registrado", "danger")
+                return redirect(url_for("register"))
+            
+            # Crear nuevo usuario
+            nuevo_usuario = {
+                "nombre": nombre,
+                "email": email,
+                "password": generate_password_hash(password),
+                "tipo_usuario": tipo_usuario,
+                "pais_interes": request.form.get("pais_interes", ""),
+                "presupuesto": float(request.form.get("presupuesto", 0) or 0),
+                "fecha_registro": datetime.datetime.utcnow()
+            }
+            
+            try:
+                usuarios_collection.insert_one(nuevo_usuario)
+                flash("✅ ¡Registro exitoso! Ahora puedes iniciar sesión", "success")
+                return redirect(url_for("login"))
+            except Exception as e:
+                flash(f"❌ Error en el registro: {e}", "danger")
+        else:
+            flash("⚠️ Base de datos no disponible", "warning")
+    
+    return render_template("register.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Inicio de sesión de usuarios"""
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
+        
+        if not email or not password:
+            flash("❌ Email y contraseña requeridos", "danger")
+            return redirect(url_for("login"))
+        
+        if db is not None:
+            try:
+                usuario = usuarios_collection.find_one({"email": email})
+                if usuario and check_password_hash(usuario["password"], password):
+                    # Iniciar sesión
+                    session["user_id"] = str(usuario["_id"])
+                    session["user_name"] = usuario["nombre"]
+                    session["user_type"] = usuario["tipo_usuario"]
+                    session["user_email"] = usuario["email"]
+                    
+                    flash(f"🎉 ¡Bienvenido/a {usuario['nombre']}!", "success")
+                    return redirect(url_for("index"))
+                else:
+                    flash("❌ Email o contraseña incorrectos", "danger")
+            except Exception as e:
+                flash(f"❌ Error en el login: {e}", "danger")
+        else:
+            flash("⚠️ Base de datos no disponible", "warning")
+    
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    """Cerrar sesión"""
+    session.clear()
+    flash("👋 ¡Sesión cerrada correctamente!", "info")
+    return redirect(url_for("index"))
+
+@app.route("/profile")
+def profile():
+    """Perfil del usuario"""
+    if "user_id" not in session:
+        flash("🔒 Debes iniciar sesión para ver tu perfil", "warning")
+        return redirect(url_for("login"))
+    
+    if db is not None:
+        try:
+            usuario = usuarios_collection.find_one({"_id": ObjectId(session["user_id"])})
+            if usuario:
+                return render_template("profile.html", usuario=usuario)
+        except Exception as e:
+            flash(f"❌ Error cargando perfil: {e}", "danger")
+    
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))

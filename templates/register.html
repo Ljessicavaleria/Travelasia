@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - TravelAsia{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Crear Cuenta</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <!-- Nombre Completo -->
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre Completo *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   required placeholder="Tu nombre completo">
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   required placeholder="tu@email.com">
+                        </div>
+
+                        <!-- Contraseña -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña *</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   required placeholder="Mínimo 6 caracteres" minlength="6">
+                            <div class="form-text">La contraseña debe tener al menos 6 caracteres.</div>
+                        </div>
+
+                        <!-- Tipo de Usuario -->
+                        <div class="mb-3">
+                            <label for="tipo_usuario" class="form-label">Tipo de Usuario *</label>
+                            <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
+                                <option value="viajero">🧭 Viajero Independiente</option>
+                                <option value="guia">🧭 Guía Turístico</option>
+                                <option value="agencia">🏢 Agencia de Viajes</option>
+                            </select>
+                        </div>
+
+                        <!-- País de Interés -->
+                        <div class="mb-3">
+                            <label for="pais_interes" class="form-label">País de Interés Principal</label>
+                            <select class="form-select" id="pais_interes" name="pais_interes">
+                                <option value="">Selecciona un país</option>
+                                <option value="Japón">🇯🇵 Japón</option>
+                                <option value="Tailandia">🇹🇭 Tailandia</option>
+                                <option value="Vietnam">🇻🇳 Vietnam</option>
+                                <option value="China">🇨🇳 China</option>
+                                <option value="Corea del Sur">🇰🇷 Corea del Sur</option>
+                                <option value="Indonesia">🇮🇩 Indonesia</option>
+                                <option value="Malasia">🇲🇾 Malasia</option>
+                                <option value="Singapur">🇸🇬 Singapur</option>
+                                <option value="India">🇮🇳 India</option>
+                                <option value="Filipinas">🇵🇭 Filipinas</option>
+                                <option value="Sri Lanka">🇱🇰 Sri Lanka</option>
+                                <option value="Camboya">🇰🇭 Camboya</option>
+                            </select>
+                        </div>
+
+                        <!-- Presupuesto Estimado -->
+                        <div class="mb-4">
+                            <label for="presupuesto" class="form-label">Presupuesto Estimado (USD)</label>
+                            <input type="number" class="form-control" id="presupuesto" name="presupuesto" 
+                                   placeholder="Ej: 1500" min="0" step="100">
+                            <div class="form-text">Presupuesto aproximado para tu viaje.</div>
+                        </div>
+
+                        <!-- Botón de Registro -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Registrarse
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Enlace a Login -->
+                    <div class="text-center mt-4">
+                        <p class="mb-0">¿Ya tienes cuenta? 
+                            <a href="{{ url_for('login') }}" class="text-decoration-none">Inicia Sesión</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de Tipos de Usuario -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">💡 Tipos de Usuario:</h6>
+                    <ul class="list-unstyled small">
+                        <li>🧭 <strong>Viajero Independiente:</strong> Planifica tus propios viajes</li>
+                        <li>🧭 <strong>Guía Turístico:</strong> Acceso a información especializada</li>
+                        <li>🏢 <strong>Agencia de Viajes:</strong> Herramientas para clientes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

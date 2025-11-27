@@ -2,11 +2,21 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 import os
 import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "travelasia-secret-key-2024")
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            flash("🔒 Debes iniciar sesión para acceder a esta página", "warning")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Configuración de MongoDB Atlas 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/travelasia_db")
@@ -15,7 +25,7 @@ try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client.travelasia_db
     destinos_collection = db.destinos
-    usuarios_collection = db.usuarios  # 👈 NUEVA COLECCIÓN DE USUARIOS
+    usuarios_collection = db.usuarios
     # Test simple de conexión
     db.command('ping')
     print("✅ ¡CONECTADO A MONGODB ATLAS! - TravelAsia")
@@ -164,6 +174,7 @@ def index():
     return render_template("index.html", destinos=destinos, tours=TOURS_PREDEFINIDOS)
 
 @app.route("/new", methods=["GET", "POST"])
+@login_required
 def create():
     """Crear nuevo destino asiático"""
     if request.method == "POST":
@@ -222,6 +233,7 @@ def view(id):
     return render_template("view.html", destino=destino)
 
 @app.route("/edit/<id>", methods=["GET", "POST"])
+@login_required
 def edit(id):
     """Editar destino existente"""
     if db is None:
@@ -272,6 +284,7 @@ def edit(id):
     return render_template("edit.html", destino=destino)
 
 @app.route("/delete/<id>", methods=["POST"])
+@login_required
 def delete(id):
     """Eliminar destino"""
     if db is not None:
@@ -330,10 +343,6 @@ def procesar_cotizacion():
     except Exception as e:
         flash(f"Error en la cotización: {e}", "danger")
         return redirect(url_for("index"))
-
-# =============================================
-# SISTEMA DE USUARIOS - NUEVAS RUTAS
-# =============================================
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -415,6 +424,7 @@ def login():
     return render_template("login.html")
 
 @app.route("/logout")
+@login_required
 def logout():
     """Cerrar sesión"""
     session.clear()
@@ -422,12 +432,9 @@ def logout():
     return redirect(url_for("index"))
 
 @app.route("/profile")
+@login_required
 def profile():
     """Perfil del usuario"""
-    if "user_id" not in session:
-        flash("🔒 Debes iniciar sesión para ver tu perfil", "warning")
-        return redirect(url_for("login"))
-    
     if db is not None:
         try:
             usuario = usuarios_collection.find_one({"_id": ObjectId(session["user_id"])})

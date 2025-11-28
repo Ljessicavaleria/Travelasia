@@ -1,70 +1,179 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row">
-        <div class="col-md-8">
-            <div class="tour-detail-card">
-                <img src="{{ tour.imagen }}" class="tour-detail-image" alt="{{ tour.nombre }}">
-                <h1>{{ tour.nombre }}</h1>
-                <div class="tour-meta">
-                    <span class="badge bg-primary">{{ tour.pais }}</span>
-                    <span class="badge bg-secondary">{{ tour.ciudad }}</span>
-                    <span class="badge bg-success">{{ tour.duracion }}</span>
+        <div class="col-lg-8 mx-auto">
+            <!-- Progreso -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="progress mb-3" style="height: 10px;">
+                        <div class="progress-bar" role="progressbar" style="width: 25%;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-primary">Destino</span>
+                        <span>Viajeros</span>
+                        <span class="text-muted">Fechas</span>
+                        <span class="text-muted">Personalizar</span>
+                        <span class="text-muted">Confirmar</span>
+                    </div>
                 </div>
-                <p class="tour-description">{{ tour.descripcion }}</p>
-                
-                <h4>💰 Precio Base: ${{ tour.precio_base }} USD por persona</h4>
-                
-                <h5>Incluye:</h5>
-                <ul>
-                    {% for item in tour.incluye %}
-                    <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
             </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="cotizacion-form">
-                <h4>Cotiza este Tour</h4>
-                <form action="{{ url_for('procesar_cotizacion') }}" method="POST">
-                    <input type="hidden" name="pais" value="{{ tour.pais.lower() }}">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Personas</label>
-                        <select class="form-select" name="personas" required>
-                            <option value="1">1 persona</option>
-                            <option value="2" selected>2 personas</option>
-                            <option value="3">3 personas</option>
-                            <option value="4">4 personas</option>
-                        </select>
+
+            <div class="row">
+                <!-- Formulario de Cotización -->
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">📝 Personaliza tu Viaje</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-cotizacion" action="{{ url_for('procesar_cotizacion') }}" method="POST">
+                                <!-- Paso 1: Destino -->
+                                <div class="cotizacion-paso active" id="paso-destino">
+                                    <h5>1. Selecciona tu Destino</h5>
+                                    <div class="row g-3">
+                                        {% for destino in destinos %}
+                                        <div class="col-md-6">
+                                            <div class="destino-option card h-100">
+                                                <input type="radio" name="destino" value="{{ destino.id }}" id="destino-{{ destino.id }}" class="d-none">
+                                                <label for="destino-{{ destino.id }}" class="card-body text-center cursor-pointer">
+                                                    <img src="{{ destino.imagen }}" alt="{{ destino.nombre }}" class="img-fluid rounded mb-2" style="height: 100px; object-fit: cover;">
+                                                    <h6>{{ destino.nombre }}</h6>
+                                                    <p class="text-muted small mb-1">{{ destino.pais_nombre }}</p>
+                                                    <p class="text-success fw-bold">Desde ${{ destino.precio_base }}</p>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Paso 2: Viajeros -->
+                                <div class="cotizacion-paso d-none" id="paso-viajeros">
+                                    <h5>2. Información de Viajeros</h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Número de personas</label>
+                                            <select class="form-select" name="personas" required>
+                                                <option value="1">1 persona</option>
+                                                <option value="2" selected>2 personas</option>
+                                                <option value="3">3 personas</option>
+                                                <option value="4">4 personas</option>
+                                                <option value="5">5 personas</option>
+                                                <option value="6">6+ personas</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tipo de habitación</label>
+                                            <select class="form-select" name="habitacion" required>
+                                                <option value="individual">Individual</option>
+                                                <option value="doble" selected>Doble</option>
+                                                <option value="triple">Triple</option>
+                                                <option value="suite">Suite</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botones de navegación -->
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-secondary btn-anterior d-none">
+                                        ← Anterior
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-siguiente ms-auto">
+                                        Siguiente →
+                                    </button>
+                                    <button type="submit" class="btn btn-success btn-finalizar d-none">
+                                        Finalizar Cotización
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Duración</label>
-                        <select class="form-select" name="noches" required>
-                            <option value="5">5 noches</option>
-                            <option value="7" selected>7 noches</option>
-                            <option value="10">10 noches</option>
-                            <option value="14">14 noches</option>
-                        </select>
+                </div>
+
+                <!-- Resumen en Tiempo Real -->
+                <div class="col-lg-4">
+                    <div class="card sticky-top" style="top: 20px;">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">💰 Resumen de Cotización</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="resumen-cotizacion">
+                                <p class="text-muted">Selecciona un destino para ver el precio</p>
+                            </div>
+                            <div class="mt-3 pt-3 border-top">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total estimado:</strong>
+                                    <strong id="total-cotizacion">$0</strong>
+                                </div>
+                                <small class="text-muted">* Precio por persona</small>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Categoría</label>
-                        <select class="form-select" name="categoria" required>
-                            <option value="economico">Económico (-20%)</option>
-                            <option value="estandar" selected>Estándar</option>
-                            <option value="premium">Premium (+50%)</option>
-                            <option value="lujo">Lujo (+100%)</option>
-                        </select>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">Calcular Cotización</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let pasoActual = 1;
+    const totalPasos = 4;
+
+    // Navegación entre pasos
+    document.querySelector('.btn-siguiente').addEventListener('click', siguientePaso);
+    document.querySelector('.btn-anterior').addEventListener('click', anteriorPaso);
+
+    function siguientePaso() {
+        if (pasoActual < totalPasos) {
+            document.getElementById(`paso-${obtenerNombrePaso(pasoActual)}`).classList.add('d-none');
+            pasoActual++;
+            document.getElementById(`paso-${obtenerNombrePaso(pasoActual)}`).classList.remove('d-none');
+            actualizarNavegacion();
+            actualizarResumen();
+        }
+    }
+
+    function anteriorPaso() {
+        if (pasoActual > 1) {
+            document.getElementById(`paso-${obtenerNombrePaso(pasoActual)}`).classList.add('d-none');
+            pasoActual--;
+            document.getElementById(`paso-${obtenerNombrePaso(pasoActual)}`).classList.remove('d-none');
+            actualizarNavegacion();
+        }
+    }
+
+    function obtenerNombrePaso(numero) {
+        const pasos = ['destino', 'viajeros', 'fechas', 'personalizar'];
+        return pasos[numero - 1];
+    }
+
+    function actualizarNavegacion() {
+        const btnAnterior = document.querySelector('.btn-anterior');
+        const btnSiguiente = document.querySelector('.btn-siguiente');
+        const btnFinalizar = document.querySelector('.btn-finalizar');
+
+        btnAnterior.classList.toggle('d-none', pasoActual === 1);
+        btnSiguiente.classList.toggle('d-none', pasoActual === totalPasos);
+        btnFinalizar.classList.toggle('d-none', pasoActual !== totalPasos);
+    }
+
+    function actualizarResumen() {
+        // Lógica para actualizar el resumen en tiempo real
+        const destinoSeleccionado = document.querySelector('input[name="destino"]:checked');
+        if (destinoSeleccionado) {
+            const precioBase = 1000; // Esto vendría de la base de datos
+            document.getElementById('total-cotizacion').textContent = `$${precioBase}`;
+        }
+    }
+
+    // Event listeners para actualización en tiempo real
+    document.querySelectorAll('input[name="destino"]').forEach(radio => {
+        radio.addEventListener('change', actualizarResumen);
+    });
+});
+</script>
 {% endblock %}

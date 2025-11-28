@@ -24,85 +24,86 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <form method="POST" action="{{ url_for('crear_itinerario') }}">
-                                <!-- Nombre del Viaje -->
-                                <div class="mb-4">
-                                    <label for="nombre_viaje" class="form-label fw-bold">✏️ Nombre del Viaje *</label>
-                                    <input type="text" class="form-control form-control-lg" 
-                                           id="nombre_viaje" name="nombre_viaje" 
-                                           required placeholder="Ej: Aventura por el Sudeste Asiático">
-                                    <div class="form-text">Dale un nombre memorable a tu viaje</div>
-                                </div>
-
-                                <!-- Descripción -->
-                                <div class="mb-4">
-                                    <label for="descripcion" class="form-label fw-bold">📝 Descripción</label>
-                                    <textarea class="form-control" id="descripcion" name="descripcion" 
-                                              rows="3" placeholder="Describe tu viaje, objetivos, lugares que quieres visitar..."></textarea>
-                                </div>
-
-                                <!-- Fechas -->
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <label for="fecha_inicio" class="form-label fw-bold">📅 Fecha de Inicio *</label>
-                                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">✏️ Nombre del Viaje *</label>
+                                        <input type="text" class="form-control form-control-lg" name="nombre_viaje" required 
+                                               placeholder="Ej: Aventura en Japón y Corea" value="Mi Viaje a Asia">
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="fecha_fin" class="form-label fw-bold">📅 Fecha de Fin *</label>
-                                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
-                                    </div>
-                                </div>
-
-                                <!-- Presupuesto -->
-                                <div class="mb-4">
-                                    <label for="presupuesto_total" class="form-label fw-bold">💰 Presupuesto Total (USD)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <input type="number" class="form-control" id="presupuesto_total" 
-                                               name="presupuesto_total" min="0" step="100" 
-                                               placeholder="2000">
-                                        <span class="input-group-text">USD</span>
-                                    </div>
-                                    <div class="form-text">Presupuesto estimado para todo el viaje</div>
-                                </div>
-
-                                <!-- Selección de Países -->
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">🌏 Selecciona los Países *</label>
-                                    <div class="form-text mb-3">Elige los países que quieres visitar en tu ruta multi-país</div>
                                     
-                                    <div class="row">
-                                        {% for key, tour in tours.items() %}
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-check card border">
-                                                <div class="card-body p-3">
-                                                    <input class="form-check-input" type="checkbox" 
-                                                           name="paises" value="{{ tour.pais }}" 
-                                                           id="pais_{{ key }}">
-                                                    <label class="form-check-label w-100" for="pais_{{ key }}">
-                                                        <div class="d-flex align-items-center">
-                                                            <img src="{{ tour.imagen }}" 
-                                                                 class="rounded me-3" 
-                                                                 style="width: 60px; height: 40px; object-fit: cover;" 
-                                                                 alt="{{ tour.pais }}">
-                                                            <div>
-                                                                <strong>{{ tour.pais }}</strong>
-                                                                <br>
-                                                                <small class="text-muted">{{ tour.ciudad }}</small>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">🌏 Países a Visitar *</label>
+                                        <div class="form-text mb-3">Elige los países que quieres visitar en tu ruta multi-país</div>
+                                        <div class="row">
+                                            {% for key, tour in tours.items() %}
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-check card border">
+                                                    <div class="card-body p-3">
+                                                        <input class="form-check-input" type="checkbox" name="paises" 
+                                                               value="{{ tour.pais }}" id="pais-{{ key }}"
+                                                               {% if tour.pais in paises_pre_seleccionados %}checked{% endif %}>
+                                                        <label class="form-check-label w-100" for="pais-{{ key }}">
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="{{ tour.imagen }}" 
+                                                                     class="rounded me-3" 
+                                                                     style="width: 60px; height: 40px; object-fit: cover;" 
+                                                                     alt="{{ tour.pais }}">
+                                                                <div>
+                                                                    <strong>{{ tour.pais }}</strong>
+                                                                    <br>
+                                                                    <small class="text-muted">{{ tour.ciudad }}</small>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </label>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            {% endfor %}
                                         </div>
-                                        {% endfor %}
                                     </div>
-                                </div>
-
-                                <!-- Botón de Envío -->
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-rocket me-2"></i>Crear Itinerario
-                                    </button>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">📅 Fecha de Inicio *</label>
+                                        <!-- ✅ CORRECCIÓN: Usar variable del backend -->
+                                        <input type="date" class="form-control" name="fecha_inicio" required 
+                                               value="{{ hoy }}">
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">📅 Fecha de Fin *</label>
+                                        <!-- ✅ CORRECCIÓN: Usar variable del backend -->
+                                        <input type="date" class="form-control" name="fecha_fin" required
+                                               value="{{ fecha_fin_default }}">
+                                        <div class="form-text" id="duracion-texto">Duración: 10 días</div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">💰 Presupuesto Total (USD) *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" name="presupuesto_total" 
+                                                   required min="100" step="50" value="2000" placeholder="2000">
+                                            <span class="input-group-text">USD</span>
+                                        </div>
+                                        <div class="form-text">Presupuesto estimado para todo el viaje</div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">📝 Descripción</label>
+                                        <textarea class="form-control" name="descripcion" rows="3" 
+                                                  placeholder="Describe tu viaje...">Viaje de ensueño por Asia</textarea>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fas fa-rocket me-2"></i>Crear Itinerario
+                                            </button>
+                                            <a href="{{ url_for('planificador') }}" class="btn btn-outline-secondary">
+                                                <i class="fas fa-times me-2"></i>Cancelar
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -194,8 +195,10 @@
 <!-- Script para calcular duración -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const fechaInicio = document.getElementById('fecha_inicio');
-    const fechaFin = document.getElementById('fecha_fin');
+    const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
+    const fechaFin = document.querySelector('input[name="fecha_fin"]');
+    const duracionTexto = document.getElementById('duracion-texto');
+    const presupuestoInput = document.querySelector('input[name="presupuesto_total"]');
     
     // Establecer fecha mínima como hoy
     const today = new Date().toISOString().split('T')[0];
@@ -207,11 +210,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const inicio = new Date(fechaInicio.value);
             const fin = new Date(fechaFin.value);
             const diffTime = Math.abs(fin - inicio);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
             
             if (diffDays > 0) {
-                // Mostrar duración en algún lugar (podemos agregar un elemento para esto)
-                console.log(`Duración del viaje: ${diffDays} días`);
+                duracionTexto.textContent = `Duración: ${diffDays} día${diffDays > 1 ? 's' : ''}`;
             }
         }
     }
@@ -222,6 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     fechaFin.addEventListener('change', calcularDuracion);
+    
+    // Calcular duración inicial
+    calcularDuracion();
 });
 </script>
 {% endblock %}

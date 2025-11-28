@@ -32,8 +32,9 @@
                 <div class="col-md-3">
                     <h6 class="text-muted">🗓️ Duración</h6>
                     <h4 class="text-primary">{{ itinerario.duracion_dias }} días</h4>
+                    <!-- ✅ CORRECCIÓN: Usar fechas directamente -->
                     <small class="text-muted">
-                        {{ itinerario.fecha_inicio.strftime('%d/%m/%Y') }} - {{ itinerario.fecha_fin.strftime('%d/%m/%Y') }}
+                        {{ itinerario.fecha_inicio }} - {{ itinerario.fecha_fin }}
                     </small>
                 </div>
                 <div class="col-md-3">
@@ -102,10 +103,10 @@
                             <div class="col-md-4">
                                 <label for="fecha" class="form-label">Fecha</label>
                                 <input type="date" class="form-control" id="fecha" name="fecha"
-                                       min="{{ itinerario.fecha_inicio.strftime('%Y-%m-%d') }}" 
-                                       max="{{ itinerario.fecha_fin.strftime('%Y-%m-%d') }}">
+                                       min="{{ itinerario.fecha_inicio }}" 
+                                       max="{{ itinerario.fecha_fin }}">
                                 <div class="form-text">
-                                    Entre {{ itinerario.fecha_inicio.strftime('%d/%m/%Y') }} y {{ itinerario.fecha_fin.strftime('%d/%m/%Y') }}
+                                    Entre {{ itinerario.fecha_inicio }} y {{ itinerario.fecha_fin }}
                                 </div>
                             </div>
                         </div>
@@ -240,19 +241,22 @@
                                                     {{ actividad.tipo|title }}
                                                 </span>
                                                 <div class="btn-group btn-group-sm">
+                                                    <!-- ✅ CORRECCIÓN: Usar índice en lugar de _id -->
                                                     <button class="btn btn-outline-primary btn-editar-actividad" 
-                                                            data-id="{{ actividad._id }}"
+                                                            data-index="{{ loop.index0 }}"
                                                             data-bs-toggle="tooltip" 
                                                             title="Editar actividad">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <button class="btn btn-outline-danger btn-eliminar-actividad" 
-                                                            data-id="{{ actividad._id }}" 
-                                                            data-nombre="{{ actividad.actividad }}"
-                                                            data-bs-toggle="tooltip" 
-                                                            title="Eliminar actividad">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    <form method="POST" action="{{ url_for('eliminar_actividad', itinerario_id=itinerario._id, actividad_index=loop.index0) }}" 
+                                                          class="d-inline" 
+                                                          onsubmit="return confirm('¿Eliminar esta actividad?');">
+                                                        <button type="submit" class="btn btn-outline-danger" 
+                                                                data-bs-toggle="tooltip" 
+                                                                title="Eliminar actividad">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -266,7 +270,8 @@
                                                 {% if actividad.fecha %}
                                                 <small class="text-muted">
                                                     <i class="fas fa-calendar me-1"></i>
-                                                    <span class="actividad-fecha">{{ actividad.fecha.strftime('%d/%m/%Y') }}</span>
+                                                    <!-- ✅ CORRECCIÓN: Mostrar fecha directamente -->
+                                                    <span class="actividad-fecha">{{ actividad.fecha }}</span>
                                                 </small>
                                                 {% endif %}
                                             </div>
@@ -475,16 +480,15 @@
                             <i class="fas fa-edit me-2"></i>Editar Itinerario
                         </a>
                         
-                        <form method="POST" action="{{ url_for('completar_itinerario', id=itinerario._id) }}" class="d-grid">
-                            <button type="submit" class="btn btn-outline-success">
-                                <i class="fas fa-check me-2"></i>
-                                {% if itinerario.estado == 'planificando' %}
-                                    Marcar como Completado
-                                {% else %}
-                                    Volver a Planificación
-                                {% endif %}
-                            </button>
-                        </form>
+                        <!-- ✅ CORRECCIÓN: Eliminar formulario de completar que no existe -->
+                        <a href="{{ url_for('editar_itinerario', id=itinerario._id) }}" class="btn btn-outline-success">
+                            <i class="fas fa-check me-2"></i>
+                            {% if itinerario.estado == 'planificando' %}
+                                Marcar como Completado
+                            {% else %}
+                                Volver a Planificación
+                            {% endif %}
+                        </a>
 
                         <form method="POST" action="{{ url_for('eliminar_itinerario', id=itinerario._id) }}" 
                               onsubmit="return confirmarEliminacion(this);" class="d-grid">
@@ -525,7 +529,7 @@
             </div>
             <div class="modal-body">
                 <form id="form-editar-actividad">
-                    <input type="hidden" id="edit-actividad-id">
+                    <input type="hidden" id="edit-actividad-index">
                     <!-- Los campos se llenarán dinámicamente con JavaScript -->
                 </form>
             </div>
@@ -556,7 +560,6 @@
 
 <!-- Script para el formulario -->
 <script>
-// El JavaScript completo va aquí (lo mantengo en el mismo archivo para simplicidad)
 document.addEventListener('DOMContentLoaded', function() {
     // Inicializar todas las funcionalidades
     inicializarFormulario();
@@ -586,19 +589,119 @@ function inicializarFormulario() {
 
 function inicializarFiltros() {
     // Implementar filtros aquí
+    const filtroPais = document.getElementById('filtro-pais');
+    const filtroTipo = document.getElementById('filtro-tipo');
+    const filtroCosto = document.getElementById('filtro-costo');
+    const buscarActividad = document.getElementById('buscar-actividad');
+    
+    if (filtroPais) {
+        filtroPais.addEventListener('change', aplicarFiltros);
+    }
+    if (filtroTipo) {
+        filtroTipo.addEventListener('change', aplicarFiltros);
+    }
+    if (filtroCosto) {
+        filtroCosto.addEventListener('change', aplicarFiltros);
+    }
+    if (buscarActividad) {
+        buscarActividad.addEventListener('input', aplicarFiltros);
+    }
+}
+
+function aplicarFiltros() {
+    const actividades = document.querySelectorAll('.actividad-item');
+    const filtroPais = document.getElementById('filtro-pais').value;
+    const filtroTipo = document.getElementById('filtro-tipo').value;
+    const filtroCosto = document.getElementById('filtro-costo').value;
+    const buscarTexto = document.getElementById('buscar-actividad').value.toLowerCase();
+    
+    let actividadesVisibles = 0;
+    
+    actividades.forEach(actividad => {
+        const pais = actividad.getAttribute('data-pais');
+        const tipo = actividad.getAttribute('data-tipo');
+        const costo = parseFloat(actividad.getAttribute('data-costo'));
+        const nombre = actividad.getAttribute('data-nombre');
+        const ciudad = actividad.getAttribute('data-ciudad');
+        
+        let mostrar = true;
+        
+        // Filtro por país
+        if (filtroPais && pais !== filtroPais) {
+            mostrar = false;
+        }
+        
+        // Filtro por tipo
+        if (filtroTipo && tipo !== filtroTipo) {
+            mostrar = false;
+        }
+        
+        // Filtro por búsqueda
+        if (buscarTexto && !nombre.includes(buscarTexto) && !ciudad.includes(buscarTexto)) {
+            mostrar = false;
+        }
+        
+        actividad.style.display = mostrar ? 'block' : 'none';
+        if (mostrar) actividadesVisibles++;
+    });
+    
+    // Actualizar contador
+    const resumenFiltros = document.getElementById('resumen-filtros');
+    const contadorFiltradas = document.getElementById('contador-filtradas');
+    
+    if (resumenFiltros && contadorFiltradas) {
+        contadorFiltradas.textContent = actividadesVisibles;
+        if (filtroPais || filtroTipo || filtroCosto || buscarTexto) {
+            resumenFiltros.classList.remove('d-none');
+        } else {
+            resumenFiltros.classList.add('d-none');
+        }
+    }
+    
+    // Ordenar por costo si está activo
+    if (filtroCosto) {
+        ordenarActividadesPorCosto(filtroCosto);
+    }
+}
+
+function ordenarActividadesPorCosto(orden) {
+    const listaActividades = document.getElementById('lista-actividades');
+    const actividades = Array.from(listaActividades.querySelectorAll('.actividad-item'));
+    
+    actividades.sort((a, b) => {
+        const costoA = parseFloat(a.getAttribute('data-costo'));
+        const costoB = parseFloat(b.getAttribute('data-costo'));
+        
+        if (orden === 'asc') {
+            return costoA - costoB;
+        } else {
+            return costoB - costoA;
+        }
+    });
+    
+    // Reordenar en el DOM
+    actividades.forEach(actividad => {
+        listaActividades.appendChild(actividad);
+    });
 }
 
 function inicializarEventListeners() {
-    // Implementar event listeners aquí
+    // Botón limpiar búsqueda
+    const btnLimpiar = document.getElementById('btn-limpiar-busqueda');
+    if (btnLimpiar) {
+        btnLimpiar.addEventListener('click', function() {
+            document.getElementById('buscar-actividad').value = '';
+            aplicarFiltros();
+        });
+    }
 }
 
 function inicializarProgressBars() {
-    // Animación de progress bars
-    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
-        const width = bar.getAttribute('data-width');
-        setTimeout(() => {
-            bar.style.width = width;
-        }, 100);
+    // Aplicar anchos dinámicos desde data-width para evitar Jinja en inline styles
+    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar){
+        var w = bar.getAttribute('data-width') || '0%';
+        if (/^\d+(?:\.\d+)?$/.test(w)) { w = w + '%'; }
+        setTimeout(function(){ bar.style.width = w; }, 60);
     });
 }
 
@@ -609,11 +712,28 @@ function inicializarTooltips() {
 }
 
 function validarPresupuesto() {
-    // Lógica de validación de presupuesto
+    const costo = parseFloat(this.value) || 0;
+    const presupuestoRestante = parseFloat(document.getElementById('presupuesto-restante').textContent.replace(/,/g, ''));
+    const costoAlerta = document.getElementById('costo-alerta');
+    const btnSubmit = document.getElementById('btn-submit');
+    
+    if (costo > presupuestoRestante) {
+        costoAlerta.textContent = '⚠️ Supera el presupuesto restante';
+        costoAlerta.classList.remove('d-none');
+        btnSubmit.disabled = true;
+    } else {
+        costoAlerta.classList.add('d-none');
+        btnSubmit.disabled = false;
+    }
 }
 
 function validarFormulario(event) {
-    // Lógica de validación de formulario
+    const form = event.target;
+    if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    form.classList.add('was-validated');
 }
 
 function confirmarEliminacion(form) {
@@ -622,11 +742,36 @@ function confirmarEliminacion(form) {
 
 // Funciones de utilidad
 function mostrarAlerta(mensaje, tipo = 'info') {
-    // Implementar sistema de alertas
+    const alerta = document.createElement('div');
+    alerta.className = `alert alert-${tipo} alert-dismissible fade show`;
+    alerta.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.getElementById('alerts-container').appendChild(alerta);
+    
+    setTimeout(() => {
+        if (alerta.parentNode) {
+            alerta.remove();
+        }
+    }, 5000);
 }
 
 function mostrarToast(titulo, mensaje, tipo = 'info') {
-    // Implementar sistema de toast
+    const toast = document.getElementById('liveToast');
+    const toastTitle = document.getElementById('toast-title');
+    const toastMessage = document.getElementById('toast-message');
+    const toastTime = document.getElementById('toast-time');
+    
+    toastTitle.textContent = titulo;
+    toastMessage.textContent = mensaje;
+    toastTime.textContent = 'Ahora';
+    
+    // Cambiar color según tipo
+    toast.className = `toast bg-${tipo} text-white`;
+    
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
 }
 </script>
 

@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% block title %}Mis Itinerarios - TravelAsia{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-map me-2"></i>Mis Itinerarios</h4>
+                        <div>
+                            <a href="{{ url_for('crear_itinerario') }}" class="btn btn-light btn-sm me-2">
+                                <i class="fas fa-plus me-1"></i>Nuevo Itinerario
+                            </a>
+                            <a href="{{ url_for('planificador') }}" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-route me-1"></i>Planificador
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ itinerarios|length }}</h3>
+                            <p class="mb-0">Total Itinerarios</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- ✅ CORRECCIÓN: Cambiar orden de estados -->
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ itinerarios|selectattr('estado', 'equalto', 'planificando')|list|length }}</h3>
+                            <p class="mb-0">En Planificación</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ itinerarios|selectattr('estado', 'equalto', 'activo')|list|length }}</h3>
+                            <p class="mb-0">Activos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ itinerarios|selectattr('favorito', 'equalto', true)|list|length }}</h3>
+                            <p class="mb-0">Favoritos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Itinerarios -->
+            {% if itinerarios %}
+            <div class="row">
+                {% for itinerario in itinerarios %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center 
+                                    {% if itinerario.estado == 'completado' %}bg-success{% elif itinerario.estado == 'activo' %}bg-primary{% else %}bg-warning{% endif %} text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-route me-2"></i>{{ itinerario.nombre_viaje }}
+                                {% if itinerario.favorito %}<i class="fas fa-star text-warning ms-1"></i>{% endif %}
+                            </h5>
+                            <span class="badge bg-light text-dark">{{ itinerario.estado|title }}</span>
+                        </div>
+                        
+                        <div class="card-body">
+                            <!-- Países -->
+                            <div class="mb-3">
+                                <strong><i class="fas fa-globe-asia me-2"></i>Países:</strong>
+                                <div class="mt-1">
+                                    {% for pais in itinerario.paises %}
+                                    <span class="badge bg-secondary me-1">{{ pais }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <!-- Fechas y Duración -->
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        {{ itinerario.fecha_inicio }} 
+                                    </small>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        {{ itinerario.duracion_dias }} días
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Presupuesto -->
+                            <div class="mb-3">
+                                <strong><i class="fas fa-dollar-sign me-2"></i>Presupuesto:</strong>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>${{ "%.2f"|format(itinerario.presupuesto_total) }} USD</span>
+                                    <small class="text-muted">
+                                        Restante: ${{ "%.2f"|format(itinerario.presupuesto_restante) }}
+                                    </small>
+                                </div>
+                                {% if itinerario.porcentaje_presupuesto > 80 %}
+                                    {% set presupuesto_progress_class = 'bg-danger' %}
+                                {% elif itinerario.porcentaje_presupuesto > 50 %}
+                                    {% set presupuesto_progress_class = 'bg-warning' %}
+                                {% else %}
+                                    {% set presupuesto_progress_class = 'bg-success' %}
+                                {% endif %}
+                                <!-- ✅ CORRECCIÓN: Progress bar con valor inicial -->
+                                <div class="progress mt-1" style="height: 6px;">
+                                    <div class="progress-bar {{ presupuesto_progress_class }}" 
+                                         data-width="{{ itinerario.porcentaje_presupuesto }}%" style="width: 0%;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Progreso de Actividades -->
+                            {% if itinerario.actividades %}
+                            <div class="mb-3">
+                                <strong><i class="fas fa-tasks me-2"></i>Progreso:</strong>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>{{ itinerario.actividades|selectattr('completada', 'equalto', true)|list|length }}/{{ itinerario.actividades|length }} actividades</span>
+                                    <small class="text-muted">{{ itinerario.porcentaje_completado }}%</small>
+                                </div>
+                                <!-- ✅ CORRECCIÓN: Progress bar con valor inicial -->
+                                <div class="progress mt-1" style="height: 6px;">
+                                    <div class="progress-bar bg-success" data-width="{{ itinerario.porcentaje_completado }}%" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Descripción -->
+                            {% if itinerario.descripcion %}
+                            <div class="mb-3">
+                                <strong><i class="fas fa-file-alt me-2"></i>Descripción:</strong>
+                                <p class="mb-0 small text-muted">{{ itinerario.descripcion[:100] }}{% if itinerario.descripcion|length > 100 %}...{% endif %}</p>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Días Restantes -->
+                            {% if itinerario.dias_restantes is not none %}
+                            <div class="alert alert-info py-2 mb-0">
+                                <i class="fas fa-hourglass-half me-2"></i>
+                                <strong>{{ itinerario.dias_restantes }} días</strong> para el viaje
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <a href="{{ url_for('ver_itinerario', id=itinerario._id) }}" 
+                                       class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                                <div class="col-4">
+                                    <a href="{{ url_for('editar_itinerario', id=itinerario._id) }}" 
+                                       class="btn btn-outline-secondary btn-sm w-100">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                                <div class="col-4">
+                                    <form action="{{ url_for('eliminar_itinerario', id=itinerario._id) }}" 
+                                          method="POST" class="d-inline w-100"
+                                          onsubmit="return confirm('¿Estás seguro de eliminar este itinerario?');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Fecha de creación -->
+                            <div class="text-center mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    <!-- ✅ CORRECCIÓN: Mostrar fecha directamente -->
+                                    Creado: {{ itinerario.fecha_creacion.strftime('%d/%m/%Y') if itinerario.fecha_creacion else 'N/A' }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Estado vacío -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-map-marked-alt fa-4x text-muted"></i>
+                </div>
+                <h3 class="text-muted">No tienes itinerarios creados</h3>
+                <p class="text-muted mb-4">Comienza planificando tu primer viaje por Asia</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('crear_itinerario') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Crear Mi Primer Itinerario
+                    </a>
+                    <a href="{{ url_for('planificador') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-route me-2"></i>Ir al Planificador
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Inicializar progress bars que vienen con data-width (evita Jinja en inline styles)
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar){
+        var w = bar.getAttribute('data-width') || '0%';
+        // Si es un número sin %, añadir %
+        if (/^\d+(?:\.\d+)?$/.test(w)) { w = w + '%'; }
+        setTimeout(function(){ bar.style.width = w; }, 60);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Destinos -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 fw-bold">Explora Asia</h1>
+            <p class="lead">Descubre los destinos más fascinantes del continente asiático</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Buscar destino</label>
+                            <input type="text" class="form-control" placeholder="Tokio, Bali, Bangkok..." id="buscar-destino">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">País</label>
+                            <select class="form-select" id="filtro-pais">
+                                <option value="">Todos los países</option>
+                                <option value="japon">Japón</option>
+                                <option value="tailandia">Tailandia</option>
+                                <option value="china">China</option>
+                                <option value="corea">Corea del Sur</option>
+                                <option value="vietnam">Vietnam</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tipo de experiencia</label>
+                            <select class="form-select" id="filtro-experiencia">
+                                <option value="">Todas</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="playa">Playa</option>
+                                <option value="aventura">Aventura</option>
+                                <option value="gastronomia">Gastronomía</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Presupuesto</label>
+                            <select class="form-select" id="filtro-presupuesto">
+                                <option value="">Cualquier presupuesto</option>
+                                <option value="economico">Económico ($500-$1,000)</option>
+                                <option value="medio">Medio ($1,000-$2,000)</option>
+                                <option value="premium">Premium ($2,000+)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de Destinos Detallados -->
+    <div class="row" id="grid-destinos">
+        {% for destino in destinos %}
+        <div class="col-lg-4 col-md-6 mb-4 destino-item" 
+             data-pais="{{ destino.pais }}" 
+             data-experiencia="{{ destino.experiencia }}"
+             data-presupuesto="{{ destino.presupuesto }}">
+            <div class="card h-100 shadow-sm">
+                <div class="position-relative">
+                    <img src="{{ destino.imagen }}" class="card-img-top" alt="{{ destino.nombre }}">
+                    <div class="card-badge">{{ destino.pais_nombre }}</div>
+                    <div class="card-price">Desde ${{ destino.precio_base }}</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ destino.nombre }}</h5>
+                    <p class="card-text text-muted">{{ destino.descripcion_corta }}</p>
+                    
+                    <div class="destino-meta mb-3">
+                        <span class="badge bg-{{ destino.experiencia_color }} me-1">
+                            {{ destino.experiencia }}
+                        </span>
+                        <span class="badge bg-secondary">
+                            ⭐ {{ destino.rating }}/5
+                        </span>
+                    </div>
+
+                    <div class="destino-details">
+                        <div class="detail-item">
+                            <i class="fas fa-clock text-muted me-2"></i>
+                            <small>{{ destino.duracion_recomendada }}</small>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-users text-muted me-2"></i>
+                            <small>Ideal para {{ destino.tipo_viajero }}</small>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-sun text-muted me-2"></i>
+                            <small>Mejor época: {{ destino.mejor_epoca }}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('ver_destino', id=destino.id) }}" class="btn btn-outline-primary">
+                            Ver Detalles
+                        </a>
+                        <a href="{{ url_for('cotizar_tour', pais=destino.pais) }}" class="btn btn-primary">
+                            Cotizar Tour
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Anterior</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Siguiente</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script>
+// Filtros en tiempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const filtros = ['buscar-destino', 'filtro-pais', 'filtro-experiencia', 'filtro-presupuesto'];
+    
+    filtros.forEach(filtroId => {
+        document.getElementById(filtroId).addEventListener('input', filtrarDestinos);
+        document.getElementById(filtroId).addEventListener('change', filtrarDestinos);
+    });
+
+    function filtrarDestinos() {
+        const busqueda = document.getElementById('buscar-destino').value.toLowerCase();
+        const pais = document.getElementById('filtro-pais').value;
+        const experiencia = document.getElementById('filtro-experiencia').value;
+        const presupuesto = document.getElementById('filtro-presupuesto').value;
+        
+        const destinos = document.querySelectorAll('.destino-item');
+        let visibles = 0;
+
+        destinos.forEach(destino => {
+            const destinoPais = destino.getAttribute('data-pais');
+            const destinoExperiencia = destino.getAttribute('data-experiencia');
+            const destinoPresupuesto = destino.getAttribute('data-presupuesto');
+            const destinoNombre = destino.querySelector('.card-title').textContent.toLowerCase();
+            
+            const coincideBusqueda = !busqueda || destinoNombre.includes(busqueda);
+            const coincidePais = !pais || destinoPais === pais;
+            const coincideExperiencia = !experiencia || destinoExperiencia === experiencia;
+            const coincidePresupuesto = !presupuesto || destinoPresupuesto === presupuesto;
+            
+            if (coincideBusqueda && coincidePais && coincideExperiencia && coincidePresupuesto) {
+                destino.style.display = 'block';
+                visibles++;
+            } else {
+                destino.style.display = 'none';
+            }
+        });
+
+        // Mostrar mensaje si no hay resultados
+        const grid = document.getElementById('grid-destinos');
+        if (visibles === 0) {
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>No se encontraron destinos</h4>
+                    <p class="text-muted">Intenta con otros filtros de búsqueda</p>
+                    <button class="btn btn-primary" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                </div>
+            `;
+        }
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('buscar-destino').value = '';
+        document.getElementById('filtro-pais').value = '';
+        document.getElementById('filtro-experiencia').value = '';
+        document.getElementById('filtro-presupuesto').value = '';
+        location.reload();
+    }
+});
+</script>
+{% endblock %}

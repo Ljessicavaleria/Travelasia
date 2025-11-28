@@ -3,156 +3,463 @@
 {% block title %}Planificador Multi-País - TravelAsia{% endblock %}
 
 {% block content %}
-<!-- Hero Section del Planificador -->
+<!-- Hero Section -->
 <div class="container-fluid bg-primary text-white py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 mb-4">🗺️ Planificador Multi-País</h1>
-                <p class="lead mb-4">Crea tu ruta perfecta por Asia. Combina países, gestiona presupuestos y organiza tus actividades en un solo lugar.</p>
-                <a href="{{ url_for('crear_itinerario') }}" class="btn btn-light btn-lg">
-                    <i class="fas fa-plus me-2"></i>Crear Nuevo Itinerario
-                </a>
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 mb-4">🗺️ Planificador Multi-País Inteligente</h1>
+                <p class="lead mb-4">Crea rutas personalizadas por Asia con inteligencia artificial. Combina países, optimiza presupuestos y organiza actividades automáticamente.</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('crear_itinerario') }}" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-plus me-2"></i>Crear Nuevo Itinerario
+                    </a>
+                    <a href="#ai-planner" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-robot me-2"></i>Planificador IA
+                    </a>
+                </div>
+                <!-- Hidden base URL for JS -->
+                <a id="crear-itinerario-link" href="{{ url_for('crear_itinerario') }}" style="display:none;">Crear</a>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <h3>12+</h3>
+                        <p>Países Asiáticos</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>50+</h3>
+                        <p>Rutas Predefinidas</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>1K+</h3>
+                        <p>Viajes Planificados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Barra de Progreso Global -->
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body py-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h6 class="mb-0">Progreso Total de Planificación</h6>
+                    <small class="text-muted">Tus itinerarios activos</small>
+                </div>
+                <div class="col-md-6">
+                    <div class="progress" style="height: 12px;">
+                        <div class="progress-bar bg-success" style="width: 65%"></div>
+                        <div class="progress-bar bg-warning" style="width: 25%"></div>
+                        <div class="progress-bar bg-secondary" style="width: 10%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted mt-1">
+                        <span>65% Completados</span>
+                        <span>25% En Progreso</span>
+                        <span>10% Por Iniciar</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Contenido Principal -->
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row">
         
         <!-- Columna Izquierda: Lista de Itinerarios -->
         <div class="col-lg-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fas fa-route me-2"></i>Mis Itinerarios</h5>
+            <!-- Filtros Rápidos -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-2">
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="filter" id="filter-all" checked>
+                        <label class="btn btn-outline-primary" for="filter-all">Todos</label>
+                        
+                        <input type="radio" class="btn-check" name="filter" id="filter-active">
+                        <label class="btn btn-outline-warning" for="filter-active">Activos</label>
+                        
+                        <input type="radio" class="btn-check" name="filter" id="filter-completed">
+                        <label class="btn btn-outline-success" for="filter-completed">Completados</label>
+                    </div>
                 </div>
-                <div class="card-body">
+            </div>
+
+            <!-- Lista de Itinerarios -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-route me-2"></i>Mis Itinerarios</h5>
+                    <span class="badge bg-light text-dark">{{ itinerarios|length }}</span>
+                </div>
+                <div class="card-body p-0">
                     {% if itinerarios %}
-                        <div class="list-group">
+                        <div class="list-group list-group-flush" id="itinerarios-list">
                             {% for itinerario in itinerarios %}
-                            <a href="{{ url_for('ver_itinerario', id=itinerario._id) }}" 
-                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">{{ itinerario.nombre_viaje }}</h6>
-                                    <small class="text-muted">
-                                        <i class="fas fa-calendar me-1"></i>
-                                        {{ itinerario.fecha_inicio }} a {{ itinerario.fecha_fin }}
-                                    </small>
-                                    <br>
-                                    <small class="text-muted">
-                                        <i class="fas fa-flag me-1"></i>
-                                        {{ itinerario.paises|length }} países
-                                    </small>
+                            <div class="list-group-item itinerary-item" 
+                                 data-estado="{{ itinerario.estado }}"
+                                 data-prioridad="{{ itinerario.prioridad }}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0">{{ itinerario.nombre_viaje }}</h6>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                        data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ url_for('ver_itinerario', id=itinerario._id) }}">
+                                                            <i class="fas fa-eye me-2"></i>Ver
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ url_for('editar_itinerario', id=itinerario._id) }}">
+                                                            <i class="fas fa-edit me-2"></i>Editar
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ url_for('duplicar_itinerario', id=itinerario._id) }}" method="POST" class="d-inline">
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="fas fa-copy me-2"></i>Duplicar
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form action="{{ url_for('eliminar_itinerario', id=itinerario._id) }}" method="POST" class="d-inline">
+                                                            <button type="submit" class="dropdown-item text-danger" 
+                                                                    onclick="return confirm('¿Estás seguro de eliminar este itinerario?')">
+                                                                <i class="fas fa-trash me-2"></i>Eliminar
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="itinerary-meta mb-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                {{ itinerario.fecha_inicio }} - {{ itinerario.fecha_fin }}
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-flag me-1"></i>
+                                                {{ itinerario.paises|length }} países
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-dollar-sign me-1"></i>
+                                                ${{ "%.2f"|format(itinerario.presupuesto_total) }}
+                                            </small>
+                                        </div>
+
+                                        <!-- Progress Bar Individual -->
+                                        <div class="progress mb-2" style="height: 6px;">
+                                            <div class="progress-bar bg-success" 
+                                                 data-width="{{ itinerario.porcentaje_completado }}%" style="width: 0%;">
+                                            </div>
+                                        </div>
+
+                                        <!-- Etiquetas -->
+                                        <div class="d-flex flex-wrap gap-1">
+                                            <span class="badge {% if itinerario.estado == 'planificando' %}bg-warning{% else %}bg-success{% endif %}">
+                                                {{ itinerario.estado|title }}
+                                            </span>
+                                            {% if itinerario.prioridad == 'alta' %}
+                                            <span class="badge bg-danger">Alta Prioridad</span>
+                                            {% endif %}
+                                            {% if itinerario.favorito %}
+                                            <span class="badge bg-warning"><i class="fas fa-star"></i></span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
-                                <span class="badge {% if itinerario.estado == 'planificando' %}bg-warning{% else %}bg-success{% endif %}">
-                                    {{ itinerario.estado|title }}
-                                </span>
-                            </a>
+                            </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="text-center py-4">
+                        <div class="text-center py-5">
                             <i class="fas fa-route fa-3x text-muted mb-3"></i>
                             <p class="text-muted">No tienes itinerarios creados todavía.</p>
                             <a href="{{ url_for('crear_itinerario') }}" class="btn btn-primary">
-                                Crear mi primer itinerario
+                                <i class="fas fa-plus me-2"></i>Crear mi primer itinerario
                             </a>
                         </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Estadísticas Rápidas -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Estadísticas</h6>
+            <!-- Planificador IA -->
+            <div class="card shadow-sm mb-4" id="ai-planner">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-robot me-2"></i>Planificador IA</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-6">
-                            <h4 class="text-primary">{{ itinerarios|length }}</h4>
-                            <small class="text-muted">Itinerarios</small>
+                    <p class="small text-muted mb-3">Deja que nuestra IA cree el itinerario perfecto para ti</p>
+                    <form id="ai-planner-form" action="{{ url_for('generar_itinerario_ia') }}" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Presupuesto Total</label>
+                            <input type="range" class="form-range" min="500" max="5000" step="100" value="1500" id="ai-budget" name="presupuesto">
+                            <div class="d-flex justify-content-between">
+                                <small>$500</small>
+                                <small id="ai-budget-value">$1,500</small>
+                                <small>$5,000</small>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <h4 class="text-success">
-                                {% set total_paises = [] %}
-                                {% for itinerario in itinerarios %}
-                                    {% for pais in itinerario.paises %}
-                                        {% if pais not in total_paises %}
-                                            {% set _ = total_paises.append(pais) %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endfor %}
-                                {{ total_paises|length }}
-                            </h4>
-                            <small class="text-muted">Países únicos</small>
+                        <div class="mb-3">
+                            <label class="form-label">Duración del Viaje</label>
+                            <select class="form-select" id="ai-duration" name="duracion">
+                                <option value="7">7 días</option>
+                                <option value="10" selected>10 días</option>
+                                <option value="14">14 días</option>
+                                <option value="21">21 días</option>
+                            </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Viaje</label>
+                            <select class="form-select" id="ai-travel-type" name="tipo_viaje">
+                                <option value="cultural">Cultural e Histórico</option>
+                                <option value="aventura">Aventura y Naturaleza</option>
+                                <option value="relax">Relax y Playas</option>
+                                <option value="gastronomia">Gastronomía</option>
+                                <option value="shopping">Shopping y Ciudades</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Viajeros</label>
+                            <select class="form-select" name="viajeros">
+                                <option value="solo">Viajero Solo</option>
+                                <option value="pareja" selected>Pareja</option>
+                                <option value="familia">Familia</option>
+                                <option value="amigos">Grupo de Amigos</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-magic me-2"></i>Generar Itinerario IA
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Plantillas Rápidas -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Plantillas Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm template-btn" data-template="japon-corea">
+                            🇯🇵 Japón + 🇰🇷 Corea (10 días) - $2,500
+                        </button>
+                        <button class="btn btn-outline-success btn-sm template-btn" data-template="tailandia-vietnam">
+                            🇹🇭 Tailandia + 🇻🇳 Vietnam (12 días) - $1,800
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm template-btn" data-template="asia-sureste">
+                            🇹🇭🇰🇭🇱🇦 Sudeste Asiático (14 días) - $2,200
+                        </button>
+                        <button class="btn btn-outline-info btn-sm template-btn" data-template="china-clasica">
+                            🇨🇳 China Clásica (10 días) - $2,000
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Columna Derecha: Mapa y Países Disponibles -->
+        <!-- Columna Derecha -->
         <div class="col-lg-8">
-            <!-- Mapa Interactivo (Placeholder) -->
+            <!-- Mapa Interactivo -->
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fas fa-map me-2"></i>Mapa de Asia</h5>
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Mapa Interactivo de Asia</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-light active" data-map-view="routes">
+                            <i class="fas fa-route"></i> Rutas
+                        </button>
+                        <button class="btn btn-outline-light" data-map-view="countries">
+                            <i class="fas fa-flag"></i> Países
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="mapa-asia" style="height: 500px; width: 100%;"></div>
+                    <div class="p-3 bg-light">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Haz clic en los marcadores para seleccionar países y crear tu ruta personalizada
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rutas Populares -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-fire me-2"></i>Rutas Populares</h5>
                 </div>
                 <div class="card-body">
-                    <div class="bg-light rounded text-center py-5" style="min-height: 300px;">
-                        <i class="fas fa-map-marked-alt fa-4x text-muted mb-3"></i>
-                        <h5 class="text-muted">Mapa Interactivo de Asia</h5>
-                        <p class="text-muted">Próximamente: Selecciona países en el mapa para crear tu ruta</p>
-                        <div class="mt-3">
-                            <span class="badge bg-primary me-2">Japón</span>
-                            <span class="badge bg-primary me-2">Corea</span>
-                            <span class="badge bg-primary me-2">China</span>
-                            <span class="badge bg-primary me-2">Tailandia</span>
-                            <span class="badge bg-primary me-2">Vietnam</span>
-                            <span class="badge bg-primary me-2">Indonesia</span>
+                    <div class="row" id="popular-routes">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">🎌 Ruta Samurái</h6>
+                                    <p class="card-text small text-muted">Japón + Corea del Sur</p>
+                                    <div class="route-countries mb-2">
+                                        <span class="badge bg-primary me-1">🇯🇵 Japón</span>
+                                        <span class="badge bg-primary">🇰🇷 Corea</span>
+                                    </div>
+                                    <div class="route-info">
+                                        <small class="text-muted">10 días • $2,500 • ⭐4.8</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary w-100 mt-2" 
+                                            onclick="cargarPlantilla('japon-corea')">
+                                        Usar Esta Ruta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">🏝️ Aventura Tropical</h6>
+                                    <p class="card-text small text-muted">Tailandia + Vietnam</p>
+                                    <div class="route-countries mb-2">
+                                        <span class="badge bg-success me-1">🇹🇭 Tailandia</span>
+                                        <span class="badge bg-success">🇻🇳 Vietnam</span>
+                                    </div>
+                                    <div class="route-info">
+                                        <small class="text-muted">12 días • $1,800 • ⭐4.6</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-success w-100 mt-2"
+                                            onclick="cargarPlantilla('tailandia-vietnam')">
+                                        Usar Esta Ruta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">🐉 Triángulo de Oro</h6>
+                                    <p class="card-text small text-muted">Tailandia + Camboya + Laos</p>
+                                    <div class="route-countries mb-2">
+                                        <span class="badge bg-warning me-1">🇹🇭 Tailandia</span>
+                                        <span class="badge bg-warning me-1">🇰🇭 Camboya</span>
+                                        <span class="badge bg-warning">🇱🇦 Laos</span>
+                                    </div>
+                                    <div class="route-info">
+                                        <small class="text-muted">14 días • $2,200 • ⭐4.7</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-warning w-100 mt-2"
+                                            onclick="cargarPlantilla('asia-sureste')">
+                                        Usar Esta Ruta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">🏯 Imperios Asiáticos</h6>
+                                    <p class="card-text small text-muted">China + Japón</p>
+                                    <div class="route-countries mb-2">
+                                        <span class="badge bg-danger me-1">🇨🇳 China</span>
+                                        <span class="badge bg-danger">🇯🇵 Japón</span>
+                                    </div>
+                                    <div class="route-info">
+                                        <small class="text-muted">15 días • $3,000 • ⭐4.9</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger w-100 mt-2"
+                                            onclick="cargarPlantilla('china-japon')">
+                                        Usar Esta Ruta
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Países Disponibles -->
-            <div class="card shadow-sm">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="fas fa-globe-asia me-2"></i>Destinos Disponibles</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for key, tour in tours.items() %}
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100 border">
-                                <div class="row g-0">
-                                    <div class="col-4">
-                                        <img src="{{ tour.imagen }}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="{{ tour.nombre }}">
-                                    </div>
-                                    <div class="col-8">
-                                        <div class="card-body p-3">
-                                            <h6 class="card-title mb-1">{{ tour.nombre }}</h6>
-                                            <p class="card-text small text-muted mb-1">
-                                                <i class="fas fa-map-marker-alt me-1"></i>{{ tour.ciudad }}
-                                            </p>
-                                            <p class="card-text small text-muted mb-2">
-                                                <i class="fas fa-clock me-1"></i>{{ tour.duracion }}
-                                            </p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="badge bg-success">${{ tour.precio_base }}</span>
-                                                <a href="{{ url_for('cotizar_tour', pais=key) }}" class="btn btn-sm btn-outline-primary">
-                                                    Cotizar
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+            <!-- Estadísticas y Progreso -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Tus Estadísticas</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid">
+                                <div class="stat-item d-flex justify-content-between mb-2">
+                                    <span>Itinerarios Creados:</span>
+                                    <strong class="text-primary">{{ itinerarios|length }}</strong>
+                                </div>
+                                <div class="stat-item d-flex justify-content-between mb-2">
+                                    <span>Países Visitados:</span>
+                                    <strong class="text-success">
+                                        {% set paises_unicos = [] %}
+                                        {% for itinerario in itinerarios %}
+                                            {% for pais in itinerario.paises %}
+                                                {% if pais not in paises_unicos %}
+                                                    {% set _ = paises_unicos.append(pais) %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ paises_unicos|length }}/12
+                                    </strong>
+                                </div>
+                                <div class="stat-item d-flex justify-content-between mb-2">
+                                    <span>Presupuesto Promedio:</span>
+                                    <strong class="text-warning">
+                                        ${{ "%.2f"|format((itinerarios|map(attribute='presupuesto_total')|sum / itinerarios|length) if itinerarios else 0) }}
+                                    </strong>
+                                </div>
+                                <div class="stat-item d-flex justify-content-between">
+                                    <span>Días Totales:</span>
+                                    <strong class="text-info">
+                                        {{ itinerarios|map(attribute='duracion_dias')|sum }}
+                                    </strong>
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Próximos Viajes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="upcoming-trips">
+                                {% for itinerario in itinerarios if itinerario.estado == 'planificando' %}
+                                <div class="trip-item d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                    <div>
+                                        <strong class="d-block">{{ itinerario.nombre_viaje }}</strong>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ itinerario.fecha_inicio }}
+                                        </small>
+                                    </div>
+                                    <a href="{{ url_for('ver_itinerario', id=itinerario._id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        Ver
+                                    </a>
+                                </div>
+                                {% else %}
+                                <div class="text-center py-3">
+                                    <i class="fas fa-calendar-plus fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted small">No tienes viajes próximos</p>
+                                    <a href="{{ url_for('crear_itinerario') }}" class="btn btn-sm btn-primary">
+                                        Planificar Uno
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -160,33 +467,33 @@
     </div>
 </div>
 
-<!-- Sección de Información -->
+<!-- Sección de Características -->
 <div class="container mt-5">
     <div class="row">
         <div class="col-12">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title">💡 ¿Cómo funciona el planificador?</h5>
-                    <div class="row">
-                        <div class="col-md-3 text-center">
-                            <i class="fas fa-route fa-2x text-primary mb-2"></i>
-                            <h6>1. Crea tu ruta</h6>
-                            <p class="small text-muted">Selecciona los países que quieres visitar</p>
+                    <h5 class="card-title">🚀 Características del Planificador</h5>
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <i class="fas fa-robot fa-2x text-primary mb-2"></i>
+                            <h6>Planificador IA</h6>
+                            <p class="small text-muted">Itinerarios automáticos basados en tus preferencias</p>
                         </div>
-                        <div class="col-md-3 text-center">
-                            <i class="fas fa-calendar-alt fa-2x text-success mb-2"></i>
-                            <h6>2. Define fechas</h6>
-                            <p class="small text-muted">Establece duración y presupuesto</p>
+                        <div class="col-md-3 mb-3">
+                            <i class="fas fa-sync-alt fa-2x text-success mb-2"></i>
+                            <h6>Sincronización</h6>
+                            <p class="small text-muted">Con Google Calendar y apps de viaje</p>
                         </div>
-                        <div class="col-md-3 text-center">
-                            <i class="fas fa-list-check fa-2x text-warning mb-2"></i>
-                            <h6>3. Agrega actividades</h6>
-                            <p class="small text-muted">Planifica día por día tu viaje</p>
+                        <div class="col-md-3 mb-3">
+                            <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                            <h6>Optimizador</h6>
+                            <p class="small text-muted">Rutas y presupuestos optimizados</p>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-3 mb-3">
                             <i class="fas fa-users fa-2x text-info mb-2"></i>
-                            <h6>4. Comparte</h6>
-                            <p class="small text-muted">Invita amigos y viaja juntos</p>
+                            <h6>Colaborativo</h6>
+                            <p class="small text-muted">Planifica con amigos en tiempo real</p>
                         </div>
                     </div>
                 </div>
@@ -194,4 +501,522 @@
         </div>
     </div>
 </div>
+
+<!-- Incluir Leaflet CSS y JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<style>
+#mapa-asia {
+    border-radius: 0 0 0.375rem 0.375rem;
+}
+
+.leaflet-popup-content {
+    margin: 8px 12px;
+    min-width: 200px;
+}
+
+.leaflet-control-layers {
+    background: white;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.leaflet-bar {
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+}
+
+.country-marker {
+    cursor: pointer;
+}
+
+.route-line {
+    stroke-dasharray: 10, 10;
+    animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.stat-item h3 {
+    margin-bottom: 0.2rem;
+    font-weight: bold;
+}
+
+.stat-item p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.itinerary-item {
+    transition: all 0.3s ease;
+}
+
+.itinerary-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.country-card {
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.country-card:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.country-flag {
+    font-size: 1.2em;
+    margin-right: 8px;
+}
+
+.custom-control {
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+}
+
+.leaflet-control-layers-expanded {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.country-popup .btn {
+    margin: 2px 0;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    #mapa-asia {
+        height: 300px;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .stat-item {
+        margin-bottom: 10px;
+    }
+}
+
+/* Animation for route creation */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.country-marker.selected {
+    animation: pulse 2s infinite;
+}
+</style>
+
+<script>
+// Variables globales para el mapa
+let mapa;
+let marcadores = {};
+let rutaLinea = null;
+let paisesSeleccionados = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar mapa
+    inicializarMapa();
+    
+    // Filtros de itinerarios
+    const filterRadios = document.querySelectorAll('input[name="filter"]');
+    filterRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            const filter = this.id.replace('filter-', '');
+            filtrarItinerarios(filter);
+        });
+    });
+
+    // Planificador IA - Slider de presupuesto
+    const budgetSlider = document.getElementById('ai-budget');
+    const budgetValue = document.getElementById('ai-budget-value');
+    
+    budgetSlider.addEventListener('input', function() {
+        budgetValue.textContent = '$' + parseInt(this.value).toLocaleString();
+    });
+
+    // Plantillas rápidas
+    document.querySelectorAll('.template-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const template = this.getAttribute('data-template');
+            cargarPlantilla(template);
+        });
+    });
+
+    // Vistas del mapa
+    document.querySelectorAll('[data-map-view]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('[data-map-view]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const view = this.getAttribute('data-map-view');
+            cambiarVistaMapa(view);
+        });
+    });
+
+    // Inicializar barras de progreso que usen data-width (evita Jinja en inline styles)
+    document.querySelectorAll('.progress-bar[data-width]').forEach(bar => {
+        let w = bar.getAttribute('data-width') || '0%';
+        if (/^\d+(?:\.\d+)?$/.test(w)) { w = w + '%'; }
+        // aplicar con pequeño retraso para activar transición si existe
+        setTimeout(() => { bar.style.width = w; }, 60);
+    });
+});
+
+function inicializarMapa() {
+    // Inicializar mapa centrado en Asia
+    mapa = L.map('mapa-asia').setView([20, 100], 3);
+    
+    // Capa de tiles de OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18
+    }).addTo(mapa);
+    
+    // Capa de satélite opcional
+    const satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0','mt1','mt2','mt3'],
+        attribution: '© Google Satellite'
+    });
+    
+    // Control de capas
+    const baseLayers = {
+        "Mapa": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }),
+        "Satélite": satelliteLayer
+    };
+    
+    L.control.layers(baseLayers).addTo(mapa);
+    
+    // Agregar marcadores para cada país
+    const coordenadas = {
+        "Japón": [36.2048, 138.2529],
+        "Tailandia": [15.8700, 100.9925],
+        "Vietnam": [14.0583, 108.2772],
+        "China": [35.8617, 104.1954],
+        "Corea del Sur": [35.9078, 127.7669],
+        "Indonesia": [-0.7893, 113.9213],
+        "Malasia": [4.2105, 101.9758],
+        "Singapur": [1.3521, 103.8198],
+        "India": [20.5937, 78.9629],
+        "Filipinas": [12.8797, 121.7740],
+        "Sri Lanka": [7.8731, 80.7718],
+        "Camboya": [12.5657, 104.9910]
+    };
+    
+    // Crear marcadores para cada país
+    Object.entries(coordenadas).forEach(([pais, coords]) => {
+        const marcador = L.marker(coords, {
+            icon: L.divIcon({
+                className: 'country-marker',
+                html: `<div style="background: #007bff; color: white; padding: 8px; border-radius: 50%; 
+                                 border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+                                 cursor: pointer; font-weight: bold;">${getFlag(pais)}</div>`,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            })
+        }).addTo(mapa);
+        
+        marcador.bindPopup(`
+            <div class="text-center">
+                <h6>${getFlag(pais)} ${pais}</h6>
+                <p class="small text-muted mb-2">Haz clic para seleccionar este país</p>
+                <button class="btn btn-sm btn-primary w-100" onclick="seleccionarPaisMapa('${pais}')">
+                    <i class="fas fa-plus me-1"></i>Seleccionar
+                </button>
+            </div>
+        `);
+        
+        marcadores[pais] = marcador;
+        
+        // Evento click en marcador
+        marcador.on('click', function() {
+            seleccionarPaisMapa(pais);
+        });
+    });
+
+    // Agregar controles personalizados después de un breve delay
+    setTimeout(agregarControlesMapa, 1000);
+}
+
+function getFlag(pais) {
+    const flags = {
+        "Japón": "🇯🇵", "Tailandia": "🇹🇭", "Vietnam": "🇻🇳", "China": "🇨🇳",
+        "Corea del Sur": "🇰🇷", "Indonesia": "🇮🇩", "Malasia": "🇲🇾", 
+        "Singapur": "🇸🇬", "India": "🇮🇳", "Filipinas": "🇵🇭", 
+        "Sri Lanka": "🇱🇰", "Camboya": "🇰🇭"
+    };
+    return flags[pais] || "🇺🇳";
+}
+
+function seleccionarPaisMapa(nombrePais) {
+    // Alternar selección del país
+    const index = paisesSeleccionados.indexOf(nombrePais);
+    if (index > -1) {
+        // Deseleccionar
+        paisesSeleccionados.splice(index, 1);
+        marcadores[nombrePais].getElement().style.filter = 'none';
+    } else {
+        // Seleccionar
+        paisesSeleccionados.push(nombrePais);
+        marcadores[nombrePais].getElement().style.filter = 'brightness(1.2) saturate(1.5)';
+    }
+    
+    actualizarRutaEnMapa();
+    mostrarNotificacionMapa(`✅ ${nombrePais} ${index > -1 ? 'deseleccionado' : 'seleccionado'}`);
+}
+
+function actualizarRutaEnMapa() {
+    // Limpiar ruta anterior
+    if (rutaLinea) {
+        mapa.removeLayer(rutaLinea);
+    }
+    
+    // Crear nueva ruta si hay al menos 2 países
+    if (paisesSeleccionados.length >= 2) {
+        const puntosRuta = paisesSeleccionados.map(pais => {
+            const coords = {
+                "Japón": [36.2048, 138.2529],
+                "Tailandia": [15.8700, 100.9925],
+                "Vietnam": [14.0583, 108.2772],
+                "China": [35.8617, 104.1954],
+                "Corea del Sur": [35.9078, 127.7669],
+                "Indonesia": [-0.7893, 113.9213],
+                "Malasia": [4.2105, 101.9758],
+                "Singapur": [1.3521, 103.8198],
+                "India": [20.5937, 78.9629],
+                "Filipinas": [12.8797, 121.7740],
+                "Sri Lanka": [7.8731, 80.7718],
+                "Camboya": [12.5657, 104.9910]
+            }[pais];
+            
+            return coords ? L.latLng(coords[0], coords[1]) : null;
+        }).filter(Boolean);
+        
+        if (puntosRuta.length > 1) {
+            rutaLinea = L.polyline(puntosRuta, {
+                color: '#007bff',
+                weight: 4,
+                opacity: 0.7,
+                dashArray: '10, 10',
+                className: 'route-line'
+            }).addTo(mapa);
+            
+            // Ajustar vista para mostrar toda la ruta
+            mapa.fitBounds(rutaLinea.getBounds(), { padding: [20, 20] });
+        }
+    }
+}
+
+function mostrarNotificacionMapa(mensaje) {
+    const notificacion = document.createElement('div');
+    notificacion.className = 'alert alert-success alert-dismissible fade show position-fixed';
+    notificacion.style.cssText = 'top: 20px; right: 20px; z-index: 1000; max-width: 300px;';
+    notificacion.innerHTML = `
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notificacion);
+    
+    setTimeout(() => {
+        if (notificacion.parentNode) {
+            notificacion.remove();
+        }
+    }, 3000);
+}
+
+function crearItinerarioDesdeRuta() {
+    if (paisesSeleccionados.length === 0) {
+        alert('Por favor selecciona al menos un país en el mapa para crear tu itinerario.');
+        return;
+    }
+    
+    // Obtener el enlace base para crear itinerario
+    const baseUrl = document.getElementById('crear-itinerario-link').href;
+    
+    // Crear URL con parámetros de los países seleccionados
+    const params = new URLSearchParams();
+    paisesSeleccionados.forEach(pais => {
+        params.append('paises', pais);
+    });
+    
+    // Redirigir a la página de creación con los países pre-seleccionados
+    window.location.href = `${baseUrl}?${params.toString()}`;
+}
+
+function cambiarVistaMapa(vista) {
+    if (vista === 'routes') {
+        // Mostrar rutas populares
+        mostrarRutasPopulares();
+    } else if (vista === 'countries') {
+        // Mostrar todos los países disponibles
+        mostrarTodosLosPaises();
+    }
+}
+
+function mostrarRutasPopulares() {
+    // Limpiar selecciones actuales
+    paisesSeleccionados.forEach(pais => {
+        if (marcadores[pais]) {
+            marcadores[pais].getElement().style.filter = 'none';
+        }
+    });
+    paisesSeleccionados = [];
+    
+    // Aquí podrías resaltar rutas populares en el mapa
+    console.log('Mostrando vista de rutas populares');
+}
+
+function mostrarTodosLosPaises() {
+    // Restablecer vista normal del mapa
+    console.log('Mostrando vista de países');
+}
+
+function filtrarItinerarios(filtro) {
+    const items = document.querySelectorAll('.itinerary-item');
+    
+    items.forEach(item => {
+        const estado = item.getAttribute('data-estado');
+        let mostrar = true;
+        
+        switch(filtro) {
+            case 'active':
+                mostrar = estado === 'planificando';
+                break;
+            case 'completed':
+                mostrar = estado === 'completado';
+                break;
+            case 'all':
+            default:
+                mostrar = true;
+        }
+        
+        item.style.display = mostrar ? 'block' : 'none';
+    });
+}
+
+function cargarPlantilla(template) {
+    const templates = {
+        'japon-corea': {
+            paises: ['Japón', 'Corea del Sur'],
+            duracion: 10,
+            presupuesto: 2500,
+            tipo: 'cultural'
+        },
+        'tailandia-vietnam': {
+            paises: ['Tailandia', 'Vietnam'],
+            duracion: 12,
+            presupuesto: 1800,
+            tipo: 'aventura'
+        },
+        'asia-sureste': {
+            paises: ['Tailandia', 'Camboya', 'Laos'],
+            duracion: 14,
+            presupuesto: 2200,
+            tipo: 'cultural'
+        },
+        'china-japon': {
+            paises: ['China', 'Japón'],
+            duracion: 15,
+            presupuesto: 3000,
+            tipo: 'cultural'
+        }
+    };
+    
+    const plantilla = templates[template];
+    if (!plantilla) {
+        alert('Plantilla no encontrada');
+        return;
+    }
+    
+    // Confirmar con el usuario
+    const confirmar = confirm(
+        `¿Cargar plantilla "${template}"?\n\n` +
+        `Países: ${plantilla.paises.join(' + ')}\n` +
+        `Duración: ${plantilla.duracion} días\n` +
+        `Presupuesto: $${plantilla.presupuesto}\n` +
+        `Tipo: ${plantilla.tipo}`
+    );
+    
+    if (confirmar) {
+        // Redirigir a creación de itinerario con datos de la plantilla
+        const baseUrl = document.getElementById('crear-itinerario-link').href;
+        const params = new URLSearchParams();
+        
+        plantilla.paises.forEach(pais => {
+            params.append('paises', pais);
+        });
+        params.append('duracion', plantilla.duracion);
+        params.append('presupuesto', plantilla.presupuesto);
+        params.append('tipo', plantilla.tipo);
+        params.append('plantilla', template);
+        
+        window.location.href = `${baseUrl}?${params.toString()}`;
+    }
+}
+
+function agregarControlesMapa() {
+    // Botón para crear itinerario desde ruta actual
+    const controlPersonalizado = L.control({ position: 'topright' });
+    
+    controlPersonalizado.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'leaflet-control leaflet-bar custom-control');
+        div.innerHTML = `
+            <button class="btn btn-primary btn-sm" onclick="crearItinerarioDesdeRuta()" 
+                    style="margin: 2px; white-space: nowrap;">
+                <i class="fas fa-plus me-1"></i>
+                Crear Ruta (${paisesSeleccionados.length})
+            </button>
+        `;
+        return div;
+    };
+    
+    controlPersonalizado.addTo(mapa);
+}
+
+function exportarRuta() {
+    if (paisesSeleccionados.length === 0) {
+        alert('No hay países seleccionados para exportar');
+        return;
+    }
+    
+    const rutaData = {
+        paises: paisesSeleccionados,
+        fechaCreacion: new Date().toISOString(),
+        totalPaises: paisesSeleccionados.length
+    };
+    
+    const blob = new Blob([JSON.stringify(rutaData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ruta-asia-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
 {% endblock %}

@@ -26,6 +26,7 @@ try:
     db = client.travelasia_db
     destinos_collection = db.destinos
     usuarios_collection = db.usuarios
+    itinerarios_collection = db.itinerarios
     # Test simple de conexión
     db.command('ping')
     print("✅ ¡CONECTADO A MONGODB ATLAS! - TravelAsia")
@@ -33,6 +34,7 @@ except Exception as e:
     db = None
     destinos_collection = None
     usuarios_collection = None
+    itinerarios_collection = None
     print(f"❌ Error MongoDB: {e}")
 
 # DATOS DE TODOS LOS TOURS PREDEFINIDOS
@@ -444,6 +446,167 @@ def profile():
             flash(f"❌ Error cargando perfil: {e}", "danger")
     
     return redirect(url_for("index"))
+
+@app.route("/planificador")
+@login_required
+def planificador():
+    """Página principal del planificador con mapa interactivo"""
+    itinerarios = []
+    if db is not None:
+        try:
+            itinerarios = list(itinerarios_collection.find({
+                "usuario_id": ObjectId(session["user_id"])
+            }).sort("fecha_creacion", -1))
+        except Exception as e:
+            flash(f"❌ Error cargando itinerarios: {e}", "danger")
+    
+    return render_template("planificador.html", 
+                         itinerarios=itinerarios,
+                         tours=TOURS_PREDEFINIDOS)
+
+@app.route("/crear-itinerario", methods=["GET", "POST"])
+@login_required
+def crear_itinerario():
+    """Crear nuevo itinerario multi-país"""
+    if request.method == "POST":
+        nombre_viaje = request.form.get("nombre_viaje", "").strip()
+        descripcion = request.form.get("descripcion", "").strip()
+        fecha_inicio = request.form.get("fecha_inicio")
+        fecha_fin = request.form.get("fecha_fin")
+        presupuesto_total = float(request.form.get("presupuesto_total", 0) or 0)
+        
+        if not nombre_viaje or not fecha_inicio or not fecha_fin:
+            flash("❌ Nombre del viaje y fechas son obligatorios", "danger")
+            return redirect(url_for("crear_itinerario"))
+        
+        fecha_inicio_dt = datetime.datetime.strptime(fecha_inicio, "%Y-%m-%d")
+        fecha_fin_dt = datetime.datetime.strptime(fecha_fin, "%Y-%m-%d")
+        duracion_dias = (fecha_fin_dt - fecha_inicio_dt).days
+        
+        if duracion_dias <= 0:
+            flash("❌ La fecha fin debe ser posterior a la fecha inicio", "danger")
+            return redirect(url_for("crear_itinerario"))
+        
+        paises = request.form.getlist("paises")
+        if not paises:
+            flash("❌ Selecciona al menos un país", "danger")
+            return redirect(url_for("crear_itinerario"))
+        
+        nuevo_itinerario = {
+            "usuario_id": ObjectId(session["user_id"]),
+            "nombre_viaje": nombre_viaje,
+            "descripcion": descripcion,
+            "paises": paises,
+            "ciudades": [],
+            "fecha_inicio": fecha_inicio,
+            "fecha_fin": fecha_fin,
+            "duracion_dias": duracion_dias,
+            "presupuesto_total": presupuesto_total,
+            "presupuesto_restante": presupuesto_total,
+            "actividades": [],
+            "transportes": [],
+            "estado": "planificando",
+            "fecha_creacion": datetime.datetime.utcnow(),
+            "fecha_actualizacion": datetime.datetime.utcnow()
+        }
+        
+        if db is not None:
+            try:
+                result = itinerarios_collection.insert_one(nuevo_itinerario)
+                flash("✅ ¡Itinerario creado correctamente! Ahora agrega actividades.", "success")
+                return redirect(url_for("ver_itinerario", id=result.inserted_id))
+            except Exception as e:
+                flash(f"❌ Error creando itinerario: {e}", "danger")
+        else:
+            flash("⚠️ Base de datos no disponible", "warning")
+    
+    return render_template("crear_itinerario.html", tours=TOURS_PREDEFINIDOS)
+
+@app.route("/itinerario/<id>")
+@login_required
+def ver_itinerario(id):
+    """Ver detalles de un itinerario"""
+    if db is None:
+        flash("❌ Base de datos no disponible", "danger")
+        return redirect(url_for("planificador"))
+    
+    try:
+        itinerario = itinerarios_collection.find_one({
+            "_id": ObjectId(id),
+            "usuario_id": ObjectId(session["user_id"])
+        })
+        if not itinerario:
+            flash("⚠️ Itinerario no encontrado", "warning")
+            return redirect(url_for("planificador"))
+        
+        return render_template("ver_itinerario.html", itinerario=itinerario)
+        
+    except Exception as e:
+        flash(f"❌ Error cargando itinerario: {e}", "danger")
+        return redirect(url_for("planificador"))
+
+@app.route("/agregar-actividad/<itinerario_id>", methods=["POST"])
+@login_required
+def agregar_actividad(itinerario_id):
+    """Agregar actividad a un itinerario"""
+    if request.method == "POST":
+        pais = request.form.get("pais", "").strip()
+        ciudad = request.form.get("ciudad", "").strip()
+        actividad = request.form.get("actividad", "").strip()
+        tipo = request.form.get("tipo", "cultural")
+        costo = float(request.form.get("costo", 0) or 0)
+        fecha = request.form.get("fecha", "")
+        
+        if not pais or not ciudad or not actividad:
+            flash("❌ País, ciudad y actividad son obligatorios", "danger")
+            return redirect(url_for("ver_itinerario", id=itinerario_id))
+        
+        nueva_actividad = {
+            "pais": pais,
+            "ciudad": ciudad,
+            "actividad": actividad,
+            "tipo": tipo,
+            "costo": costo,
+            "fecha": fecha,
+            "completada": False
+        }
+        
+        if db is not None:
+            try:
+                itinerarios_collection.update_one(
+                    {
+                        "_id": ObjectId(itinerario_id),
+                        "usuario_id": ObjectId(session["user_id"])
+                    },
+                    {
+                        "$push": {"actividades": nueva_actividad},
+                        "$inc": {"presupuesto_restante": -costo},
+                        "$set": {"fecha_actualizacion": datetime.datetime.utcnow()}
+                    }
+                )
+                flash("✅ Actividad agregada correctamente", "success")
+            except Exception as e:
+                flash(f"❌ Error agregando actividad: {e}", "danger")
+        
+        return redirect(url_for("ver_itinerario", id=itinerario_id))
+
+@app.route("/eliminar-itinerario/<id>", methods=["POST"])
+@login_required
+def eliminar_itinerario(id):
+    """Eliminar itinerario"""
+    if db is not None:
+        try:
+            itinerarios_collection.delete_one({
+                "_id": ObjectId(id),
+                "usuario_id": ObjectId(session["user_id"])
+            })
+            flash("🗑️ Itinerario eliminado correctamente", "secondary")
+        except Exception as e:
+            flash(f"❌ Error eliminando itinerario: {e}", "danger")
+    else:
+        flash("⚠️ Base de datos no disponible", "warning")
+    
+    return redirect(url_for("planificador"))
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))

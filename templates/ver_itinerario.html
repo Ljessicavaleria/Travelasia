@@ -1,0 +1,638 @@
+{% extends "base.html" %}
+
+{% block title %}{{ itinerario.nombre_viaje }} - TravelAsia{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header del Itinerario -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1">{{ itinerario.nombre_viaje }}</h4>
+                    <p class="mb-0">{{ itinerario.descripcion }}</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-light text-dark fs-6">
+                        {% if itinerario.estado == 'planificando' %}
+                        📝 Planificando
+                        {% else %}
+                        ✅ Completado
+                        {% endif %}
+                    </span>
+                    <br>
+                    <a href="{{ url_for('planificador') }}" class="btn btn-light btn-sm mt-2">
+                        <i class="fas fa-arrow-left me-1"></i>Volver al Planificador
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h6 class="text-muted">🗓️ Duración</h6>
+                    <h4 class="text-primary">{{ itinerario.duracion_dias }} días</h4>
+                    <small class="text-muted">
+                        {{ itinerario.fecha_inicio.strftime('%d/%m/%Y') }} - {{ itinerario.fecha_fin.strftime('%d/%m/%Y') }}
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted">🌏 Países</h6>
+                    <h4 class="text-success">{{ itinerario.paises|length }}</h4>
+                    <small class="text-muted">
+                        {% for pais in itinerario.paises %}
+                        <span class="badge bg-success me-1">{{ pais }}</span>
+                        {% endfor %}
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted">💰 Presupuesto</h6>
+                    <h4 class="text-warning">${{ "{:,.2f}".format(itinerario.presupuesto_total) }}</h4>
+                    <small class="text-muted">
+                        Restante: ${{ "{:,.2f}".format(itinerario.presupuesto_restante) }}
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-muted">📋 Actividades</h6>
+                    <h4 class="text-info">{{ itinerario.actividades|length }}</h4>
+                    <small class="text-muted">Planificadas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sistema de Alertas -->
+    <div id="alerts-container"></div>
+
+    <div class="row">
+        <!-- Columna Izquierda: Actividades -->
+        <div class="col-lg-8">
+            <!-- Formulario para Agregar Actividad -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Agregar Nueva Actividad</h5>
+                    <span class="badge bg-light text-dark" id="contador-formulario">
+                        {{ itinerario.actividades|length }}/{{ itinerario.presupuesto_restante }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('agregar_actividad', itinerario_id=itinerario._id) }}" id="form-actividad" class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="pais" class="form-label">País *</label>
+                                <select class="form-select" id="pais" name="pais" required>
+                                    <option value="">Selecciona un país</option>
+                                    {% for pais in itinerario.paises %}
+                                    <option value="{{ pais }}">{{ pais }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor selecciona un país.
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ciudad" class="form-label">Ciudad *</label>
+                                <input type="text" class="form-control" id="ciudad" name="ciudad" 
+                                       required placeholder="Ej: Tokio, Bangkok..." 
+                                       pattern="[A-Za-záéíóúñÑ\s]{2,}">
+                                <div class="invalid-feedback">
+                                    Por favor ingresa una ciudad válida (mínimo 2 caracteres).
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="fecha" class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha"
+                                       min="{{ itinerario.fecha_inicio.strftime('%Y-%m-%d') }}" 
+                                       max="{{ itinerario.fecha_fin.strftime('%Y-%m-%d') }}">
+                                <div class="form-text">
+                                    Entre {{ itinerario.fecha_inicio.strftime('%d/%m/%Y') }} y {{ itinerario.fecha_fin.strftime('%d/%m/%Y') }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="actividad" class="form-label">Actividad *</label>
+                                <input type="text" class="form-control" id="actividad" name="actividad" 
+                                       required placeholder="Ej: Visitar templo, Comida local..."
+                                       pattern=".{5,}">
+                                <div class="invalid-feedback">
+                                    La actividad debe tener al menos 5 caracteres.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="tipo" class="form-label">Tipo</label>
+                                <select class="form-select" id="tipo" name="tipo">
+                                    <option value="cultural">🏛️ Cultural</option>
+                                    <option value="naturaleza">🌳 Naturaleza</option>
+                                    <option value="gastronomia">🍜 Gastronomía</option>
+                                    <option value="aventura">🧗 Aventura</option>
+                                    <option value="compras">🛍️ Compras</option>
+                                    <option value="relajacion">🏖️ Relajación</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="costo" class="form-label">Costo (USD)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="costo" name="costo" 
+                                           min="0" step="0.01" value="0" required>
+                                </div>
+                                <div class="form-text">
+                                    Presupuesto restante: $<span id="presupuesto-restante">{{ "{:,.2f}".format(itinerario.presupuesto_restante) }}</span>
+                                    <span id="costo-alerta" class="text-danger d-none"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campo oculto para validación del servidor -->
+                        <input type="hidden" name="itinerario_id" value="{{ itinerario._id }}">
+                        
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg" id="btn-submit">
+                                <i class="fas fa-plus me-2"></i>Agregar Actividad
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Filtros de Actividades -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <label for="filtro-pais" class="form-label small mb-1">Filtrar por país:</label>
+                            <select class="form-select form-select-sm" id="filtro-pais">
+                                <option value="">Todos los países</option>
+                                {% for pais in itinerario.paises %}
+                                <option value="{{ pais }}">{{ pais }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtro-tipo" class="form-label small mb-1">Filtrar por tipo:</label>
+                            <select class="form-select form-select-sm" id="filtro-tipo">
+                                <option value="">Todos los tipos</option>
+                                <option value="cultural">Cultural</option>
+                                <option value="naturaleza">Naturaleza</option>
+                                <option value="gastronomia">Gastronomía</option>
+                                <option value="aventura">Aventura</option>
+                                <option value="compras">Compras</option>
+                                <option value="relajacion">Relajación</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filtro-costo" class="form-label small mb-1">Ordenar por costo:</label>
+                            <select class="form-select form-select-sm" id="filtro-costo">
+                                <option value="">Sin orden</option>
+                                <option value="asc">Menor a Mayor</option>
+                                <option value="desc">Mayor a Menor</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="buscar-actividad" class="form-label small mb-1">Buscar actividad:</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" id="buscar-actividad" placeholder="Buscar...">
+                                <button class="btn btn-outline-secondary" type="button" id="btn-limpiar-busqueda">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Actividades -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list-check me-2"></i>Actividades Planificadas</h5>
+                    <div>
+                        <span class="badge bg-light text-dark me-2" id="contador-actividades">
+                            {{ itinerario.actividades|length }} actividades
+                        </span>
+                        <span class="badge bg-warning text-dark" id="total-costo-actividades">
+                            Total: ${{ "{:,.2f}".format(itinerario.presupuesto_total - itinerario.presupuesto_restante) }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if itinerario.actividades %}
+                        <div class="list-group" id="lista-actividades">
+                            {% for actividad in itinerario.actividades %}
+                            <div class="list-group-item actividad-item fade-in" 
+                                 data-pais="{{ actividad.pais }}" 
+                                 data-tipo="{{ actividad.tipo }}"
+                                 data-costo="{{ actividad.costo }}"
+                                 data-nombre="{{ actividad.actividad|lower }}"
+                                 data-ciudad="{{ actividad.ciudad|lower }}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0 actividad-titulo">{{ actividad.actividad }}</h6>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge badge-tipo 
+                                                    {% if actividad.tipo == 'cultural' %}bg-primary
+                                                    {% elif actividad.tipo == 'naturaleza' %}bg-success
+                                                    {% elif actividad.tipo == 'gastronomia' %}bg-warning text-dark
+                                                    {% elif actividad.tipo == 'aventura' %}bg-danger
+                                                    {% else %}bg-secondary{% endif %}">
+                                                    {{ actividad.tipo|title }}
+                                                </span>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary btn-editar-actividad" 
+                                                            data-id="{{ actividad._id }}"
+                                                            data-bs-toggle="tooltip" 
+                                                            title="Editar actividad">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-eliminar-actividad" 
+                                                            data-id="{{ actividad._id }}" 
+                                                            data-nombre="{{ actividad.actividad }}"
+                                                            data-bs-toggle="tooltip" 
+                                                            title="Eliminar actividad">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                                    <span class="actividad-ubicacion">{{ actividad.ciudad }}, {{ actividad.pais }}</span>
+                                                </small>
+                                                <br>
+                                                {% if actividad.fecha %}
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    <span class="actividad-fecha">{{ actividad.fecha.strftime('%d/%m/%Y') }}</span>
+                                                </small>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <span class="fw-bold text-success actividad-costo">${{ "{:,.2f}".format(actividad.costo) }}</span>
+                                                <br>
+                                                <small class="text-muted">Costo</small>
+                                            </div>
+                                        </div>
+                                        {% if actividad.descripcion %}
+                                        <div class="mt-2">
+                                            <small class="text-muted actividad-descripcion">
+                                                <i class="fas fa-sticky-note me-1"></i>
+                                                {{ actividad.descripcion }}
+                                            </small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Resumen de actividades filtradas -->
+                        <div class="mt-3 p-3 bg-light rounded d-none" id="resumen-filtros">
+                            <small class="text-muted">
+                                Mostrando <span id="contador-filtradas">0</span> de {{ itinerario.actividades|length }} actividades
+                            </small>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 empty-state">
+                            <i class="fas fa-list-check fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted empty-state-title">No hay actividades planificadas</h5>
+                            <p class="text-muted empty-state-description">
+                                Comienza agregando tu primera actividad usando el formulario de arriba. 
+                                Planifica tu viaje paso a paso.
+                            </p>
+                            <button class="btn btn-primary mt-2" onclick="document.getElementById('actividad').focus()">
+                                <i class="fas fa-plus me-2"></i>Comenzar a Planificar
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen y Acciones -->
+        <div class="col-lg-4">
+            <!-- Resumen del Presupuesto -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Resumen del Presupuesto</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Presupuesto total:</span>
+                            <strong>${{ "{:,.2f}".format(itinerario.presupuesto_total) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Gastado en actividades:</span>
+                            <strong class="text-danger">${{ "{:,.2f}".format(itinerario.presupuesto_total - itinerario.presupuesto_restante) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Presupuesto restante:</span>
+                            <strong class="text-success">${{ "{:,.2f}".format(itinerario.presupuesto_restante) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                            <span>Promedio por día:</span>
+                            <strong class="text-info">
+                                ${{
+                                    "{:,.2f}".format(
+                                        (itinerario.presupuesto_total - itinerario.presupuesto_restante) / 
+                                        (itinerario.duracion_dias if itinerario.duracion_dias > 0 else 1)
+                                    )
+                                }}
+                            </strong>
+                        </div>
+                    </div>
+                  
+                    <!-- Progress Bar del Presupuesto -->
+                    {% set porcentaje_usado = ((itinerario.presupuesto_total - itinerario.presupuesto_restante) / itinerario.presupuesto_total * 100) if itinerario.presupuesto_total > 0 else 0 %}
+                    {% if porcentaje_usado > 80 %}
+                        {% set progress_bar_class = 'bg-danger' %}
+                    {% elif porcentaje_usado > 50 %}
+                        {% set progress_bar_class = 'bg-warning' %}
+                    {% else %}
+                        {% set progress_bar_class = 'bg-success' %}
+                    {% endif %}
+                    {% set width_value = porcentaje_usado ~ "%" %}
+                    <div class="progress mb-3 budget-progress" style="height: 25px;">
+                        <div class="progress-bar {{ progress_bar_class }}" role="progressbar"
+                            data-width="{{ width_value }}"
+                            style="width: 0%;"
+                            aria-valuenow="{{ "%.0f"|format(porcentaje_usado) }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                            {{ "%.0f"|format(porcentaje_usado) }}%
+                        </div>
+                    </div>
+
+                    <div class="alert 
+                        {% if porcentaje_usado > 80 %}alert-danger
+                        {% elif porcentaje_usado > 50 %}alert-warning
+                        {% else %}alert-success{% endif %} 
+                        mb-0 py-2">
+                        <small>
+                            <i class="fas 
+                                {% if porcentaje_usado > 80 %}fa-exclamation-triangle
+                                {% elif porcentaje_usado > 50 %}fa-info-circle
+                                {% else %}fa-check-circle{% endif %} 
+                                me-1"></i>
+                            {% if porcentaje_usado > 80 %}
+                            <strong>¡Presupuesto casi agotado!</strong> Considera ajustar tus gastos.
+                            {% elif porcentaje_usado > 50 %}
+                            <strong>Presupuesto a la mitad.</strong> Planea con cuidado los gastos restantes.
+                            {% else %}
+                            <strong>Buen control del presupuesto.</strong> Vas por buen camino.
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Estadísticas del Viaje</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value text-primary">
+                                ${{
+                                    "{:,.2f}".format(
+                                        (itinerario.presupuesto_total - itinerario.presupuesto_restante) / 
+                                        (itinerario.actividades|length if itinerario.actividades|length > 0 else 1)
+                                    )
+                                }}
+                            </span>
+                            <div class="stat-label">Costo promedio por actividad</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value text-success">
+                                {{
+                                    "%.1f"|format(
+                                        itinerario.actividades|length / 
+                                        (itinerario.duracion_dias if itinerario.duracion_dias > 0 else 1)
+                                    )
+                                }}
+                            </span>
+                            <div class="stat-label">Actividades por día</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value text-warning">
+                                {{ (itinerario.presupuesto_restante / itinerario.duracion_dias if itinerario.duracion_dias > 0 else 0)|int }}
+                            </span>
+                            <div class="stat-label">Presupuesto diario restante</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value text-danger">
+                                {{ itinerario.paises|length }}
+                            </span>
+                            <div class="stat-label">Países visitados</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mapa de Ruta -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-route me-2"></i>Tu Ruta por Asia</h5>
+                </div>
+                <div class="card-body">
+                    <div class="route-map">
+                        <i class="fas fa-map-marked-alt fa-3x mb-3"></i>
+                        <h6>Ruta Multi-País</h6>
+                        <div class="route-countries mt-3">
+                            {% for pais in itinerario.paises %}
+                            <span class="route-country">{{ pais }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="route-path mt-3">
+                            <i class="fas fa-arrow-right me-1"></i>
+                            {{ itinerario.paises|join(" → ") }}
+                        </div>
+                        <div class="mt-3">
+                            <small>
+                                <i class="fas fa-clock me-1"></i>
+                                {{ itinerario.duracion_dias }} días de aventura
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('editar_itinerario', id=itinerario._id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i>Editar Itinerario
+                        </a>
+                        
+                        <form method="POST" action="{{ url_for('completar_itinerario', id=itinerario._id) }}" class="d-grid">
+                            <button type="submit" class="btn btn-outline-success">
+                                <i class="fas fa-check me-2"></i>
+                                {% if itinerario.estado == 'planificando' %}
+                                    Marcar como Completado
+                                {% else %}
+                                    Volver a Planificación
+                                {% endif %}
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('eliminar_itinerario', id=itinerario._id) }}" 
+                              onsubmit="return confirmarEliminacion(this);" class="d-grid">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-2"></i>Eliminar Itinerario
+                            </button>
+                        </form>
+
+                        <button class="btn btn-outline-info" id="btn-compartir">
+                            <i class="fas fa-share me-2"></i>Compartir Itinerario
+                        </button>
+                        
+                        <button class="btn btn-outline-warning" id="btn-imprimir">
+                            <i class="fas fa-print me-2"></i>Imprimir Itinerario
+                        </button>
+                        
+                        <button class="btn btn-outline-dark" id="btn-exportar">
+                            <i class="fas fa-download me-2"></i>Exportar a PDF
+                        </button>
+
+                        <button class="btn btn-outline-primary" id="btn-sincronizar">
+                            <i class="fas fa-sync me-2"></i>Sincronizar con Calendario
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Actividad -->
+<div class="modal fade" id="modalEditarActividad" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Actividad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-editar-actividad">
+                    <input type="hidden" id="edit-actividad-id">
+                    <!-- Los campos se llenarán dinámicamente con JavaScript -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-guardar-cambios">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container para Notificaciones -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toast-title">TravelAsia</strong>
+            <small id="toast-time">Ahora</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-message"></div>
+    </div>
+</div>
+
+<!-- Datos embebidos (limpios para JS) -->
+<div id="app-data" style="display:none;"
+    data-presupuesto-restante="{{ itinerario.presupuesto_restante | tojson }}"
+></div>
+
+<!-- Script para el formulario -->
+<script>
+// El JavaScript completo va aquí (lo mantengo en el mismo archivo para simplicidad)
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar todas las funcionalidades
+    inicializarFormulario();
+    inicializarFiltros();
+    inicializarEventListeners();
+    inicializarProgressBars();
+    inicializarTooltips();
+});
+
+function inicializarFormulario() {
+    // Validación de presupuesto en tiempo real
+    const costoInput = document.getElementById('costo');
+    const appData = document.getElementById('app-data');
+    const presupuestoRestante = appData ? Number(appData.dataset.presupuestoRestante) : 0;
+    const btnSubmit = document.getElementById('btn-submit');
+
+    if (costoInput && btnSubmit) {
+        costoInput.addEventListener('input', validarPresupuesto);
+    }
+
+    // Validación del formulario
+    const form = document.getElementById('form-actividad');
+    if (form) {
+        form.addEventListener('submit', validarFormulario);
+    }
+}
+
+function inicializarFiltros() {
+    // Implementar filtros aquí
+}
+
+function inicializarEventListeners() {
+    // Implementar event listeners aquí
+}
+
+function inicializarProgressBars() {
+    // Animación de progress bars
+    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+        const width = bar.getAttribute('data-width');
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 100);
+    });
+}
+
+function inicializarTooltips() {
+    // Inicializar tooltips de Bootstrap
+    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip));
+}
+
+function validarPresupuesto() {
+    // Lógica de validación de presupuesto
+}
+
+function validarFormulario(event) {
+    // Lógica de validación de formulario
+}
+
+function confirmarEliminacion(form) {
+    return confirm('¿Estás seguro de que quieres eliminar este itinerario? Esta acción no se puede deshacer.');
+}
+
+// Funciones de utilidad
+function mostrarAlerta(mensaje, tipo = 'info') {
+    // Implementar sistema de alertas
+}
+
+function mostrarToast(titulo, mensaje, tipo = 'info') {
+    // Implementar sistema de toast
+}
+</script>
+
+<!-- Incluir los archivos CSS separados -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}">
+
+{% endblock %}

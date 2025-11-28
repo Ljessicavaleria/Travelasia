@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Itinerario - TravelAsia{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-route me-2"></i>Crear Nuevo Itinerario</h4>
+                        <a href="{{ url_for('planificador') }}" class="btn btn-light btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Volver al Planificador
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Formulario Principal -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('crear_itinerario') }}">
+                                <!-- Nombre del Viaje -->
+                                <div class="mb-4">
+                                    <label for="nombre_viaje" class="form-label fw-bold">✏️ Nombre del Viaje *</label>
+                                    <input type="text" class="form-control form-control-lg" 
+                                           id="nombre_viaje" name="nombre_viaje" 
+                                           required placeholder="Ej: Aventura por el Sudeste Asiático">
+                                    <div class="form-text">Dale un nombre memorable a tu viaje</div>
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="mb-4">
+                                    <label for="descripcion" class="form-label fw-bold">📝 Descripción</label>
+                                    <textarea class="form-control" id="descripcion" name="descripcion" 
+                                              rows="3" placeholder="Describe tu viaje, objetivos, lugares que quieres visitar..."></textarea>
+                                </div>
+
+                                <!-- Fechas -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="fecha_inicio" class="form-label fw-bold">📅 Fecha de Inicio *</label>
+                                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="fecha_fin" class="form-label fw-bold">📅 Fecha de Fin *</label>
+                                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                                    </div>
+                                </div>
+
+                                <!-- Presupuesto -->
+                                <div class="mb-4">
+                                    <label for="presupuesto_total" class="form-label fw-bold">💰 Presupuesto Total (USD)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="presupuesto_total" 
+                                               name="presupuesto_total" min="0" step="100" 
+                                               placeholder="2000">
+                                        <span class="input-group-text">USD</span>
+                                    </div>
+                                    <div class="form-text">Presupuesto estimado para todo el viaje</div>
+                                </div>
+
+                                <!-- Selección de Países -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">🌏 Selecciona los Países *</label>
+                                    <div class="form-text mb-3">Elige los países que quieres visitar en tu ruta multi-país</div>
+                                    
+                                    <div class="row">
+                                        {% for key, tour in tours.items() %}
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check card border">
+                                                <div class="card-body p-3">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="paises" value="{{ tour.pais }}" 
+                                                           id="pais_{{ key }}">
+                                                    <label class="form-check-label w-100" for="pais_{{ key }}">
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="{{ tour.imagen }}" 
+                                                                 class="rounded me-3" 
+                                                                 style="width: 60px; height: 40px; object-fit: cover;" 
+                                                                 alt="{{ tour.pais }}">
+                                                            <div>
+                                                                <strong>{{ tour.pais }}</strong>
+                                                                <br>
+                                                                <small class="text-muted">{{ tour.ciudad }}</small>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Botón de Envío -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-rocket me-2"></i>Crear Itinerario
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Ayuda -->
+                <div class="col-lg-4">
+                    <!-- Información de Países -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Consejos de Viaje</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning small">
+                                <strong>💡 Tip:</strong> Comienza con 2-3 países para tu primer viaje multi-país
+                            </div>
+                            <ul class="list-unstyled small">
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-primary me-2"></i>
+                                    <strong>Duración ideal:</strong> 10-21 días
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-dollar-sign text-success me-2"></i>
+                                    <strong>Presupuesto promedio:</strong> $1,500 - $3,000
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-plane text-info me-2"></i>
+                                    <strong>Vuelos internos:</strong> Considera distancias entre países
+                                </li>
+                                <li>
+                                    <i class="fas fa-passport text-warning me-2"></i>
+                                    <strong>Visados:</strong> Verifica requisitos por país
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Rutas Populares -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-star me-2"></i>Rutas Populares</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item px-0">
+                                    <small class="fw-bold">🇹🇭🇰🇭🇻🇳</small><br>
+                                    <span class="small">Tailandia + Camboya + Vietnam</span>
+                                    <br>
+                                    <small class="text-muted">14-21 días • $1,800-2,500</small>
+                                </div>
+                                <div class="list-group-item px-0">
+                                    <small class="fw-bold">🇯🇵🇰🇷</small><br>
+                                    <span class="small">Japón + Corea del Sur</span>
+                                    <br>
+                                    <small class="text-muted">10-14 días • $2,000-3,000</small>
+                                </div>
+                                <div class="list-group-item px-0">
+                                    <small class="fw-bold">🇲🇾🇸🇬🇮🇩</small><br>
+                                    <span class="small">Malasia + Singapur + Indonesia</span>
+                                    <br>
+                                    <small class="text-muted">12-18 días • $1,500-2,200</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progreso del Formulario -->
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-tasks me-2"></i>Tu Progreso</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: 25%;"></div>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Después de crear el itinerario, podrás agregar actividades y transporte
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para calcular duración -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaInicio = document.getElementById('fecha_inicio');
+    const fechaFin = document.getElementById('fecha_fin');
+    
+    // Establecer fecha mínima como hoy
+    const today = new Date().toISOString().split('T')[0];
+    fechaInicio.min = today;
+    fechaFin.min = today;
+    
+    function calcularDuracion() {
+        if (fechaInicio.value && fechaFin.value) {
+            const inicio = new Date(fechaInicio.value);
+            const fin = new Date(fechaFin.value);
+            const diffTime = Math.abs(fin - inicio);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 0) {
+                // Mostrar duración en algún lugar (podemos agregar un elemento para esto)
+                console.log(`Duración del viaje: ${diffDays} días`);
+            }
+        }
+    }
+    
+    fechaInicio.addEventListener('change', function() {
+        fechaFin.min = this.value;
+        calcularDuracion();
+    });
+    
+    fechaFin.addEventListener('change', calcularDuracion);
+});
+</script>
+{% endblock %}

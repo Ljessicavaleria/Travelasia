@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import os
 import datetime
-from datetime import timedelta  # ✅ AGREGAR ESTE IMPORT
+from datetime import timedelta
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "travelasia-secret-key-2024")
@@ -23,20 +23,25 @@ def login_required(f):
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/travelasia_db")
 
 try:
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)  # Aumentado a 10s
     db = client.travelasia_db
     destinos_collection = db.destinos
     usuarios_collection = db.usuarios
     itinerarios_collection = db.itinerarios
-    # Test simple de conexión
-    db.command('ping')
+    
+    # Test de conexión más robusto
+    client.admin.command('ping')
     print("✅ ¡CONECTADO A MONGODB ATLAS! - TravelAsia")
+    print(f"✅ Base de datos: {db.name}")
+    print(f"✅ Colecciones disponibles: {db.list_collection_names()}")
+    
 except Exception as e:
     db = None
     destinos_collection = None
     usuarios_collection = None
     itinerarios_collection = None
     print(f"❌ Error MongoDB: {e}")
+    print("⚠️ La aplicación funcionará en modo demo sin base de datos")
 
 # DATOS DE TODOS LOS TOURS PREDEFINIDOS
 TOURS_PREDEFINIDOS = {
@@ -239,6 +244,21 @@ def generar_itinerario_automatico(datos_ia, user_id):
         'generado_ia': True,
         'prioridad': 'media'
     }
+
+def calcular_dias_restantes(itinerario):
+    """Calcula días restantes hasta el viaje"""
+    try:
+        fecha_inicio = itinerario.get('fecha_inicio')
+        if not fecha_inicio:
+            return None
+            
+        fecha_inicio_dt = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+        hoy = datetime.datetime.now()
+        dias_restantes = (fecha_inicio_dt - hoy).days
+        
+        return max(0, dias_restantes) if dias_restantes > 0 else None
+    except:
+        return None
 
 # ========== RUTAS PÚBLICAS ==========
 
@@ -1007,21 +1027,6 @@ def mis_itinerarios():
         flash(f"❌ Error cargando itinerarios: {e}", "danger")
         return redirect(url_for("planificador"))
 
-def calcular_dias_restantes(itinerario):
-    """Calcula días restantes hasta el viaje"""
-    try:
-        fecha_inicio = itinerario.get('fecha_inicio')
-        if not fecha_inicio:
-            return None
-            
-        fecha_inicio_dt = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
-        hoy = datetime.datetime.now()
-        dias_restantes = (fecha_inicio_dt - hoy).days
-        
-        return max(0, dias_restantes) if dias_restantes > 0 else None
-    except:
-        return None
-
 @app.route("/actualizar-perfil", methods=["POST"])
 @login_required
 def actualizar_perfil():
@@ -1102,7 +1107,9 @@ def init_db():
     except Exception as e:
         print(f"❌ Error inicializando BD: {e}")
 
+# ========== CONFIGURACIÓN PARA PRODUCCIÓN ==========
+
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)  # IMPORTANTE: debug=False

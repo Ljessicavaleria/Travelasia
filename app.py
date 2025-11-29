@@ -261,6 +261,11 @@ def destinos():
     """Página de destinos disponibles"""
     return render_template("destinos.html", tours=TOURS_PREDEFINIDOS)
 
+@app.route("/explora")
+def explora():
+    """Página de exploración y búsqueda de destinos"""
+    return render_template("explora.html", tours=TOURS_PREDEFINIDOS)
+
 @app.route("/cotizar")
 def cotizar():
     """Página de cotización"""
@@ -311,6 +316,29 @@ def cotizar_tour(pais):
         flash("Tour no encontrado", "danger")
         return redirect(url_for("index"))
     return render_template("cotizar.html", tour=tour)
+
+# ========== RUTA RESULTADO_COTIZACION ==========
+
+@app.route("/resultado_cotizacion")
+def resultado_cotizacion():
+    """Página de resultado de cotización"""
+    # Obtener datos de la sesión o parámetros
+    datos = request.args
+    tour_key = datos.get('tour', 'japon')
+    tour = TOURS_PREDEFINIDOS.get(tour_key, TOURS_PREDEFINIDOS['japon'])
+    
+    # Calcular datos para mostrar
+    precio_final = datos.get('precio_final', 1500)
+    personas = datos.get('personas', 2)
+    noches = datos.get('noches', 7)
+    categoria = datos.get('categoria', 'estandar')
+    
+    return render_template("resultado_cotizacion.html",
+                         tour=tour,
+                         precio_final=precio_final,
+                         personas=personas,
+                         noches=noches,
+                         categoria=categoria)
 
 # ========== AUTENTICACIÓN ==========
 

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explora Destinos - TRAVELASIA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">TRAVELASIA</div>
+        <div class="nav">
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('destinos') }}">Destinos</a>
+            <a href="{{ url_for('cotizar') }}">Cotizar</a>
+            <a href="{{ url_for('planificador') }}">Planificador</a>
+        </div>
+        <div class="user-info">
+            {% if session.user_name %}
+                {{ session.user_name }}
+            {% else %}
+                <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="explora-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">Explora</h1>
+            <p class="hero-subtitle">Descubre tu destino más fácilmente del mundo</p>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Buscar destino: Tokyo, Bali, Bangkok..." id="searchInput">
+                <button class="search-button" onclick="buscarDestinos()">🔍 Buscar</button>
+            </div>
+            
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">País</label>
+                    <select class="filter-select" id="paisFilter">
+                        <option value="">Todos los países</option>
+                        <option value="Japón">Japón</option>
+                        <option value="Tailandia">Tailandia</option>
+                        <option value="Vietnam">Vietnam</option>
+                        <option value="China">China</option>
+                        <option value="Corea del Sur">Corea del Sur</option>
+                        <option value="Indonesia">Indonesia</option>
+                        <option value="Malasia">Malasia</option>
+                        <option value="Singapur">Singapur</option>
+                        <option value="India">India</option>
+                        <option value="Filipinas">Filipinas</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Tipo de experiencia</label>
+                    <select class="filter-select" id="experienciaFilter">
+                        <option value="">Todas</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="aventura">Aventura</option>
+                        <option value="relax">Relax</option>
+                        <option value="gastronomia">Gastronomía</option>
+                        <option value="shopping">Shopping</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Presupuesto</label>
+                    <select class="filter-select" id="presupuestoFilter">
+                        <option value="">Cualquier presupuesto</option>
+                        <option value="economico">Económico (Menos de $800)</option>
+                        <option value="medio">Medio ($800 - $1500)</option>
+                        <option value="premium">Premium ($1500 - $3000)</option>
+                        <option value="lujo">Lujo (Más de $3000)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-item">
+                <div class="feature-icon">🌏</div>
+                <h3 class="feature-title">Aguiente</h3>
+                <p>Destinos únicos y experiencias auténticas</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Seguridad</h3>
+                <p>Viaja con confianza y tranquilidad</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            <h2>Destinos Populares</h2>
+            <div class="destinos-grid" id="destinosGrid">
+                <!-- Los destinos se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2024 Travelasia. Todos los derechos reservados.</p>
+        </div>
+    </div>
+
+    <script>
+        // Datos de destinos (simulados - en producción vendrían de la base de datos)
+        const destinos = [
+            {
+                id: 'japon',
+                nombre: 'Japón Esencial',
+                pais: 'Japón',
+                imagen: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
+                precio: 1500,
+                experiencia: 'cultural',
+                descripcion: 'Tokio, Kioto, Osaka - 10 días'
+            },
+            {
+                id: 'tailandia',
+                nombre: 'Aventura Tailandia',
+                pais: 'Tailandia',
+                imagen: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600',
+                precio: 1200,
+                experiencia: 'aventura',
+                descripcion: 'Bangkok, Phuket, Chiang Mai - 12 días'
+            },
+            {
+                id: 'bali',
+                nombre: 'Paraíso de Bali',
+                pais: 'Indonesia',
+                imagen: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=600',
+                precio: 800,
+                experiencia: 'relax',
+                descripcion: 'Bali, Ubud, Seminyak - 8 días'
+            },
+            {
+                id: 'vietnam',
+                nombre: 'Vietnam Clásico',
+                pais: 'Vietnam',
+                imagen: 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=600',
+                precio: 900,
+                experiencia: 'cultural',
+                descripcion: 'Hanoi, Halong Bay, Ho Chi Minh - 9 días'
+            },
+            {
+                id: 'corea',
+                nombre: 'Corea del Sur',
+                pais: 'Corea del Sur',
+                imagen: 'https://images.unsplash.com/photo-1534274867514-d5b47ef89ed7?w=600',
+                precio: 1300,
+                experiencia: 'shopping',
+                descripcion: 'Seúl, Busan, Jeju Island - 11 días'
+            },
+            {
+                id: 'singapur',
+                nombre: 'Singapur Moderno',
+                pais: 'Singapur',
+                imagen: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600',
+                precio: 1400,
+                experiencia: 'gastronomia',
+                descripcion: 'Singapur - 5 días'
+            }
+        ];
+
+        // Cargar destinos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            mostrarDestinos(destinos);
+            
+            // Agregar event listeners a los filtros
+            document.getElementById('paisFilter').addEventListener('change', filtrarDestinos);
+            document.getElementById('experienciaFilter').addEventListener('change', filtrarDestinos);
+            document.getElementById('presupuestoFilter').addEventListener('change', filtrarDestinos);
+            document.getElementById('searchInput').addEventListener('input', filtrarDestinos);
+        });
+
+        // Función para mostrar destinos
+        function mostrarDestinos(destinosArray) {
+            const grid = document.getElementById('destinosGrid');
+            grid.innerHTML = '';
+
+            if (destinosArray.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #7f8c8d;">No se encontraron destinos que coincidan con tu búsqueda.</p>';
+                return;
+            }
+
+            destinosArray.forEach(destino => {
+                const card = document.createElement('div');
+                card.className = 'destino-card';
+                card.innerHTML = `
+                    <img src="${destino.imagen}" alt="${destino.nombre}" class="destino-image">
+                    <div class="destino-content">
+                        <h3 class="destino-title">${destino.nombre}</h3>
+                        <p class="destino-pais">${destino.pais} • ${destino.descripcion}</p>
+                        <p class="destino-precio">$${destino.precio} USD</p>
+                        <button class="btn-cotizar" onclick="cotizarDestino('${destino.id}')">
+                            Cotizar Ahora
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Función para filtrar destinos
+        function filtrarDestinos() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const pais = document.getElementById('paisFilter').value;
+            const experiencia = document.getElementById('experienciaFilter').value;
+            const presupuesto = document.getElementById('presupuestoFilter').value;
+
+            const destinosFiltrados = destinos.filter(destino => {
+                // Filtro por búsqueda
+                const matchSearch = !searchTerm || 
+                    destino.nombre.toLowerCase().includes(searchTerm) ||
+                    destino.pais.toLowerCase().includes(searchTerm) ||
+                    destino.descripcion.toLowerCase().includes(searchTerm);
+
+                // Filtro por país
+                const matchPais = !pais || destino.pais === pais;
+
+                // Filtro por experiencia
+                const matchExperiencia = !experiencia || destino.experiencia === experiencia;
+
+                // Filtro por presupuesto
+                let matchPresupuesto = true;
+                if (presupuesto) {
+                    switch(presupuesto) {
+                        case 'economico':
+                            matchPresupuesto = destino.precio < 800;
+                            break;
+                        case 'medio':
+                            matchPresupuesto = destino.precio >= 800 && destino.precio <= 1500;
+                            break;
+                        case 'premium':
+                            matchPresupuesto = destino.precio > 1500 && destino.precio <= 3000;
+                            break;
+                        case 'lujo':
+                            matchPresupuesto = destino.precio > 3000;
+                            break;
+                    }
+                }
+
+                return matchSearch && matchPais && matchExperiencia && matchPresupuesto;
+            });
+
+            mostrarDestinos(destinosFiltrados);
+        }
+
+        // Función para buscar destinos
+        function buscarDestinos() {
+            filtrarDestinos();
+        }
+
+        // Función para redirigir a cotización
+        function cotizarDestino(destinoId) {
+            window.location.href = `/cotizar/${destinoId}`;
+        }
+
+        // Función para limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('paisFilter').value = '';
+            document.getElementById('experienciaFilter').value = '';
+            document.getElementById('presupuestoFilter').value = '';
+            mostrarDestinos(destinos);
+        }
+    </script>
+</body>
+</html>

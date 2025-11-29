@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultado de Cotización - TRAVELASIA</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="header">
         <div class="logo">TRAVELASIA</div>
         <div class="nav">
-            <a href="inicio.html">Inicio</a>
-            <a href="agregar_destino.html">Agregar Destino</a>
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('destinos') }}">Destinos</a>
+            <a href="{{ url_for('cotizar') }}">Cotizar</a>
         </div>
-        <div class="user-info">Jessica</div>
+        <div class="user-info">
+            {% if session.user_name %}
+                {{ session.user_name }}
+            {% else %}
+                <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+            {% endif %}
+        </div>
     </div>
 
     <div class="container">
@@ -28,101 +35,164 @@
                 <div class="info-section">
                     <h3>📅 Información del Viaje</h3>
                     <div class="info-item">
-                        <span>Destino:</span>
-                        <strong>Tokio, Japón</strong>
+                        <span>Tour:</span>
+                        <strong>{{ tour.nombre }}</strong>
                     </div>
                     <div class="info-item">
-                        <span>Fecha de ida:</span>
-                        <span>15 Mar 2024</span>
+                        <span>País:</span>
+                        <span>{{ tour.pais }}</span>
                     </div>
                     <div class="info-item">
-                        <span>Fecha de regreso:</span>
-                        <span>25 Mar 2024</span>
+                        <span>Ciudades:</span>
+                        <span>{{ tour.ciudad }}</span>
                     </div>
                     <div class="info-item">
                         <span>Duración:</span>
-                        <span>10 días / 9 noches</span>
+                        <span>{{ tour.duracion }}</span>
                     </div>
                 </div>
 
                 <div class="info-section">
-                    <h3>👥 Pasajeros</h3>
+                    <h3>👥 Detalles de la Cotización</h3>
                     <div class="info-item">
-                        <span>Adultos:</span>
-                        <span>2</span>
+                        <span>Personas:</span>
+                        <span>{{ datos.personas }}</span>
                     </div>
                     <div class="info-item">
-                        <span>Niños:</span>
-                        <span>1</span>
+                        <span>Noches:</span>
+                        <span>{{ datos.noches }}</span>
                     </div>
                     <div class="info-item">
-                        <span>Habitación:</span>
-                        <span>Doble con cama extra</span>
+                        <span>Categoría:</span>
+                        <span>{{ datos.categoria.title() }}</span>
                     </div>
                 </div>
 
                 <div class="info-section">
                     <h3>✈️ Servicios Incluidos</h3>
+                    {% for servicio in tour.incluye %}
                     <div class="info-item">
-                        <span>Vuelos:</span>
+                        <span>{{ servicio }}:</span>
                         <span>✓ Incluido</span>
                     </div>
-                    <div class="info-item">
-                        <span>Hotel:</span>
-                        <span>✓ 4 estrellas</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Traslados:</span>
-                        <span>✓ Incluido</span>
-                    </div>
-                    <div class="info-item">
-                        <span>Tours:</span>
-                        <span>✓ City tour</span>
-                    </div>
+                    {% endfor %}
                 </div>
 
                 <div class="info-section">
                     <h3>💰 Desglose de Costos</h3>
                     <div class="info-item">
-                        <span>Vuelos:</span>
-                        <span>$1,200</span>
+                        <span>Precio base por persona:</span>
+                        <span>${{ tour.precio_base }}</span>
                     </div>
                     <div class="info-item">
-                        <span>Alojamiento:</span>
-                        <span>$900</span>
+                        <span>Número de personas:</span>
+                        <span>{{ datos.personas }}</span>
                     </div>
                     <div class="info-item">
-                        <span>Tours:</span>
-                        <span>$300</span>
+                        <span>Noches de estancia:</span>
+                        <span>{{ datos.noches }}</span>
                     </div>
                     <div class="info-item">
-                        <span>Seguro:</span>
-                        <span>$150</span>
+                        <span>Categoría {{ datos.categoria.title() }}:</span>
+                        <span>
+                            {% if datos.categoria == 'economico' %}
+                            (Ahorro 20%)
+                            {% elif datos.categoria == 'premium' %}
+                            (Premium +50%)
+                            {% elif datos.categoria == 'lujo' %}
+                            (Lujo +100%)
+                            {% else %}
+                            (Estándar)
+                            {% endif %}
+                        </span>
                     </div>
-                    <div class="info-item">
-                        <span>Impuestos:</span>
-                        <span>$120</span>
+                    <div class="info-item total-line">
+                        <span><strong>Total del viaje:</strong></span>
+                        <span><strong>${{ precio_final }} USD</strong></span>
                     </div>
                 </div>
             </div>
 
             <div class="price-summary">
                 <h2>Total de la Cotización</h2>
-                <div class="total-price">$2,670 USD</div>
-                <p>Precio por persona: $890 USD</p>
+                <div class="total-price">${{ precio_final }} USD</div>
+                <p>Precio por persona: ${{ (precio_final / datos.personas) | round(2) }} USD</p>
                 <p>* Precio sujeto a disponibilidad</p>
             </div>
 
             <div class="actions">
-                <a href="#" class="btn btn-success">Confirmar Reserva</a>
-                <a href="#" class="btn btn-primary">Modificar Cotización</a>
-                <a href="inicio.html" class="btn btn-secondary">Nueva Búsqueda</a>
+                {% if session.user_id %}
+                <a href="{{ url_for('crear_itinerario') }}?paises={{ tour.pais }}" class="btn btn-success">Crear Itinerario</a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-success">Iniciar Sesión para Reservar</a>
+                {% endif %}
+                <a href="{{ url_for('cotizar') }}" class="btn btn-primary">Nueva Cotización</a>
+                <a href="{{ url_for('destinos') }}" class="btn btn-secondary">Ver Más Destinos</a>
+                
+                <!-- Botones adicionales -->
+                <button class="btn btn-secondary" onclick="imprimirCotizacion()">🖨️ Imprimir</button>
+                <button class="btn btn-primary" onclick="compartirCotizacion()">📤 Compartir</button>
             </div>
 
             <div class="disclaimer">
-                <p>Esta cotización es válida por 72 horas. Para confirmar tu reserva, realiza el pago antes de la fecha de vencimiento.</p>
+                <p>Esta cotización es válida por 72 horas. Para confirmar tu reserva, inicia sesión y crea tu itinerario.</p>
+                {% if not session.user_id %}
+                <p style="margin-top: 10px;"><a href="{{ url_for('register') }}" style="color: #3498db; text-decoration: underline;">¿No tienes cuenta? Regístrate gratis</a></p>
+                {% endif %}
             </div>
         </div>
     </div>
+
+    <!-- Datos embebidos para uso en JavaScript -->
+    <div id="cotizacion-data" style="display:none;"
+         data-tour-name="{{ tour.nombre }}"
+         data-precio-final="{{ precio_final }}"
+         data-pais="{{ tour.pais }}">
+    </div>
+
+    <script>
+        // Funcionalidad para imprimir la cotización
+        function imprimirCotizacion() {
+            window.print();
+        }
+
+        // Funcionalidad para compartir
+        function compartirCotizacion() {
+            const data = document.getElementById('cotizacion-data');
+            const tourName = data.dataset.tourName;
+            const precio = data.dataset.precioFinal;
+            const pais = data.dataset.pais;
+            
+            const titulo = "Mi cotización de viaje - TRAVELASIA";
+            const texto = `¡He cotizado un viaje increíble con TRAVELASIA! ${tourName} por $${precio}`;
+            const url = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: titulo,
+                    text: texto,
+                    url: url
+                });
+            } else {
+                // Fallback para copiar al portapapeles
+                navigator.clipboard.writeText(texto + "\n" + url).then(function() {
+                    alert('¡Cotización copiada al portapapeles!');
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada
+            const quotationCard = document.querySelector('.quotation-card');
+            quotationCard.style.opacity = '0';
+            quotationCard.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                quotationCard.style.transition = 'all 0.5s ease';
+                quotationCard.style.opacity = '1';
+                quotationCard.style.transform = 'translateY(0)';
+            }, 300);
+        });
+    </script>
 </body>
 </html>

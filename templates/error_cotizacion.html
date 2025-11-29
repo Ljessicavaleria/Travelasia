@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white text-center py-4">
+                    <h1 class="display-4 mb-0">⚠️</h1>
+                    <h2 class="card-title mb-0">Error en la Cotización</h2>
+                </div>
+                
+                <div class="card-body p-5">
+                    <div class="alert alert-warning text-center">
+                        <h4 class="alert-heading">¡Ups! Algo salió mal</h4>
+                        <p class="mb-3">Se ha producido un error al calcular la cotización de tu viaje.</p>
+                        
+                        <div class="bg-light p-3 rounded mb-4 text-start">
+                            <code class="text-danger">TypeError: unsupported operand type(s) for /: 'float' and 'str'</code>
+                        </div>
+                        
+                        <p class="mb-0">El sistema intentó realizar una operación matemática entre tipos de datos incompatibles.</p>
+                    </div>
+
+                    <div class="bg-light p-4 rounded mb-4">
+                        <h5 class="text-primary mb-3">🛠️ Posibles causas y soluciones:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">✅ <strong>Campo de texto en lugar de número:</strong> Verifica que todos los campos numéricos contengan solo números</li>
+                            <li class="mb-2">✅ <strong>Formato incorrecto:</strong> Asegúrate de que los valores monetarios no incluyan símbolos</li>
+                            <li class="mb-2">✅ <strong>Separadores decimales:</strong> Usa puntos (.) en lugar de comas (,) para decimales</li>
+                            <li class="mb-2">✅ <strong>Campos vacíos:</strong> Todos los campos requeridos deben tener valores válidos</li>
+                        </ul>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('cotizar') }}" class="btn btn-primary btn-lg me-3">
+                            🔄 Reintentar Cotización
+                        </a>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                            🏠 Volver al Inicio
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-center text-muted">
+                    <small>Si el problema persiste, contacta a nuestro equipo de soporte</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

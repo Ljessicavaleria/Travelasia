@@ -271,21 +271,35 @@ def cotizar():
     """Página de cotización"""
     return render_template("cotizar.html", tours=TOURS_PREDEFINIDOS)
 
+# ========== RUTA MANEJO ERROR COTIZACIÓN ==========
+
+@app.route("/error_cotizacion")
+def error_cotizacion():
+    """Página de error para cotizaciones"""
+    return render_template("error_cotizacion.html")
+
 @app.route("/procesar_cotizacion", methods=["POST"])
 def procesar_cotizacion():
     """Procesar la cotización del tour"""
     try:
         datos = request.form
         pais = datos.get("pais")
-        personas = int(datos.get("personas", 1))
-        noches = int(datos.get("noches", 7))
+        
+        # ✅ VALIDAR Y CONVERTIR DATOS NUMÉRICOS
+        try:
+            personas = int(datos.get("personas", 1))
+            noches = int(datos.get("noches", 7))
+        except (ValueError, TypeError):
+            flash("❌ Error: Número de personas o noches inválido", "danger")
+            return redirect(url_for("error_cotizacion"))
+        
         categoria = datos.get("categoria", "estandar")
         
-        # Cálculo de precio
+        # Validar que el tour existe
         tour = TOURS_PREDEFINIDOS.get(pais)
         if not tour:
             flash("Tour no disponible", "danger")
-            return redirect(url_for("index"))
+            return redirect(url_for("error_cotizacion"))
         
         precio_base = tour["precio_base"]
         
@@ -297,6 +311,10 @@ def procesar_cotizacion():
             "lujo": 2.0
         }
         
+        # ✅ CÁLCULO SEGURO - VERIFICAR DIVISIÓN POR CERO
+        if noches <= 0:
+            noches = 7  # Valor por defecto seguro
+        
         precio_final = precio_base * multiplicadores.get(categoria, 1.0) * personas * (noches / 7)
         
         return render_template("resultado_cotizacion.html", 
@@ -305,8 +323,9 @@ def procesar_cotizacion():
                              precio_final=round(precio_final, 2))
                              
     except Exception as e:
-        flash(f"Error en la cotización: {e}", "danger")
-        return redirect(url_for("index"))
+        print(f"❌ ERROR EN COTIZACIÓN: {e}")  # Log para debugging
+        flash(f"Error en el cálculo de la cotización", "danger")
+        return redirect(url_for("error_cotizacion"))
 
 @app.route("/cotizar/<pais>")
 def cotizar_tour(pais):

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Itinerario - Travel Asia</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 50px;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .itinerary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-top: 4px solid #2a5298;
+        }
+        .day-header {
+            background: #e9f2ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .day-number {
+            background: #2a5298;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .activity-row {
+            border-bottom: 1px dashed #dee2e6;
+            padding: 15px 0;
+            margin: 0;
+        }
+        .activity-row:last-child {
+            border-bottom: none;
+        }
+        .time-input-group {
+            max-width: 200px;
+        }
+        .btn-travel-primary {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+        }
+        .btn-travel-primary:hover {
+            background: #1e3c72;
+            color: white;
+        }
+        .btn-travel-success {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+        }
+        .btn-travel-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+        }
+        .btn-travel-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-globe-asia me-2 text-primary"></i>Travel Asia
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-dark">
+                    <i class="fas fa-user-circle me-1"></i>Admin
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-2">
+                        <i class="fas fa-edit me-2"></i>Editar Itinerario
+                    </h1>
+                    <p class="mb-0">
+                        <i class="fas fa-map-marked-alt me-1"></i>
+                        <strong>Japón Cultural:</strong> Tokio, Kioto y Osaka | 7 días
+                    </p>
+                </div>
+                <a href="view.html" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-1"></i>Volver al Tour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario Principal -->
+    <div class="container">
+        <form action="/guardar_itinerario" method="POST">
+            <!-- Información General -->
+            <div class="form-section">
+                <h5 class="mb-3">
+                    <i class="fas fa-info-circle text-primary me-2"></i>
+                    Información General del Tour
+                </h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Nombre del Tour:</label>
+                        <input type="text" class="form-control" name="tour_name" 
+                               value="Japón Cultural: Tokio, Kioto y Osaka" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Duración:</label>
+                        <input type="number" class="form-control" name="duration" 
+                               value="7" min="1" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Precio Base:</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" name="price" 
+                                   value="1200" step="0.01" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DÍA 1 -->
+            <div class="itinerary-card">
+                <div class="day-header">
+                    <div class="d-flex align-items-center">
+                        <span class="day-number">1</span>
+                        <h5 class="mb-0">Día 1: Llegada a Tokio</h5>
+                    </div>
+                </div>
+
+                <!-- Actividad 1 -->
+                <div class="activity-row row align-items-center">
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Hora:</label>
+                        <div class="time-input-group">
+                            <input type="time" class="form-control" name="day1_time1" value="08:00" required>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <label class="form-label small fw-bold">Actividad:</label>
+                        <input type="text" class="form-control" name="day1_activity1" 
+                               value="Llegada al Aeropuerto de Narita" required>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Duración:</label>
+                        <select class="form-select" name="day1_duration1">
+                            <option>2 horas</option>
+                            <option>3 horas</option>
+                            <option selected>4 horas</option>
+                            <option>Todo el día</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label small fw-bold">Descripción:</label>
+                        <textarea class="form-control" name="day1_desc1" rows="2">Recepción por nuestro guía hispanohablante. Traslado al hotel en Shinjuku. Check-in y tiempo libre.</textarea>
+                    </div>
+                </div>
+
+                <!-- Actividad 2 -->
+                <div class="activity-row row align-items-center">
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Hora:</label>
+                        <div class="time-input-group">
+                            <input type="time" class="form-control" name="day1_time2" value="14:00" required>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <label class="form-label small fw-bold">Actividad:</label>
+                        <input type="text" class="form-control" name="day1_activity2" 
+                               value="Visita al Templo Sensō-ji" required>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Duración:</label>
+                        <select class="form-select" name="day1_duration2">
+                            <option>1 hora</option>
+                            <option>2 horas</option>
+                            <option selected>3 horas</option>
+                            <option>4 horas</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label small fw-bold">Descripción:</label>
+                        <textarea class="form-control" name="day1_desc2" rows="2">Templo budista más antiguo de Tokio. Paseo por el mercado Nakamise para souvenirs tradicionales.</textarea>
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-travel-secondary">
+                        <i class="fas fa-plus me-1"></i>Agregar Actividad al Día 1
+                    </button>
+                </div>
+            </div>
+
+            <!-- DÍA 2 -->
+            <div class="itinerary-card">
+                <div class="day-header">
+                    <div class="d-flex align-items-center">
+                        <span class="day-number">2</span>
+                        <h5 class="mb-0">Día 2: Monte Fuji y Hakone</h5>
+                    </div>
+                </div>
+
+                <!-- Actividad 1 Día 2 -->
+                <div class="activity-row row align-items-center">
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Hora:</label>
+                        <div class="time-input-group">
+                            <input type="time" class="form-control" name="day2_time1" value="07:00" required>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <label class="form-label small fw-bold">Actividad:</label>
+                        <input type="text" class="form-control" name="day2_activity1" 
+                               value="Excursión al Monte Fuji" required>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Duración:</label>
+                        <select class="form-select" name="day2_duration1">
+                            <option selected>5 horas</option>
+                            <option>6 horas</option>
+                            <option>Todo el día</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label small fw-bold">Descripción:</label>
+                        <textarea class="form-control" name="day2_desc1" rows="2">Viaje a la estación 5 del Monte Fuji. Vistas panorámicas (según clima). Almuerzo incluido.</textarea>
+                    </div>
+                </div>
+
+                <!-- Actividad 2 Día 2 -->
+                <div class="activity-row row align-items-center">
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Hora:</label>
+                        <div class="time-input-group">
+                            <input type="time" class="form-control" name="day2_time2" value="13:30" required>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <label class="form-label small fw-bold">Actividad:</label>
+                        <input type="text" class="form-control" name="day2_activity2" 
+                               value="Crucero por el Lago Ashi" required>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <label class="form-label small fw-bold">Duración:</label>
+                        <select class="form-select" name="day2_duration2">
+                            <option>1 hora</option>
+                            <option selected>2 horas</option>
+                            <option>3 horas</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">Descripción:</label>
+                        <textarea class="form-control" name="day2_desc2" rows="2">Paseo en barco pirata con vistas al Monte Fuji. Tiempo libre en Hakone.</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agregar Nuevo Día -->
+            <div class="itinerary-card text-center">
+                <h6 class="mb-3">¿Necesitas agregar más días?</h6>
+                <button type="button" class="btn btn-travel-success">
+                    <i class="fas fa-calendar-plus me-1"></i>Agregar Nuevo Día al Itinerario
+                </button>
+            </div>
+
+            <!-- Servicios Incluidos -->
+            <div class="form-section">
+                <h5 class="mb-3">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Servicios Incluidos
+                </h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="includes_hotel" id="includes_hotel" checked>
+                            <label class="form-check-label" for="includes_hotel">
+                                <i class="fas fa-hotel me-1"></i>Hotel 4 estrellas
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="includes_transport" id="includes_transport" checked>
+                            <label class="form-check-label" for="includes_transport">
+                                <i class="fas fa-bus me-1"></i>Transporte privado
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="includes_guide" id="includes_guide" checked>
+                            <label class="form-check-label" for="includes_guide">
+                                <i class="fas fa-user-tie me-1"></i>Guía en español
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="includes_meals" id="includes_meals" checked>
+                            <label class="form-check-label" for="includes_meals">
+                                <i class="fas fa-utensils me-1"></i>Desayuno diario
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="includes_tickets" id="includes_tickets">
+                            <label class="form-check-label" for="includes_tickets">
+                                <i class="fas fa-ticket-alt me-1"></i>Entradas a atracciones
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="includes_insurance" id="includes_insurance">
+                            <label class="form-check-label" for="includes_insurance">
+                                <i class="fas fa-shield-alt me-1"></i>Seguro de viaje
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notas Adicionales -->
+            <div class="form-section">
+                <h5 class="mb-3">
+                    <i class="fas fa-sticky-note text-warning me-2"></i>
+                    Notas Adicionales
+                </h5>
+                <textarea class="form-control" name="additional_notes" rows="4" 
+                          placeholder="Escribe aquí notas importantes para los guías o clientes...">Verificar restricciones dietarias del grupo. Incluir tiempo libre para compras los días 3 y 5.</textarea>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="view.html" class="btn btn-travel-danger">
+                    <i class="fas fa-times me-1"></i>Cancelar Cambios
+                </a>
+                <div>
+                    <button type="reset" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-undo me-1"></i>Restablecer
+                    </button>
+                    <button type="submit" class="btn btn-travel-primary">
+                        <i class="fas fa-save me-1"></i>Guardar Itinerario
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-3">
+        <div class="container text-center">
+            <p class="mb-0 small">
+                <i class="fas fa-globe-asia me-1"></i>Travel Asia System © 2024
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS (solo para componentes que lo requieran) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

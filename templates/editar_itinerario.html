@@ -90,6 +90,15 @@
             font-size: 1.1rem;
             padding: 12px 15px;
         }
+        .is-invalid {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -128,8 +137,9 @@
                             {% if estado == 'planificando' %}bg-warning
                             {% elif estado == 'confirmado' %}bg-success
                             {% elif estado == 'completado' %}bg-secondary
+                            {% elif estado == 'en_progreso' %}bg-info
                             {% else %}bg-info{% endif %}">
-                            {{ estado|title }}
+                            {% if estado %}{{ estado|title }}{% else %}Planificando{% endif %}
                         </span>
                         
                         <!-- Países dinámicos -->
@@ -148,7 +158,7 @@
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <!-- Presupuesto dinámico -->
                     <div class="price-display" id="presupuesto-total">
-                        ${{ "%.2f"|format(presupuesto_total) }}
+                        ${{ "%.2f"|format(presupuesto_total) if presupuesto_total is defined else "0.00" }}
                     </div>
                 </div>
             </div>
@@ -157,7 +167,7 @@
 
     <!-- Formulario Principal -->
     <div class="container">
-        <form action="/itinerario/editar/{{ itinerario_id }}" method="POST">
+        <form action="/itinerario/editar/{{ itinerario_id }}" method="POST" id="form-editar-itinerario">
             <input type="hidden" name="itinerario_id" value="{{ itinerario_id }}">
             
             <!-- SECCIÓN 1: INFORMACIÓN GENERAL -->
@@ -189,11 +199,12 @@
                             <label class="form-label fw-bold">Presupuesto Total *</label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" 
+                                <input type="number" class="form-control" id="presupuesto-total-input"
                                        name="presupuesto_total" 
-                                       value="{{ "%.2f"|format(presupuesto_total) }}"
+                                       value="{{ "%.2f"|format(presupuesto_total) if presupuesto_total is defined else '1000.00' }}"
                                        step="0.01" min="100" required>
                             </div>
+                            <div class="error-message" id="error-presupuesto"></div>
                         </div>
                     </div>
                     
@@ -244,78 +255,80 @@
                 <div class="card-body">
                     
                     <!-- Loop dinámico para países -->
-                    {% for pais in paises %}
-                    <div class="country-section">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="d-flex align-items-center">
-                                <!-- Banderas dinámicas -->
-                                <span class="country-badge">
-                                    {% if pais.nombre == 'Japón' %}🇯🇵
-                                    {% elif pais.nombre == 'Corea del Sur' %}🇰🇷
-                                    {% elif pais.nombre == 'Tailandia' %}🇹🇭
-                                    {% elif pais.nombre == 'Vietnam' %}🇻🇳
-                                    {% elif pais.nombre == 'China' %}🇨🇳
-                                    {% elif pais.nombre == 'Indonesia' %}🇮🇩
-                                    {% elif pais.nombre == 'Malasia' %}🇲🇾
-                                    {% elif pais.nombre == 'Singapur' %}🇸🇬
-                                    {% elif pais.nombre == 'India' %}🇮🇳
-                                    {% elif pais.nombre == 'Filipinas' %}🇵🇭
-                                    {% elif pais.nombre == 'Camboya' %}🇰🇭
-                                    {% elif pais.nombre == 'Laos' %}🇱🇦
-                                    {% else %}🇺🇳{% endif %}
-                                </span>
-                                <h5 class="mb-0">{{ pais.nombre }}</h5>
-                            </div>
-                            <a href="/itinerario/{{ itinerario_id }}/eliminar-pais/{{ pais.id }}" 
-                               class="btn btn-outline-danger btn-sm"
-                               onclick="return confirm('¿Eliminar {{ pais.nombre }} del itinerario?')">
-                                <i class="fas fa-times"></i>
-                            </a>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label fw-bold">Días en {{ pais.nombre }}</label>
-                                <input type="number" class="form-control" 
-                                       name="dias_{{ pais.id }}" 
-                                       value="{{ pais.dias }}"
-                                       min="1" max="30">
+                    {% if paises %}
+                        {% for pais in paises %}
+                        <div class="country-section">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex align-items-center">
+                                    <!-- Banderas dinámicas -->
+                                    <span class="country-badge">
+                                        {% if pais.nombre == 'Japón' %}🇯🇵
+                                        {% elif pais.nombre == 'Corea del Sur' %}🇰🇷
+                                        {% elif pais.nombre == 'Tailandia' %}🇹🇭
+                                        {% elif pais.nombre == 'Vietnam' %}🇻🇳
+                                        {% elif pais.nombre == 'China' %}🇨🇳
+                                        {% elif pais.nombre == 'Indonesia' %}🇮🇩
+                                        {% elif pais.nombre == 'Malasia' %}🇲🇾
+                                        {% elif pais.nombre == 'Singapur' %}🇸🇬
+                                        {% elif pais.nombre == 'India' %}🇮🇳
+                                        {% elif pais.nombre == 'Filipinas' %}🇵🇭
+                                        {% elif pais.nombre == 'Camboya' %}🇰🇭
+                                        {% elif pais.nombre == 'Laos' %}🇱🇦
+                                        {% else %}🇺🇳{% endif %}
+                                    </span>
+                                    <h5 class="mb-0">{{ pais.nombre }}</h5>
+                                </div>
+                                <a href="/itinerario/{{ itinerario_id }}/eliminar-pais/{{ pais.id }}" 
+                                   class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('¿Eliminar {{ pais.nombre }} del itinerario?')">
+                                    <i class="fas fa-times"></i>
+                                </a>
                             </div>
                             
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label fw-bold">Presupuesto para {{ pais.nombre }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Días en {{ pais.nombre }}</label>
                                     <input type="number" class="form-control" 
-                                           name="presupuesto_{{ pais.id }}" 
-                                           value="{{ "%.2f"|format(pais.presupuesto) }}"
-                                           step="0.01">
+                                           name="dias_{{ pais.id }}" 
+                                           value="{{ pais.dias }}"
+                                           min="1" max="30">
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Presupuesto para {{ pais.nombre }}</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" 
+                                               name="presupuesto_{{ pais.id }}" 
+                                               value="{{ "%.2f"|format(pais.presupuesto) if pais.presupuesto else '0.00' }}"
+                                               step="0.01">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Orden de Visita</label>
+                                    <input type="number" class="form-control" 
+                                           name="orden_{{ pais.id }}" 
+                                           value="{{ pais.orden }}"
+                                           min="1" max="10">
                                 </div>
                             </div>
                             
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label fw-bold">Orden de Visita</label>
-                                <input type="number" class="form-control" 
-                                       name="orden_{{ pais.id }}" 
-                                       value="{{ pais.orden }}"
-                                       min="1" max="10">
+                            <!-- Ciudades específicas de este país -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ciudades en {{ pais.nombre }}</label>
+                                <textarea class="form-control" name="ciudades_{{ pais.id }}" rows="2"
+                                          placeholder="Ej: Tokio, Kioto, Osaka (separadas por comas)">{{ pais.ciudades|join(', ') if pais.ciudades else '' }}</textarea>
+                            </div>
+                            
+                            <!-- Notas específicas del país -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Notas para {{ pais.nombre }}</label>
+                                <textarea class="form-control" name="notas_{{ pais.id }}" rows="2"
+                                          placeholder="Actividades específicas, lugares que visitar...">{{ pais.notas if pais.notas else '' }}</textarea>
                             </div>
                         </div>
-                        
-                        <!-- Ciudades específicas de este país -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Ciudades en {{ pais.nombre }}</label>
-                            <textarea class="form-control" name="ciudades_{{ pais.id }}" rows="2"
-                                      placeholder="Ej: Tokio, Kioto, Osaka (separadas por comas)">{{ pais.ciudades|join(', ') }}</textarea>
-                        </div>
-                        
-                        <!-- Notas específicas del país -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Notas para {{ pais.nombre }}</label>
-                            <textarea class="form-control" name="notas_{{ pais.id }}" rows="2"
-                                      placeholder="Actividades específicas, lugares que visitar...">{{ pais.notas }}</textarea>
-                        </div>
-                    </div>
+                        {% endfor %}
                     {% else %}
                     <!-- Mensaje si no hay países -->
                     <div class="text-center py-4">
@@ -325,7 +338,7 @@
                             <i class="fas fa-plus me-1"></i>Agregar Primer País
                         </a>
                     </div>
-                    {% endfor %}
+                    {% endif %}
                     
                 </div>
             </div>
@@ -341,102 +354,106 @@
                 <div class="card-body">
                     
                     <!-- Loop dinámico para días -->
-                    {% for dia in dias %}
-                    <div class="day-section">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">
-                                <i class="fas fa-calendar-day me-2"></i>
-                                Día {{ dia.numero }}: {{ dia.titulo }}
-                            </h5>
-                            <a href="/itinerario/{{ itinerario_id }}/eliminar-dia/{{ dia.numero }}" 
-                               class="btn btn-outline-danger btn-sm"
-                               onclick="return confirm('¿Eliminar Día {{ dia.numero }}?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">País del Día</label>
-                                <select class="form-select" name="dia{{ dia.numero }}_pais">
-                                    <option value="">Seleccionar país...</option>
-                                    {% for pais in paises %}
-                                    <option value="{{ pais.id }}" {% if dia.pais_id == pais.id %}selected{% endif %}>
-                                        {{ pais.nombre }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
+                    {% if dias %}
+                        {% for dia in dias %}
+                        <div class="day-section">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-calendar-day me-2"></i>
+                                    Día {{ dia.numero }}: {{ dia.titulo }}
+                                </h5>
+                                <a href="/itinerario/{{ itinerario_id }}/eliminar-dia/{{ dia.numero }}" 
+                                   class="btn btn-outline-danger btn-sm"
+                                   onclick="return confirm('¿Eliminar Día {{ dia.numero }}?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Ciudad Principal</label>
-                                <input type="text" class="form-control" 
-                                       name="dia{{ dia.numero }}_ciudad" 
-                                       value="{{ dia.ciudad }}"
-                                       placeholder="Ej: Tokio, Seúl, Bangkok...">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Hotel/Alojamiento</label>
-                                <input type="text" class="form-control" 
-                                       name="dia{{ dia.numero }}_hotel" 
-                                       value="{{ dia.hotel }}"
-                                       placeholder="Nombre del hotel...">
-                            </div>
-                        </div>
-                        
-                        <!-- Actividades de este día -->
-                        <h6 class="section-title">Actividades del Día {{ dia.numero }}</h6>
-                        
-                        {% for actividad in dia.actividades %}
-                        <div class="activity-row">
-                            <div class="row align-items-center">
-                                <div class="col-md-2 mb-2">
-                                    <label class="form-label small fw-bold">Hora</label>
-                                    <input type="time" class="form-control" 
-                                           name="dia{{ dia.numero }}_act{{ loop.index }}_hora"
-                                           value="{{ actividad.hora }}">
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">País del Día</label>
+                                    <select class="form-select" name="dia{{ dia.numero }}_pais">
+                                        <option value="">Seleccionar país...</option>
+                                        {% for pais in paises %}
+                                        <option value="{{ pais.id }}" {% if dia.pais_id == pais.id %}selected{% endif %}>
+                                            {{ pais.nombre }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
-                                <div class="col-md-8 mb-2">
-                                    <label class="form-label small fw-bold">Actividad</label>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Ciudad Principal</label>
                                     <input type="text" class="form-control" 
-                                           name="dia{{ dia.numero }}_act{{ loop.index }}_nombre"
-                                           value="{{ actividad.nombre }}"
-                                           placeholder="Nombre de la actividad">
+                                           name="dia{{ dia.numero }}_ciudad" 
+                                           value="{{ dia.ciudad }}"
+                                           placeholder="Ej: Tokio, Seúl, Bangkok...">
                                 </div>
-                                <div class="col-md-2 mb-2 text-end">
-                                    <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/eliminar-actividad/{{ loop.index }}" 
-                                       class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('¿Eliminar esta actividad?')">
-                                        <i class="fas fa-times"></i>
-                                    </a>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Hotel/Alojamiento</label>
+                                    <input type="text" class="form-control" 
+                                           name="dia{{ dia.numero }}_hotel" 
+                                           value="{{ dia.hotel }}"
+                                           placeholder="Nombre del hotel...">
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label small fw-bold">Descripción</label>
-                                    <textarea class="form-control" 
-                                              name="dia{{ dia.numero }}_act{{ loop.index }}_descripcion"
-                                              rows="2"
-                                              placeholder="Detalles de la actividad...">{{ actividad.descripcion }}</textarea>
+                            </div>
+                            
+                            <!-- Actividades de este día -->
+                            <h6 class="section-title">Actividades del Día {{ dia.numero }}</h6>
+                            
+                            {% if dia.actividades %}
+                                {% for actividad in dia.actividades %}
+                                <div class="activity-row">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label small fw-bold">Hora</label>
+                                            <input type="time" class="form-control" 
+                                                   name="dia{{ dia.numero }}_act{{ loop.index }}_hora"
+                                                   value="{{ actividad.hora }}">
+                                        </div>
+                                        <div class="col-md-8 mb-2">
+                                            <label class="form-label small fw-bold">Actividad</label>
+                                            <input type="text" class="form-control" 
+                                                   name="dia{{ dia.numero }}_act{{ loop.index }}_nombre"
+                                                   value="{{ actividad.nombre }}"
+                                                   placeholder="Nombre de la actividad">
+                                        </div>
+                                        <div class="col-md-2 mb-2 text-end">
+                                            <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/eliminar-actividad/{{ loop.index }}" 
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('¿Eliminar esta actividad?')">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Descripción</label>
+                                            <textarea class="form-control" 
+                                                      name="dia{{ dia.numero }}_act{{ loop.index }}_descripcion"
+                                                      rows="2"
+                                                      placeholder="Detalles de la actividad...">{{ actividad.descripcion }}</textarea>
+                                        </div>
+                                    </div>
                                 </div>
+                                {% endfor %}
+                            {% endif %}
+                            
+                            <!-- Agregar actividad a este día -->
+                            <div class="text-center mt-3">
+                                <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/agregar-actividad" 
+                                   class="btn btn-sm btn-add">
+                                    <i class="fas fa-plus me-1"></i>Agregar Actividad al Día {{ dia.numero }}
+                                </a>
+                            </div>
+                            
+                            <!-- Notas del día -->
+                            <div class="mt-4">
+                                <label class="form-label fw-bold">Notas del Día {{ dia.numero }}</label>
+                                <textarea class="form-control" 
+                                          name="dia{{ dia.numero }}_notas"
+                                          rows="2"
+                                          placeholder="Notas importantes para este día...">{{ dia.notas }}</textarea>
                             </div>
                         </div>
                         {% endfor %}
-                        
-                        <!-- Agregar actividad a este día -->
-                        <div class="text-center mt-3">
-                            <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/agregar-actividad" 
-                               class="btn btn-sm btn-add">
-                                <i class="fas fa-plus me-1"></i>Agregar Actividad al Día {{ dia.numero }}
-                            </a>
-                        </div>
-                        
-                        <!-- Notas del día -->
-                        <div class="mt-4">
-                            <label class="form-label fw-bold">Notas del Día {{ dia.numero }}</label>
-                            <textarea class="form-control" 
-                                      name="dia{{ dia.numero }}_notas"
-                                      rows="2"
-                                      placeholder="Notas importantes para este día...">{{ dia.notas }}</textarea>
-                        </div>
-                    </div>
                     {% else %}
                     <!-- Mensaje si no hay días -->
                     <div class="text-center py-4">
@@ -446,7 +463,7 @@
                             <i class="fas fa-plus me-1"></i>Agregar Primer Día
                         </a>
                     </div>
-                    {% endfor %}
+                    {% endif %}
                     
                 </div>
             </div>
@@ -506,13 +523,13 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">Restricciones/Alergias Alimenticias</label>
                         <textarea class="form-control" name="restricciones_alimenticias" rows="2"
-                                  placeholder="Ej: Vegetariano, alergia a mariscos, sin gluten...">{{ restricciones_alimenticias }}</textarea>
+                                  placeholder="Ej: Vegetariano, alergia a mariscos, sin gluten...">{{ restricciones_alimenticias if restricciones_alimenticias else '' }}</textarea>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold">Notas Especiales</label>
                         <textarea class="form-control" name="notas_especiales" rows="3"
-                                  placeholder="Cualquier otra información importante para tu viaje...">{{ notas_especiales }}</textarea>
+                                  placeholder="Cualquier otra información importante para tu viaje...">{{ notas_especiales if notas_especiales else '' }}</textarea>
                     </div>
                 </div>
             </div>
@@ -544,12 +561,64 @@
             <p class="mb-0">
                 <i class="fas fa-globe-asia me-1"></i>TravelAsia - 
                 Itinerario ID: {{ itinerario_id }} | 
-                Última modificación: {{ fecha_modificacion }}
+                Última modificación: {{ fecha_modificacion if fecha_modificacion else 'Nunca' }}
             </p>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Validación JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-editar-itinerario');
+        const presupuestoInput = document.getElementById('presupuesto-total-input');
+        const errorElement = document.getElementById('error-presupuesto');
+        
+        // Validar presupuesto en tiempo real
+        presupuestoInput.addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            
+            if (isNaN(value) || value < 100) {
+                this.classList.add('is-invalid');
+                errorElement.textContent = 'El presupuesto mínimo es $100.00';
+            } else {
+                this.classList.remove('is-invalid');
+                errorElement.textContent = '';
+                // Formatear a 2 decimales
+                this.value = value.toFixed(2);
+            }
+        });
+        
+        // Validar al enviar el formulario
+        form.addEventListener('submit', function(event) {
+            const presupuestoValue = parseFloat(presupuestoInput.value);
+            
+            if (isNaN(presupuestoValue) || presupuestoValue < 100) {
+                event.preventDefault();
+                presupuestoInput.classList.add('is-invalid');
+                errorElement.textContent = 'Por favor ingresa un presupuesto válido (mínimo $100.00)';
+                presupuestoInput.focus();
+                return false;
+            }
+            
+            // Confirmar envío
+            if (!confirm('¿Guardar todos los cambios del itinerario?')) {
+                event.preventDefault();
+                return false;
+            }
+            
+            // Asegurar formato decimal
+            presupuestoInput.value = presupuestoValue.toFixed(2);
+            return true;
+        });
+        
+        // Inicializar valor si está vacío o es 0
+        if (!presupuestoInput.value || parseFloat(presupuestoInput.value) === 0) {
+            presupuestoInput.value = "1000.00";
+        }
+    });
+    </script>
 </body>
 </html>

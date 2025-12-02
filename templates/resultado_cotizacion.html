@@ -11,6 +11,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            margin: 0;
         }
         .header {
             background: rgba(255, 255, 255, 0.95);
@@ -20,20 +22,38 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         .logo {
             font-size: 1.8rem;
             font-weight: bold;
             color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav {
+            display: flex;
+            gap: 1.5rem;
         }
         .nav a {
-            margin: 0 1rem;
             text-decoration: none;
             color: #34495e;
             font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
         }
         .nav a:hover {
+            background-color: #f8f9fa;
             color: #3498db;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .quotation-card {
             background: white;
@@ -67,6 +87,12 @@
             border-radius: 10px;
             border-left: 4px solid #3498db;
         }
+        .info-section h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
         .info-item {
             display: flex;
             justify-content: space-between;
@@ -81,6 +107,7 @@
             margin-top: 0.5rem;
             padding-top: 1rem;
             font-size: 1.1rem;
+            color: #2c3e50;
         }
         .price-summary {
             background: #2c3e50;
@@ -93,6 +120,7 @@
             font-weight: bold;
             color: #2ecc71;
             margin: 1rem 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .actions {
             padding: 2rem;
@@ -111,22 +139,34 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            cursor: pointer;
         }
         .btn-success {
             background: #27ae60;
             color: white;
         }
+        .btn-success:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
         .btn-primary {
             background: #3498db;
             color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
         .btn-secondary {
             background: #95a5a6;
             color: white;
         }
-        .btn:hover {
+        .btn-secondary:hover {
+            background: #7f8c8d;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.4);
         }
         .disclaimer {
             background: #fff3cd;
@@ -139,33 +179,77 @@
             .header {
                 flex-direction: column;
                 gap: 1rem;
+                padding: 1rem;
+            }
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
             }
             .destination-info {
                 grid-template-columns: 1fr;
+                padding: 1rem;
             }
             .actions {
                 flex-direction: column;
+                padding: 1rem;
             }
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+            .info-section {
+                padding: 1rem;
+            }
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .quotation-card, .quotation-card * {
+                visibility: visible;
+            }
+            .quotation-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+            }
+            .actions, .btn {
+                display: none !important;
+            }
+            .header {
+                display: none !important;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">TRAVELASIA</div>
+        <div class="logo">
+            <i class="fas fa-globe-asia"></i> TRAVELASIA
+        </div>
         <div class="nav">
-            <a href="{{ url_for('index') }}">Inicio</a>
-            <a href="{{ url_for('destinos') }}">Destinos</a>
-            <a href="{{ url_for('cotizar') }}">Cotizar</a>
+            <a href="{{ url_for('index') }}">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+            <a href="{{ url_for('destinos') }}">
+                <i class="fas fa-map-marked-alt"></i> Destinos
+            </a>
+            <a href="{{ url_for('cotizar') }}">
+                <i class="fas fa-calculator"></i> Cotizar
+            </a>
         </div>
         <div class="user-info">
             {% if session.user_name %}
-                <i class="fas fa-user"></i> {{ session.user_name }}
+                <i class="fas fa-user-circle"></i> 
+                <span>{{ session.user_name }}</span>
             {% else %}
-                <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+                <a href="{{ url_for('login') }}" style="text-decoration: none; color: #3498db;">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </a>
             {% endif %}
         </div>
     </div>
@@ -324,32 +408,36 @@
                 quotationCard.style.transform = 'translateY(0)';
             }, 300);
 
-            // Agregar clase de impresión
-            const style = document.createElement('style');
-            style.textContent = `
-                @media print {
-                    body * {
-                        visibility: hidden;
-                    }
-                    .quotation-card, .quotation-card * {
-                        visibility: visible;
-                    }
-                    .quotation-card {
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        box-shadow: none;
-                    }
-                    .actions, .btn {
-                        display: none !important;
-                    }
+            // Contador de precio animado (opcional)
+            const totalPrice = document.querySelector('.total-price');
+            const originalPrice = parseFloat("{{ precio_final }}");
+            let currentPrice = 0;
+            const duration = 1500; // 1.5 segundos
+            const increment = originalPrice / (duration / 16); // 60fps
+            
+            function animatePrice() {
+                if (currentPrice < originalPrice) {
+                    currentPrice += increment;
+                    if (currentPrice > originalPrice) currentPrice = originalPrice;
+                    totalPrice.textContent = '$' + Math.round(currentPrice) + ' USD';
+                    requestAnimationFrame(animatePrice);
                 }
-            `;
-            document.head.appendChild(style);
+            }
+            
+            // Iniciar animación después de un breve retraso
+            setTimeout(animatePrice, 500);
         });
 
         function imprimirCotizacion() {
-            window.print();
+            // Mostrar mensaje temporal
+            const printBtn = event.target.closest('.btn');
+            const originalHTML = printBtn.innerHTML;
+            printBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
+            
+            setTimeout(() => {
+                window.print();
+                printBtn.innerHTML = originalHTML;
+            }, 500);
         }
 
         function compartirCotizacion() {
@@ -360,20 +448,41 @@
             const personas = data.dataset.personas;
             
             const titulo = "Mi cotización de viaje - TRAVELASIA";
-            const texto = `¡He cotizado ${tourName} para ${personas} personas por $${precio} USD! ✈️`;
+            const texto = `¡He cotizado ${tourName} para ${personas} personas por $${precio} USD! ✈️ Descubre más en: `;
             const url = window.location.href;
             
-            if (navigator.share) {
-                navigator.share({
-                    title: titulo,
-                    text: texto,
-                    url: url
-                });
-            } else {
-                navigator.clipboard.writeText(texto + "\n" + url).then(function() {
-                    alert('✅ Cotización copiada al portapapeles');
-                });
-            }
+            // Cambiar texto del botón temporalmente
+            const shareBtn = event.target.closest('.btn');
+            const originalHTML = shareBtn.innerHTML;
+            shareBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Compartiendo...';
+            
+            setTimeout(() => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: titulo,
+                        text: texto,
+                        url: url
+                    }).then(() => {
+                        shareBtn.innerHTML = '<i class="fas fa-check"></i> ¡Compartido!';
+                        setTimeout(() => {
+                            shareBtn.innerHTML = originalHTML;
+                        }, 2000);
+                    }).catch(() => {
+                        shareBtn.innerHTML = originalHTML;
+                    });
+                } else {
+                    // Fallback para copiar al portapapeles
+                    navigator.clipboard.writeText(texto + url).then(() => {
+                        shareBtn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+                        setTimeout(() => {
+                            shareBtn.innerHTML = originalHTML;
+                        }, 2000);
+                    }).catch(() => {
+                        alert('No se pudo copiar al portapapeles');
+                        shareBtn.innerHTML = originalHTML;
+                    });
+                }
+            }, 500);
         }
     </script>
 </body>

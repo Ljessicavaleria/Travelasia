@@ -3,385 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Itinerario - Travel Asia</title>
-    <!-- Bootstrap CSS -->
+    <title>Editar Itinerario - TravelAsia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding-bottom: 50px;
-        }
-        .navbar-brand {
-            font-weight: 700;
-            color: #2c3e50;
         }
         .header-section {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 30px 0;
-            margin-bottom: 30px;
+            padding: 25px 0;
+            margin-bottom: 20px;
         }
-        .itinerary-card {
+        .country-section {
             background: white;
+            border: 2px solid #e9ecef;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            border-top: 4px solid #2a5298;
         }
-        .day-header {
-            background: #e9f2ff;
-            padding: 15px;
+        .day-section {
+            background: white;
+            border-left: 4px solid #2a5298;
             border-radius: 8px;
+            padding: 20px;
             margin-bottom: 20px;
-        }
-        .day-number {
-            background: #2a5298;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .activity-row {
-            border-bottom: 1px dashed #dee2e6;
-            padding: 15px 0;
-            margin: 0;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
         }
-        .activity-row:last-child {
-            border-bottom: none;
-        }
-        .time-input-group {
-            max-width: 200px;
-        }
-        .btn-travel-primary {
-            background: #2a5298;
+        .btn-save {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
             color: white;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 35px;
             border-radius: 6px;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
-        .btn-travel-primary:hover {
-            background: #1e3c72;
-            color: white;
-        }
-        .btn-travel-success {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-        }
-        .btn-travel-danger {
+        .btn-delete {
             background: #dc3545;
             color: white;
             border: none;
-            padding: 8px 20px;
+            padding: 12px 25px;
             border-radius: 6px;
+            font-weight: 600;
         }
-        .btn-travel-secondary {
-            background: #6c757d;
+        .btn-add {
+            background: #28a745;
             color: white;
             border: none;
-            padding: 8px 20px;
+            padding: 10px 20px;
             border-radius: 6px;
         }
-        .form-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
+        .country-badge {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .price-display {
+            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .section-title {
+            color: #2a5298;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
             margin-bottom: 20px;
+        }
+        .form-control-lg {
+            font-size: 1.1rem;
+            padding: 12px 15px;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-globe-asia me-2 text-primary"></i>Travel Asia
+            <a class="navbar-brand fw-bold text-primary" href="/">
+                <i class="fas fa-globe-asia me-2"></i>TRAVELASIA
             </a>
-            <div class="navbar-nav ms-auto">
-                <span class="nav-link text-dark">
-                    <i class="fas fa-user-circle me-1"></i>Admin
+            <div class="d-flex align-items-center">
+                <span class="me-3">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span id="current-user">{{ usuario_nombre }}</span>
                 </span>
+                <a href="/logout" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>Salir
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
+    <!-- Header con datos dinámicos -->
     <div class="header-section">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 mb-2">
-                        <i class="fas fa-edit me-2"></i>Editar Itinerario
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h3 mb-3">
+                        <i class="fas fa-edit me-2"></i>Editando Itinerario
                     </h1>
-                    <p class="mb-0">
-                        <i class="fas fa-map-marked-alt me-1"></i>
-                        <strong>Japón Cultural:</strong> Tokio, Kioto y Osaka | 7 días
-                    </p>
+                    <div class="d-flex align-items-center flex-wrap">
+                        <!-- Nombre dinámico del itinerario -->
+                        <h4 class="mb-0 me-3" id="itinerario-nombre">{{ nombre_itinerario }}</h4>
+                        
+                        <!-- Estado dinámico -->
+                        <span id="estado-badge" class="status-badge me-2 
+                            {% if estado == 'planificando' %}bg-warning
+                            {% elif estado == 'confirmado' %}bg-success
+                            {% elif estado == 'completado' %}bg-secondary
+                            {% else %}bg-info{% endif %}">
+                            {{ estado|title }}
+                        </span>
+                        
+                        <!-- Países dinámicos -->
+                        <span class="badge bg-info me-2">
+                            <i class="fas fa-flag me-1"></i>
+                            <span id="numero-paises">{{ numero_paises }}</span> países
+                        </span>
+                        
+                        <!-- Días dinámicos -->
+                        <span class="badge bg-success">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            <span id="total-dias">{{ total_dias }}</span> días
+                        </span>
+                    </div>
                 </div>
-                <a href="view.html" class="btn btn-outline-light">
-                    <i class="fas fa-arrow-left me-1"></i>Volver al Tour
-                </a>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <!-- Presupuesto dinámico -->
+                    <div class="price-display" id="presupuesto-total">
+                        ${{ "%.2f"|format(presupuesto_total) }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Formulario Principal -->
     <div class="container">
-        <form action="/guardar_itinerario" method="POST">
-            <!-- Información General -->
-            <div class="form-section">
-                <h5 class="mb-3">
-                    <i class="fas fa-info-circle text-primary me-2"></i>
-                    Información General del Tour
-                </h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Nombre del Tour:</label>
-                        <input type="text" class="form-control" name="tour_name" 
-                               value="Japón Cultural: Tokio, Kioto y Osaka" required>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label fw-bold">Duración:</label>
-                        <input type="number" class="form-control" name="duration" 
-                               value="7" min="1" required>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label fw-bold">Precio Base:</label>
-                        <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" name="price" 
-                                   value="1200" step="0.01" required>
+        <form action="/itinerario/editar/{{ itinerario_id }}" method="POST">
+            <input type="hidden" name="itinerario_id" value="{{ itinerario_id }}">
+            
+            <!-- SECCIÓN 1: INFORMACIÓN GENERAL -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información General</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nombre del Itinerario *</label>
+                            <input type="text" class="form-control form-control-lg" 
+                                   name="nombre" 
+                                   value="{{ nombre_itinerario }}" 
+                                   placeholder="Ej: Aventura por el Sudeste Asiático"
+                                   required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-bold">Duración Total *</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" 
+                                       name="duracion_total" 
+                                       value="{{ total_dias }}"
+                                       min="1" max="60" required>
+                                <span class="input-group-text">días</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-bold">Presupuesto Total *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" 
+                                       name="presupuesto_total" 
+                                       value="{{ "%.2f"|format(presupuesto_total) }}"
+                                       step="0.01" min="100" required>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- DÍA 1 -->
-            <div class="itinerary-card">
-                <div class="day-header">
-                    <div class="d-flex align-items-center">
-                        <span class="day-number">1</span>
-                        <h5 class="mb-0">Día 1: Llegada a Tokio</h5>
-                    </div>
-                </div>
-
-                <!-- Actividad 1 -->
-                <div class="activity-row row align-items-center">
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Hora:</label>
-                        <div class="time-input-group">
-                            <input type="time" class="form-control" name="day1_time1" value="08:00" required>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Inicio *</label>
+                            <input type="date" class="form-control" 
+                                   name="fecha_inicio" 
+                                   value="{{ fecha_inicio }}"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Fin *</label>
+                            <input type="date" class="form-control" 
+                                   name="fecha_fin" 
+                                   value="{{ fecha_fin }}"
+                                   required>
                         </div>
                     </div>
-                    <div class="col-md-8 mb-2">
-                        <label class="form-label small fw-bold">Actividad:</label>
-                        <input type="text" class="form-control" name="day1_activity1" 
-                               value="Llegada al Aeropuerto de Narita" required>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descripción</label>
+                        <textarea class="form-control" name="descripcion" rows="3" 
+                                  placeholder="Describe tu viaje, tus intereses, lo que esperas experimentar...">{{ descripcion }}</textarea>
                     </div>
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Duración:</label>
-                        <select class="form-select" name="day1_duration1">
-                            <option>2 horas</option>
-                            <option>3 horas</option>
-                            <option selected>4 horas</option>
-                            <option>Todo el día</option>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Estado del Itinerario</label>
+                        <select class="form-select" name="estado">
+                            <option value="planificando" {% if estado == 'planificando' %}selected{% endif %}>🟡 Planificando</option>
+                            <option value="confirmado" {% if estado == 'confirmado' %}selected{% endif %}>🟢 Confirmado</option>
+                            <option value="en_progreso" {% if estado == 'en_progreso' %}selected{% endif %}>🔵 En Progreso</option>
+                            <option value="completado" {% if estado == 'completado' %}selected{% endif %}>⚫ Completado</option>
+                            <option value="cancelado" {% if estado == 'cancelado' %}selected{% endif %}>🔴 Cancelado</option>
                         </select>
                     </div>
-                    <div class="col-12 mb-3">
-                        <label class="form-label small fw-bold">Descripción:</label>
-                        <textarea class="form-control" name="day1_desc1" rows="2">Recepción por nuestro guía hispanohablante. Traslado al hotel en Shinjuku. Check-in y tiempo libre.</textarea>
-                    </div>
-                </div>
-
-                <!-- Actividad 2 -->
-                <div class="activity-row row align-items-center">
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Hora:</label>
-                        <div class="time-input-group">
-                            <input type="time" class="form-control" name="day1_time2" value="14:00" required>
-                        </div>
-                    </div>
-                    <div class="col-md-8 mb-2">
-                        <label class="form-label small fw-bold">Actividad:</label>
-                        <input type="text" class="form-control" name="day1_activity2" 
-                               value="Visita al Templo Sensō-ji" required>
-                    </div>
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Duración:</label>
-                        <select class="form-select" name="day1_duration2">
-                            <option>1 hora</option>
-                            <option>2 horas</option>
-                            <option selected>3 horas</option>
-                            <option>4 horas</option>
-                        </select>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label class="form-label small fw-bold">Descripción:</label>
-                        <textarea class="form-control" name="day1_desc2" rows="2">Templo budista más antiguo de Tokio. Paseo por el mercado Nakamise para souvenirs tradicionales.</textarea>
-                    </div>
-                </div>
-
-                <div class="text-end">
-                    <button type="button" class="btn btn-travel-secondary">
-                        <i class="fas fa-plus me-1"></i>Agregar Actividad al Día 1
-                    </button>
                 </div>
             </div>
 
-            <!-- DÍA 2 -->
-            <div class="itinerary-card">
-                <div class="day-header">
-                    <div class="d-flex align-items-center">
-                        <span class="day-number">2</span>
-                        <h5 class="mb-0">Día 2: Monte Fuji y Hakone</h5>
-                    </div>
+            <!-- SECCIÓN 2: PAÍSES (Dinámico) -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Países del Itinerario</h5>
+                    <a href="/itinerario/{{ itinerario_id }}/agregar-pais" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i>Agregar País
+                    </a>
                 </div>
-
-                <!-- Actividad 1 Día 2 -->
-                <div class="activity-row row align-items-center">
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Hora:</label>
-                        <div class="time-input-group">
-                            <input type="time" class="form-control" name="day2_time1" value="07:00" required>
+                <div class="card-body">
+                    
+                    <!-- Loop dinámico para países -->
+                    {% for pais in paises %}
+                    <div class="country-section">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center">
+                                <!-- Banderas dinámicas -->
+                                <span class="country-badge">
+                                    {% if pais.nombre == 'Japón' %}🇯🇵
+                                    {% elif pais.nombre == 'Corea del Sur' %}🇰🇷
+                                    {% elif pais.nombre == 'Tailandia' %}🇹🇭
+                                    {% elif pais.nombre == 'Vietnam' %}🇻🇳
+                                    {% elif pais.nombre == 'China' %}🇨🇳
+                                    {% elif pais.nombre == 'Indonesia' %}🇮🇩
+                                    {% elif pais.nombre == 'Malasia' %}🇲🇾
+                                    {% elif pais.nombre == 'Singapur' %}🇸🇬
+                                    {% elif pais.nombre == 'India' %}🇮🇳
+                                    {% elif pais.nombre == 'Filipinas' %}🇵🇭
+                                    {% elif pais.nombre == 'Camboya' %}🇰🇭
+                                    {% elif pais.nombre == 'Laos' %}🇱🇦
+                                    {% else %}🇺🇳{% endif %}
+                                </span>
+                                <h5 class="mb-0">{{ pais.nombre }}</h5>
+                            </div>
+                            <a href="/itinerario/{{ itinerario_id }}/eliminar-pais/{{ pais.id }}" 
+                               class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('¿Eliminar {{ pais.nombre }} del itinerario?')">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Días en {{ pais.nombre }}</label>
+                                <input type="number" class="form-control" 
+                                       name="dias_{{ pais.id }}" 
+                                       value="{{ pais.dias }}"
+                                       min="1" max="30">
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Presupuesto para {{ pais.nombre }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" 
+                                           name="presupuesto_{{ pais.id }}" 
+                                           value="{{ "%.2f"|format(pais.presupuesto) }}"
+                                           step="0.01">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Orden de Visita</label>
+                                <input type="number" class="form-control" 
+                                       name="orden_{{ pais.id }}" 
+                                       value="{{ pais.orden }}"
+                                       min="1" max="10">
+                            </div>
+                        </div>
+                        
+                        <!-- Ciudades específicas de este país -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ciudades en {{ pais.nombre }}</label>
+                            <textarea class="form-control" name="ciudades_{{ pais.id }}" rows="2"
+                                      placeholder="Ej: Tokio, Kioto, Osaka (separadas por comas)">{{ pais.ciudades|join(', ') }}</textarea>
+                        </div>
+                        
+                        <!-- Notas específicas del país -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Notas para {{ pais.nombre }}</label>
+                            <textarea class="form-control" name="notas_{{ pais.id }}" rows="2"
+                                      placeholder="Actividades específicas, lugares que visitar...">{{ pais.notas }}</textarea>
                         </div>
                     </div>
-                    <div class="col-md-8 mb-2">
-                        <label class="form-label small fw-bold">Actividad:</label>
-                        <input type="text" class="form-control" name="day2_activity1" 
-                               value="Excursión al Monte Fuji" required>
+                    {% else %}
+                    <!-- Mensaje si no hay países -->
+                    <div class="text-center py-4">
+                        <i class="fas fa-flag fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay países agregados a este itinerario</p>
+                        <a href="/itinerario/{{ itinerario_id }}/agregar-pais" class="btn btn-add">
+                            <i class="fas fa-plus me-1"></i>Agregar Primer País
+                        </a>
                     </div>
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Duración:</label>
-                        <select class="form-select" name="day2_duration1">
-                            <option selected>5 horas</option>
-                            <option>6 horas</option>
-                            <option>Todo el día</option>
-                        </select>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label class="form-label small fw-bold">Descripción:</label>
-                        <textarea class="form-control" name="day2_desc1" rows="2">Viaje a la estación 5 del Monte Fuji. Vistas panorámicas (según clima). Almuerzo incluido.</textarea>
-                    </div>
+                    {% endfor %}
+                    
                 </div>
+            </div>
 
-                <!-- Actividad 2 Día 2 -->
-                <div class="activity-row row align-items-center">
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Hora:</label>
-                        <div class="time-input-group">
-                            <input type="time" class="form-control" name="day2_time2" value="13:30" required>
+            <!-- SECCIÓN 3: ITINERARIO POR DÍAS (Dinámico) -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Itinerario Diario</h5>
+                    <a href="/itinerario/{{ itinerario_id }}/agregar-dia" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i>Agregar Día
+                    </a>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Loop dinámico para días -->
+                    {% for dia in dias %}
+                    <div class="day-section">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-day me-2"></i>
+                                Día {{ dia.numero }}: {{ dia.titulo }}
+                            </h5>
+                            <a href="/itinerario/{{ itinerario_id }}/eliminar-dia/{{ dia.numero }}" 
+                               class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('¿Eliminar Día {{ dia.numero }}?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">País del Día</label>
+                                <select class="form-select" name="dia{{ dia.numero }}_pais">
+                                    <option value="">Seleccionar país...</option>
+                                    {% for pais in paises %}
+                                    <option value="{{ pais.id }}" {% if dia.pais_id == pais.id %}selected{% endif %}>
+                                        {{ pais.nombre }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Ciudad Principal</label>
+                                <input type="text" class="form-control" 
+                                       name="dia{{ dia.numero }}_ciudad" 
+                                       value="{{ dia.ciudad }}"
+                                       placeholder="Ej: Tokio, Seúl, Bangkok...">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Hotel/Alojamiento</label>
+                                <input type="text" class="form-control" 
+                                       name="dia{{ dia.numero }}_hotel" 
+                                       value="{{ dia.hotel }}"
+                                       placeholder="Nombre del hotel...">
+                            </div>
+                        </div>
+                        
+                        <!-- Actividades de este día -->
+                        <h6 class="section-title">Actividades del Día {{ dia.numero }}</h6>
+                        
+                        {% for actividad in dia.actividades %}
+                        <div class="activity-row">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 mb-2">
+                                    <label class="form-label small fw-bold">Hora</label>
+                                    <input type="time" class="form-control" 
+                                           name="dia{{ dia.numero }}_act{{ loop.index }}_hora"
+                                           value="{{ actividad.hora }}">
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <label class="form-label small fw-bold">Actividad</label>
+                                    <input type="text" class="form-control" 
+                                           name="dia{{ dia.numero }}_act{{ loop.index }}_nombre"
+                                           value="{{ actividad.nombre }}"
+                                           placeholder="Nombre de la actividad">
+                                </div>
+                                <div class="col-md-2 mb-2 text-end">
+                                    <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/eliminar-actividad/{{ loop.index }}" 
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('¿Eliminar esta actividad?')">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">Descripción</label>
+                                    <textarea class="form-control" 
+                                              name="dia{{ dia.numero }}_act{{ loop.index }}_descripcion"
+                                              rows="2"
+                                              placeholder="Detalles de la actividad...">{{ actividad.descripcion }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <!-- Agregar actividad a este día -->
+                        <div class="text-center mt-3">
+                            <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/agregar-actividad" 
+                               class="btn btn-sm btn-add">
+                                <i class="fas fa-plus me-1"></i>Agregar Actividad al Día {{ dia.numero }}
+                            </a>
+                        </div>
+                        
+                        <!-- Notas del día -->
+                        <div class="mt-4">
+                            <label class="form-label fw-bold">Notas del Día {{ dia.numero }}</label>
+                            <textarea class="form-control" 
+                                      name="dia{{ dia.numero }}_notas"
+                                      rows="2"
+                                      placeholder="Notas importantes para este día...">{{ dia.notas }}</textarea>
                         </div>
                     </div>
-                    <div class="col-md-8 mb-2">
-                        <label class="form-label small fw-bold">Actividad:</label>
-                        <input type="text" class="form-control" name="day2_activity2" 
-                               value="Crucero por el Lago Ashi" required>
+                    {% else %}
+                    <!-- Mensaje si no hay días -->
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay días planificados en este itinerario</p>
+                        <a href="/itinerario/{{ itinerario_id }}/agregar-dia" class="btn btn-add">
+                            <i class="fas fa-plus me-1"></i>Agregar Primer Día
+                        </a>
                     </div>
-                    <div class="col-md-2 mb-2">
-                        <label class="form-label small fw-bold">Duración:</label>
-                        <select class="form-select" name="day2_duration2">
-                            <option>1 hora</option>
-                            <option selected>2 horas</option>
-                            <option>3 horas</option>
-                        </select>
+                    {% endfor %}
+                    
+                </div>
+            </div>
+
+            <!-- SECCIÓN 4: PREFERENCIAS (Genérica) -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-heart me-2"></i>Preferencias del Viajero</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Tipo de Viaje Preferido</label>
+                            <select class="form-select" name="tipo_viaje">
+                                <option value="cultural" {% if tipo_viaje == 'cultural' %}selected{% endif %}>🏛️ Cultural e Histórico</option>
+                                <option value="aventura" {% if tipo_viaje == 'aventura' %}selected{% endif %}>⛰️ Aventura y Naturaleza</option>
+                                <option value="relax" {% if tipo_viaje == 'relax' %}selected{% endif %}>🏖️ Relax y Playas</option>
+                                <option value="gastronomia" {% if tipo_viaje == 'gastronomia' %}selected{% endif %}>🍜 Gastronómico</option>
+                                <option value="shopping" {% if tipo_viaje == 'shopping' %}selected{% endif %}>🛍️ Shopping y Ciudades</option>
+                                <option value="mixto" {% if tipo_viaje == 'mixto' %}selected{% endif %}>🌟 Mixto (un poco de todo)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nivel de Actividad</label>
+                            <select class="form-select" name="nivel_actividad">
+                                <option value="tranquilo" {% if nivel_actividad == 'tranquilo' %}selected{% endif %}>😌 Tranquilo (mucho descanso)</option>
+                                <option value="moderado" {% if nivel_actividad == 'moderado' %}selected{% endif %}>🚶 Moderado (equilibrado)</option>
+                                <option value="activo" {% if nivel_actividad == 'activo' %}selected{% endif %}>🏃 Activo (siempre en movimiento)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-12">
-                        <label class="form-label small fw-bold">Descripción:</label>
-                        <textarea class="form-control" name="day2_desc2" rows="2">Paseo en barco pirata con vistas al Monte Fuji. Tiempo libre en Hakone.</textarea>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Alojamiento Preferido</label>
+                            <select class="form-select" name="tipo_alojamiento">
+                                <option value="hotel" {% if tipo_alojamiento == 'hotel' %}selected{% endif %}>🏨 Hotel</option>
+                                <option value="hostal" {% if tipo_alojamiento == 'hostal' %}selected{% endif %}>🛏️ Hostal</option>
+                                <option value="airbnb" {% if tipo_alojamiento == 'airbnb' %}selected{% endif %}>🏠 Airbnb/Apartamento</option>
+                                <option value="resort" {% if tipo_alojamiento == 'resort' %}selected{% endif %}>🏝️ Resort</option>
+                                <option value="mixto" {% if tipo_alojamiento == 'mixto' %}selected{% endif %}>🔀 Mixto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Compañía de Viaje</label>
+                            <select class="form-select" name="compania_viaje">
+                                <option value="solo" {% if compania_viaje == 'solo' %}selected{% endif %}>👤 Solo</option>
+                                <option value="pareja" {% if compania_viaje == 'pareja' %}selected{% endif %}>👫 Pareja</option>
+                                <option value="familia" {% if compania_viaje == 'familia' %}selected{% endif %}>👨‍👩‍👧‍👦 Familia</option>
+                                <option value="amigos" {% if compania_viaje == 'amigos' %}selected{% endif %}>👥 Grupo de Amigos</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Restricciones/Alergias Alimenticias</label>
+                        <textarea class="form-control" name="restricciones_alimenticias" rows="2"
+                                  placeholder="Ej: Vegetariano, alergia a mariscos, sin gluten...">{{ restricciones_alimenticias }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Notas Especiales</label>
+                        <textarea class="form-control" name="notas_especiales" rows="3"
+                                  placeholder="Cualquier otra información importante para tu viaje...">{{ notas_especiales }}</textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- Agregar Nuevo Día -->
-            <div class="itinerary-card text-center">
-                <h6 class="mb-3">¿Necesitas agregar más días?</h6>
-                <button type="button" class="btn btn-travel-success">
-                    <i class="fas fa-calendar-plus me-1"></i>Agregar Nuevo Día al Itinerario
-                </button>
-            </div>
-
-            <!-- Servicios Incluidos -->
-            <div class="form-section">
-                <h5 class="mb-3">
-                    <i class="fas fa-check-circle text-success me-2"></i>
-                    Servicios Incluidos
-                </h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="includes_hotel" id="includes_hotel" checked>
-                            <label class="form-check-label" for="includes_hotel">
-                                <i class="fas fa-hotel me-1"></i>Hotel 4 estrellas
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="includes_transport" id="includes_transport" checked>
-                            <label class="form-check-label" for="includes_transport">
-                                <i class="fas fa-bus me-1"></i>Transporte privado
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="includes_guide" id="includes_guide" checked>
-                            <label class="form-check-label" for="includes_guide">
-                                <i class="fas fa-user-tie me-1"></i>Guía en español
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="includes_meals" id="includes_meals" checked>
-                            <label class="form-check-label" for="includes_meals">
-                                <i class="fas fa-utensils me-1"></i>Desayuno diario
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="includes_tickets" id="includes_tickets">
-                            <label class="form-check-label" for="includes_tickets">
-                                <i class="fas fa-ticket-alt me-1"></i>Entradas a atracciones
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="includes_insurance" id="includes_insurance">
-                            <label class="form-check-label" for="includes_insurance">
-                                <i class="fas fa-shield-alt me-1"></i>Seguro de viaje
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notas Adicionales -->
-            <div class="form-section">
-                <h5 class="mb-3">
-                    <i class="fas fa-sticky-note text-warning me-2"></i>
-                    Notas Adicionales
-                </h5>
-                <textarea class="form-control" name="additional_notes" rows="4" 
-                          placeholder="Escribe aquí notas importantes para los guías o clientes...">Verificar restricciones dietarias del grupo. Incluir tiempo libre para compras los días 3 y 5.</textarea>
-            </div>
-
-            <!-- Botones de Acción -->
-            <div class="d-flex justify-content-between mt-4">
-                <a href="view.html" class="btn btn-travel-danger">
-                    <i class="fas fa-times me-1"></i>Cancelar Cambios
-                </a>
+            <!-- BOTONES FINALES -->
+            <div class="d-flex justify-content-between mb-5">
                 <div>
-                    <button type="reset" class="btn btn-outline-secondary me-2">
-                        <i class="fas fa-undo me-1"></i>Restablecer
-                    </button>
-                    <button type="submit" class="btn btn-travel-primary">
-                        <i class="fas fa-save me-1"></i>Guardar Itinerario
+                    <a href="/" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+                <div>
+                    <a href="/itinerario/eliminar/{{ itinerario_id }}" 
+                       class="btn btn-delete btn-lg me-3"
+                       onclick="return confirm('¿Estás SEGURO de eliminar este itinerario? Esta acción no se puede deshacer.')">
+                        <i class="fas fa-trash-alt me-2"></i>Eliminar Itinerario
+                    </a>
+                    <button type="submit" class="btn btn-save btn-lg">
+                        <i class="fas fa-save me-2"></i>Guardar Todos los Cambios
                     </button>
                 </div>
             </div>
@@ -389,15 +539,17 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white mt-5 py-3">
-        <div class="container text-center">
-            <p class="mb-0 small">
-                <i class="fas fa-globe-asia me-1"></i>Travel Asia System © 2024
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <p class="mb-0">
+                <i class="fas fa-globe-asia me-1"></i>TravelAsia - 
+                Itinerario ID: {{ itinerario_id }} | 
+                Última modificación: {{ fecha_modificacion }}
             </p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS (solo para componentes que lo requieran) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

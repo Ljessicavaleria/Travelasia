@@ -3,161 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Itinerario - TravelAsia</title>
+    <title>Editar Itinerario - TRAVELASIA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-color: #1a56db;
+            --secondary-color: #7e3af2;
+            --accent-color: #0694a2;
+            --light-bg: #f8fafc;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-radius: 12px;
         }
-        .header-section {
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        /* HEADER STYLE */
+        .travelasia-header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 25px 0;
-            margin-bottom: 20px;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
-        .country-section {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
+
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
-        .day-section {
-            background: white;
-            border-left: 4px solid #2a5298;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .activity-row {
-            padding: 15px;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            background: #f8f9fa;
-        }
-        .btn-save {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-            color: white;
-            border: none;
-            padding: 12px 35px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 6px;
-            font-weight: 600;
-        }
-        .btn-add {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-        }
-        .country-badge {
-            font-size: 1.5rem;
+
+        .brand-logo i {
             margin-right: 10px;
         }
-        .price-display {
-            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+
+        /* CARD STYLES */
+        .travelasia-card {
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            border: none;
+            overflow: hidden;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .travelasia-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: 700;
+            padding: 20px;
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .card-header-modern i {
+            margin-right: 10px;
             font-size: 1.2rem;
         }
-        .status-badge {
-            padding: 8px 20px;
+
+        /* FORM CONTROLS */
+        .form-label-modern {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .form-control-modern {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: white;
+        }
+
+        .form-control-modern:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+            outline: none;
+        }
+
+        .form-control-modern-lg {
+            padding: 16px 20px;
+            font-size: 1.1rem;
+        }
+
+        /* BUTTONS */
+        .btn-travelasia {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-travelasia:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(26, 86, 219, 0.2);
+            color: white;
+        }
+
+        .btn-travelasia-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-travelasia-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-travelasia-danger {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+        }
+
+        .btn-travelasia-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.2);
+            color: white;
+        }
+
+        /* COUNTRY BADGES */
+        .country-badge-modern {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
             border-radius: 20px;
             font-weight: 500;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #bae6fd;
         }
-        .section-title {
-            color: #2a5298;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+
+        .country-flag-large {
+            font-size: 1.5rem;
+            margin-right: 8px;
         }
-        .form-control-lg {
-            font-size: 1.1rem;
-            padding: 12px 15px;
+
+        /* PRICE DISPLAY */
+        .price-display-modern {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
-        .is-invalid {
-            border-color: #dc3545;
-            background-color: #f8d7da;
+
+        /* STATUS BADGES */
+        .status-badge-modern {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
         }
-        .error-message {
-            color: #dc3545;
-            font-size: 0.875em;
-            margin-top: 0.25rem;
+
+        .status-planning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .status-confirmed { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .status-in-progress { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+        .status-completed { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+
+        /* DAY SECTION */
+        .day-section-modern {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-left: 5px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .day-number {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ACTIVITY ROW */
+        .activity-row-modern {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* PROGRESS BARS */
+        .progress-modern {
+            height: 10px;
+            border-radius: 10px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .progress-bar-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+        }
+
+        /* FOOTER */
+        .travelasia-footer {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            color: #9ca3af;
+            padding: 25px 0;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .travelasia-header {
+                padding: 20px 0;
+            }
+            
+            .brand-logo {
+                font-size: 1.5rem;
+            }
+            
+            .day-section-modern {
+                padding: 20px 15px;
+            }
+            
+            .price-display-modern {
+                font-size: 1.1rem;
+                padding: 12px 20px;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="/">
-                <i class="fas fa-globe-asia me-2"></i>TRAVELASIA
-            </a>
-            <div class="d-flex align-items-center">
-                <span class="me-3">
-                    <i class="fas fa-user-circle me-1"></i>
-                    <span id="current-user">{{ usuario_nombre }}</span>
-                </span>
-                <a href="/logout" class="btn btn-outline-danger btn-sm">
-                    <i class="fas fa-sign-out-alt me-1"></i>Salir
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Header con datos dinámicos -->
-    <div class="header-section">
+    <!-- HEADER -->
+    <div class="travelasia-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="h3 mb-3">
-                        <i class="fas fa-edit me-2"></i>Editando Itinerario
+                    <div class="brand-logo">
+                        <i class="fas fa-globe-asia"></i>TRAVELASIA
+                    </div>
+                    <h1 class="h3 mt-3 mb-2">
+                        <i class="fas fa-edit me-2"></i>Editar Itinerario
                     </h1>
-                    <div class="d-flex align-items-center flex-wrap">
-                        <!-- Nombre dinámico del itinerario -->
+                    <div class="d-flex align-items-center flex-wrap mt-3">
                         <h4 class="mb-0 me-3" id="itinerario-nombre">{{ nombre_itinerario }}</h4>
                         
-                        <!-- Estado dinámico -->
-                        <span id="estado-badge" class="status-badge me-2 
-                            {% if estado == 'planificando' %}bg-warning
-                            {% elif estado == 'confirmado' %}bg-success
-                            {% elif estado == 'completado' %}bg-secondary
-                            {% elif estado == 'en_progreso' %}bg-info
-                            {% else %}bg-info{% endif %}">
+                        <span id="estado-badge" class="status-badge-modern me-3 
+                            {% if estado == 'planificando' %}status-planning
+                            {% elif estado == 'confirmado' %}status-confirmed
+                            {% elif estado == 'en_progreso' %}status-in-progress
+                            {% elif estado == 'completado' %}status-completed
+                            {% else %}status-planning{% endif %}">
                             {% if estado %}{{ estado|title }}{% else %}Planificando{% endif %}
                         </span>
                         
-                        <!-- Países dinámicos -->
-                        <span class="badge bg-info me-2">
+                        <span class="country-badge-modern me-3">
                             <i class="fas fa-flag me-1"></i>
                             <span id="numero-paises">{{ numero_paises }}</span> países
                         </span>
                         
-                        <!-- Días dinámicos -->
-                        <span class="badge bg-success">
+                        <span class="country-badge-modern">
                             <i class="fas fa-calendar-alt me-1"></i>
                             <span id="total-dias">{{ total_dias }}</span> días
                         </span>
                     </div>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <!-- Presupuesto dinámico -->
-                    <div class="price-display" id="presupuesto-total">
+                    <div class="price-display-modern" id="presupuesto-total">
                         ${{ "%.2f"|format(presupuesto_total) if presupuesto_total is defined else "0.00" }}
                     </div>
                 </div>
@@ -165,103 +318,101 @@
         </div>
     </div>
 
-    <!-- Formulario Principal -->
-    <div class="container">
+    <!-- FORMULARIO PRINCIPAL -->
+    <div class="container animate-fade-in">
         <form action="/itinerario/editar/{{ itinerario_id }}" method="POST" id="form-editar-itinerario">
             <input type="hidden" name="itinerario_id" value="{{ itinerario_id }}">
             
             <!-- SECCIÓN 1: INFORMACIÓN GENERAL -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Información General</h5>
+            <div class="travelasia-card">
+                <div class="card-header-modern">
+                    <i class="fas fa-info-circle"></i>Información General
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Nombre del Itinerario *</label>
-                            <input type="text" class="form-control form-control-lg" 
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern">Nombre del Itinerario *</label>
+                            <input type="text" class="form-control-modern form-control-modern-lg" 
                                    name="nombre" 
                                    value="{{ nombre_itinerario }}" 
                                    placeholder="Ej: Aventura por el Sudeste Asiático"
                                    required>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-bold">Duración Total *</label>
+                        <div class="col-md-3 mb-4">
+                            <label class="form-label-modern">Duración Total *</label>
                             <div class="input-group">
-                                <input type="number" class="form-control" 
+                                <input type="number" class="form-control-modern" 
                                        name="duracion_total" 
                                        value="{{ total_dias }}"
                                        min="1" max="60" required>
-                                <span class="input-group-text">días</span>
+                                <span class="input-group-text" style="background: #f8fafc; border: 2px solid #e5e7eb; border-left: none;">días</span>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-bold">Presupuesto Total *</label>
+                        <div class="col-md-3 mb-4">
+                            <label class="form-label-modern">Presupuesto Total *</label>
                             <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="presupuesto-total-input"
+                                <span class="input-group-text" style="background: #f8fafc; border: 2px solid #e5e7eb; border-right: none;">$</span>
+                                <input type="number" class="form-control-modern" id="presupuesto-total-input"
                                        name="presupuesto_total" 
                                        value="{{ "%.2f"|format(presupuesto_total) if presupuesto_total is defined else '1000.00' }}"
                                        step="0.01" min="100" required>
                             </div>
-                            <div class="error-message" id="error-presupuesto"></div>
+                            <small class="text-muted mt-1 d-block">Mínimo: $100.00</small>
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
+                    <div class="row mb-4">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Fecha de Inicio *</label>
-                            <input type="date" class="form-control" 
+                            <label class="form-label-modern">Fecha de Inicio *</label>
+                            <input type="date" class="form-control-modern" 
                                    name="fecha_inicio" 
                                    value="{{ fecha_inicio }}"
                                    required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Fecha de Fin *</label>
-                            <input type="date" class="form-control" 
+                            <label class="form-label-modern">Fecha de Fin *</label>
+                            <input type="date" class="form-control-modern" 
                                    name="fecha_fin" 
                                    value="{{ fecha_fin }}"
                                    required>
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Descripción</label>
-                        <textarea class="form-control" name="descripcion" rows="3" 
+                    <div class="mb-4">
+                        <label class="form-label-modern">Descripción</label>
+                        <textarea class="form-control-modern" name="descripcion" rows="3" 
                                   placeholder="Describe tu viaje, tus intereses, lo que esperas experimentar...">{{ descripcion }}</textarea>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Estado del Itinerario</label>
-                        <select class="form-select" name="estado">
+                        <label class="form-label-modern">Estado del Itinerario</label>
+                        <select class="form-control-modern" name="estado">
                             <option value="planificando" {% if estado == 'planificando' %}selected{% endif %}>🟡 Planificando</option>
                             <option value="confirmado" {% if estado == 'confirmado' %}selected{% endif %}>🟢 Confirmado</option>
                             <option value="en_progreso" {% if estado == 'en_progreso' %}selected{% endif %}>🔵 En Progreso</option>
                             <option value="completado" {% if estado == 'completado' %}selected{% endif %}>⚫ Completado</option>
-                            <option value="cancelado" {% if estado == 'cancelado' %}selected{% endif %}>🔴 Cancelado</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- SECCIÓN 2: PAÍSES (Dinámico) -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Países del Itinerario</h5>
-                    <a href="/itinerario/{{ itinerario_id }}/agregar-pais" class="btn btn-light btn-sm">
+            <!-- SECCIÓN 2: PAÍSES -->
+            <div class="travelasia-card">
+                <div class="card-header-modern d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-flag"></i>Países del Itinerario
+                    </div>
+                    <a href="/itinerario/{{ itinerario_id }}/agregar-pais" class="btn btn-travelasia btn-sm">
                         <i class="fas fa-plus me-1"></i>Agregar País
                     </a>
                 </div>
-                <div class="card-body">
-                    
-                    <!-- Loop dinámico para países -->
+                <div class="card-body p-4">
                     {% if paises %}
                         {% for pais in paises %}
-                        <div class="country-section">
+                        <div class="mb-4 p-4" style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div class="d-flex align-items-center">
-                                    <!-- Banderas dinámicas -->
-                                    <span class="country-badge">
+                                    <span class="country-flag-large me-3">
                                         {% if pais.nombre == 'Japón' %}🇯🇵
                                         {% elif pais.nombre == 'Corea del Sur' %}🇰🇷
                                         {% elif pais.nombre == 'Tailandia' %}🇹🇭
@@ -276,10 +427,10 @@
                                         {% elif pais.nombre == 'Laos' %}🇱🇦
                                         {% else %}🇺🇳{% endif %}
                                     </span>
-                                    <h5 class="mb-0">{{ pais.nombre }}</h5>
+                                    <h5 class="mb-0 fw-bold">{{ pais.nombre }}</h5>
                                 </div>
                                 <a href="/itinerario/{{ itinerario_id }}/eliminar-pais/{{ pais.id }}" 
-                                   class="btn btn-outline-danger btn-sm"
+                                   class="btn btn-sm btn-travelasia-danger"
                                    onclick="return confirm('¿Eliminar {{ pais.nombre }} del itinerario?')">
                                     <i class="fas fa-times"></i>
                                 </a>
@@ -287,18 +438,18 @@
                             
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Días en {{ pais.nombre }}</label>
-                                    <input type="number" class="form-control" 
+                                    <label class="form-label-modern">Días en {{ pais.nombre }}</label>
+                                    <input type="number" class="form-control-modern" 
                                            name="dias_{{ pais.id }}" 
                                            value="{{ pais.dias }}"
                                            min="1" max="30">
                                 </div>
                                 
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Presupuesto para {{ pais.nombre }}</label>
+                                    <label class="form-label-modern">Presupuesto para {{ pais.nombre }}</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <input type="number" class="form-control" 
+                                        <span class="input-group-text" style="background: #f8fafc; border: 2px solid #e5e7eb; border-right: none;">$</span>
+                                        <input type="number" class="form-control-modern" 
                                                name="presupuesto_{{ pais.id }}" 
                                                value="{{ "%.2f"|format(pais.presupuesto) if pais.presupuesto else '0.00' }}"
                                                step="0.01">
@@ -306,73 +457,71 @@
                                 </div>
                                 
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Orden de Visita</label>
-                                    <input type="number" class="form-control" 
+                                    <label class="form-label-modern">Orden de Visita</label>
+                                    <input type="number" class="form-control-modern" 
                                            name="orden_{{ pais.id }}" 
                                            value="{{ pais.orden }}"
                                            min="1" max="10">
                                 </div>
                             </div>
                             
-                            <!-- Ciudades específicas de este país -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Ciudades en {{ pais.nombre }}</label>
-                                <textarea class="form-control" name="ciudades_{{ pais.id }}" rows="2"
+                                <label class="form-label-modern">Ciudades en {{ pais.nombre }}</label>
+                                <textarea class="form-control-modern" name="ciudades_{{ pais.id }}" rows="2"
                                           placeholder="Ej: Tokio, Kioto, Osaka (separadas por comas)">{{ pais.ciudades|join(', ') if pais.ciudades else '' }}</textarea>
                             </div>
                             
-                            <!-- Notas específicas del país -->
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Notas para {{ pais.nombre }}</label>
-                                <textarea class="form-control" name="notas_{{ pais.id }}" rows="2"
+                                <label class="form-label-modern">Notas para {{ pais.nombre }}</label>
+                                <textarea class="form-control-modern" name="notas_{{ pais.id }}" rows="2"
                                           placeholder="Actividades específicas, lugares que visitar...">{{ pais.notas if pais.notas else '' }}</textarea>
                             </div>
                         </div>
                         {% endfor %}
                     {% else %}
-                    <!-- Mensaje si no hay países -->
-                    <div class="text-center py-4">
-                        <i class="fas fa-flag fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">No hay países agregados a este itinerario</p>
-                        <a href="/itinerario/{{ itinerario_id }}/agregar-pais" class="btn btn-add">
-                            <i class="fas fa-plus me-1"></i>Agregar Primer País
+                    <div class="text-center py-5">
+                        <i class="fas fa-flag fa-4x text-muted mb-4"></i>
+                        <p class="text-muted mb-4">No hay países agregados a este itinerario</p>
+                        <a href="/itinerario/{{ itinerario_id }}/agregar-pais" class="btn btn-travelasia">
+                            <i class="fas fa-plus me-2"></i>Agregar Primer País
                         </a>
                     </div>
                     {% endif %}
-                    
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: ITINERARIO POR DÍAS (Dinámico) -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Itinerario Diario</h5>
-                    <a href="/itinerario/{{ itinerario_id }}/agregar-dia" class="btn btn-light btn-sm">
+            <!-- SECCIÓN 3: DÍAS -->
+            <div class="travelasia-card">
+                <div class="card-header-modern d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-calendar-alt"></i>Itinerario Diario
+                    </div>
+                    <a href="/itinerario/{{ itinerario_id }}/agregar-dia" class="btn btn-travelasia btn-sm">
                         <i class="fas fa-plus me-1"></i>Agregar Día
                     </a>
                 </div>
-                <div class="card-body">
-                    
-                    <!-- Loop dinámico para días -->
+                <div class="card-body p-4">
                     {% if dias %}
                         {% for dia in dias %}
-                        <div class="day-section">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0">
+                        <div class="day-section-modern">
+                            <div class="day-number">{{ dia.numero }}</div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 fw-bold">
                                     <i class="fas fa-calendar-day me-2"></i>
                                     Día {{ dia.numero }}: {{ dia.titulo }}
                                 </h5>
                                 <a href="/itinerario/{{ itinerario_id }}/eliminar-dia/{{ dia.numero }}" 
-                                   class="btn btn-outline-danger btn-sm"
+                                   class="btn btn-sm btn-travelasia-danger"
                                    onclick="return confirm('¿Eliminar Día {{ dia.numero }}?')">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
                             
-                            <div class="row mb-3">
+                            <div class="row mb-4">
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold">País del Día</label>
-                                    <select class="form-select" name="dia{{ dia.numero }}_pais">
+                                    <label class="form-label-modern">País del Día</label>
+                                    <select class="form-control-modern" name="dia{{ dia.numero }}_pais">
                                         <option value="">Seleccionar país...</option>
                                         {% for pais in paises %}
                                         <option value="{{ pais.id }}" {% if dia.pais_id == pais.id %}selected{% endif %}>
@@ -382,51 +531,50 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold">Ciudad Principal</label>
-                                    <input type="text" class="form-control" 
+                                    <label class="form-label-modern">Ciudad Principal</label>
+                                    <input type="text" class="form-control-modern" 
                                            name="dia{{ dia.numero }}_ciudad" 
                                            value="{{ dia.ciudad }}"
                                            placeholder="Ej: Tokio, Seúl, Bangkok...">
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold">Hotel/Alojamiento</label>
-                                    <input type="text" class="form-control" 
+                                    <label class="form-label-modern">Hotel/Alojamiento</label>
+                                    <input type="text" class="form-control-modern" 
                                            name="dia{{ dia.numero }}_hotel" 
                                            value="{{ dia.hotel }}"
                                            placeholder="Nombre del hotel...">
                                 </div>
                             </div>
                             
-                            <!-- Actividades de este día -->
-                            <h6 class="section-title">Actividades del Día {{ dia.numero }}</h6>
+                            <h6 class="form-label-modern mb-3">Actividades del Día {{ dia.numero }}</h6>
                             
                             {% if dia.actividades %}
                                 {% for actividad in dia.actividades %}
-                                <div class="activity-row">
+                                <div class="activity-row-modern mb-3">
                                     <div class="row align-items-center">
-                                        <div class="col-md-2 mb-2">
-                                            <label class="form-label small fw-bold">Hora</label>
-                                            <input type="time" class="form-control" 
+                                        <div class="col-md-2 mb-3">
+                                            <label class="form-label-modern small">Hora</label>
+                                            <input type="time" class="form-control-modern" 
                                                    name="dia{{ dia.numero }}_act{{ loop.index }}_hora"
                                                    value="{{ actividad.hora }}">
                                         </div>
-                                        <div class="col-md-8 mb-2">
-                                            <label class="form-label small fw-bold">Actividad</label>
-                                            <input type="text" class="form-control" 
+                                        <div class="col-md-8 mb-3">
+                                            <label class="form-label-modern small">Actividad</label>
+                                            <input type="text" class="form-control-modern" 
                                                    name="dia{{ dia.numero }}_act{{ loop.index }}_nombre"
                                                    value="{{ actividad.nombre }}"
                                                    placeholder="Nombre de la actividad">
                                         </div>
-                                        <div class="col-md-2 mb-2 text-end">
+                                        <div class="col-md-2 mb-3 text-end">
                                             <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/eliminar-actividad/{{ loop.index }}" 
-                                               class="btn btn-sm btn-outline-danger"
+                                               class="btn btn-sm btn-travelasia-danger"
                                                onclick="return confirm('¿Eliminar esta actividad?')">
                                                 <i class="fas fa-times"></i>
                                             </a>
                                         </div>
                                         <div class="col-12">
-                                            <label class="form-label small fw-bold">Descripción</label>
-                                            <textarea class="form-control" 
+                                            <label class="form-label-modern small">Descripción</label>
+                                            <textarea class="form-control-modern" 
                                                       name="dia{{ dia.numero }}_act{{ loop.index }}_descripcion"
                                                       rows="2"
                                                       placeholder="Detalles de la actividad...">{{ actividad.descripcion }}</textarea>
@@ -436,18 +584,16 @@
                                 {% endfor %}
                             {% endif %}
                             
-                            <!-- Agregar actividad a este día -->
-                            <div class="text-center mt-3">
+                            <div class="text-center mt-4">
                                 <a href="/itinerario/{{ itinerario_id }}/dia/{{ dia.numero }}/agregar-actividad" 
-                                   class="btn btn-sm btn-add">
+                                   class="btn btn-travelasia-outline">
                                     <i class="fas fa-plus me-1"></i>Agregar Actividad al Día {{ dia.numero }}
                                 </a>
                             </div>
                             
-                            <!-- Notas del día -->
                             <div class="mt-4">
-                                <label class="form-label fw-bold">Notas del Día {{ dia.numero }}</label>
-                                <textarea class="form-control" 
+                                <label class="form-label-modern">Notas del Día {{ dia.numero }}</label>
+                                <textarea class="form-control-modern" 
                                           name="dia{{ dia.numero }}_notas"
                                           rows="2"
                                           placeholder="Notas importantes para este día...">{{ dia.notas }}</textarea>
@@ -455,111 +601,108 @@
                         </div>
                         {% endfor %}
                     {% else %}
-                    <!-- Mensaje si no hay días -->
-                    <div class="text-center py-4">
-                        <i class="fas fa-calendar fa-3x text-muted mb-3"></i>
-                        <p class="text-muted">No hay días planificados en este itinerario</p>
-                        <a href="/itinerario/{{ itinerario_id }}/agregar-dia" class="btn btn-add">
-                            <i class="fas fa-plus me-1"></i>Agregar Primer Día
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar fa-4x text-muted mb-4"></i>
+                        <p class="text-muted mb-4">No hay días planificados en este itinerario</p>
+                        <a href="/itinerario/{{ itinerario_id }}/agregar-dia" class="btn btn-travelasia">
+                            <i class="fas fa-plus me-2"></i>Agregar Primer Día
                         </a>
                     </div>
                     {% endif %}
-                    
                 </div>
             </div>
 
-            <!-- SECCIÓN 4: PREFERENCIAS (Genérica) -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="fas fa-heart me-2"></i>Preferencias del Viajero</h5>
+            <!-- SECCIÓN 4: PREFERENCIAS -->
+            <div class="travelasia-card">
+                <div class="card-header-modern">
+                    <i class="fas fa-heart"></i>Preferencias del Viajero
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Tipo de Viaje Preferido</label>
-                            <select class="form-select" name="tipo_viaje">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern">Tipo de Viaje Preferido</label>
+                            <select class="form-control-modern" name="tipo_viaje">
                                 <option value="cultural" {% if tipo_viaje == 'cultural' %}selected{% endif %}>🏛️ Cultural e Histórico</option>
                                 <option value="aventura" {% if tipo_viaje == 'aventura' %}selected{% endif %}>⛰️ Aventura y Naturaleza</option>
                                 <option value="relax" {% if tipo_viaje == 'relax' %}selected{% endif %}>🏖️ Relax y Playas</option>
                                 <option value="gastronomia" {% if tipo_viaje == 'gastronomia' %}selected{% endif %}>🍜 Gastronómico</option>
                                 <option value="shopping" {% if tipo_viaje == 'shopping' %}selected{% endif %}>🛍️ Shopping y Ciudades</option>
-                                <option value="mixto" {% if tipo_viaje == 'mixto' %}selected{% endif %}>🌟 Mixto (un poco de todo)</option>
+                                <option value="mixto" {% if tipo_viaje == 'mixto' %}selected{% endif %}>🌟 Mixto</option>
                             </select>
                         </div>
                         
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Nivel de Actividad</label>
-                            <select class="form-select" name="nivel_actividad">
-                                <option value="tranquilo" {% if nivel_actividad == 'tranquilo' %}selected{% endif %}>😌 Tranquilo (mucho descanso)</option>
-                                <option value="moderado" {% if nivel_actividad == 'moderado' %}selected{% endif %}>🚶 Moderado (equilibrado)</option>
-                                <option value="activo" {% if nivel_actividad == 'activo' %}selected{% endif %}>🏃 Activo (siempre en movimiento)</option>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label-modern">Nivel de Actividad</label>
+                            <select class="form-control-modern" name="nivel_actividad">
+                                <option value="tranquilo" {% if nivel_actividad == 'tranquilo' %}selected{% endif %}>😌 Tranquilo</option>
+                                <option value="moderado" {% if nivel_actividad == 'moderado' %}selected{% endif %}>🚶 Moderado</option>
+                                <option value="activo" {% if nivel_actividad == 'activo' %}selected{% endif %}>🏃 Activo</option>
                             </select>
                         </div>
                     </div>
                     
-                    <div class="row mb-3">
+                    <div class="row mb-4">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Alojamiento Preferido</label>
-                            <select class="form-select" name="tipo_alojamiento">
+                            <label class="form-label-modern">Alojamiento Preferido</label>
+                            <select class="form-control-modern" name="tipo_alojamiento">
                                 <option value="hotel" {% if tipo_alojamiento == 'hotel' %}selected{% endif %}>🏨 Hotel</option>
                                 <option value="hostal" {% if tipo_alojamiento == 'hostal' %}selected{% endif %}>🛏️ Hostal</option>
-                                <option value="airbnb" {% if tipo_alojamiento == 'airbnb' %}selected{% endif %}>🏠 Airbnb/Apartamento</option>
+                                <option value="airbnb" {% if tipo_alojamiento == 'airbnb' %}selected{% endif %}>🏠 Airbnb</option>
                                 <option value="resort" {% if tipo_alojamiento == 'resort' %}selected{% endif %}>🏝️ Resort</option>
-                                <option value="mixto" {% if tipo_alojamiento == 'mixto' %}selected{% endif %}>🔀 Mixto</option>
                             </select>
                         </div>
                         
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Compañía de Viaje</label>
-                            <select class="form-select" name="compania_viaje">
+                            <label class="form-label-modern">Compañía de Viaje</label>
+                            <select class="form-control-modern" name="compania_viaje">
                                 <option value="solo" {% if compania_viaje == 'solo' %}selected{% endif %}>👤 Solo</option>
                                 <option value="pareja" {% if compania_viaje == 'pareja' %}selected{% endif %}>👫 Pareja</option>
                                 <option value="familia" {% if compania_viaje == 'familia' %}selected{% endif %}>👨‍👩‍👧‍👦 Familia</option>
-                                <option value="amigos" {% if compania_viaje == 'amigos' %}selected{% endif %}>👥 Grupo de Amigos</option>
+                                <option value="amigos" {% if compania_viaje == 'amigos' %}selected{% endif %}>👥 Amigos</option>
                             </select>
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Restricciones/Alergias Alimenticias</label>
-                        <textarea class="form-control" name="restricciones_alimenticias" rows="2"
+                    <div class="mb-4">
+                        <label class="form-label-modern">Restricciones/Alergias Alimenticias</label>
+                        <textarea class="form-control-modern" name="restricciones_alimenticias" rows="2"
                                   placeholder="Ej: Vegetariano, alergia a mariscos, sin gluten...">{{ restricciones_alimenticias if restricciones_alimenticias else '' }}</textarea>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Notas Especiales</label>
-                        <textarea class="form-control" name="notas_especiales" rows="3"
-                                  placeholder="Cualquier otra información importante para tu viaje...">{{ notas_especiales if notas_especiales else '' }}</textarea>
+                        <label class="form-label-modern">Notas Especiales</label>
+                        <textarea class="form-control-modern" name="notas_especiales" rows="3"
+                                  placeholder="Cualquier otra información importante...">{{ notas_especiales if notas_especiales else '' }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- BOTONES FINALES -->
-            <div class="d-flex justify-content-between mb-5">
+            <div class="d-flex justify-content-between mb-5 mt-4">
                 <div>
-                    <a href="/" class="btn btn-outline-secondary btn-lg">
+                    <a href="/" class="btn btn-travelasia-outline btn-lg">
                         <i class="fas fa-times me-2"></i>Cancelar
                     </a>
                 </div>
                 <div>
                     <a href="/itinerario/eliminar/{{ itinerario_id }}" 
-                       class="btn btn-delete btn-lg me-3"
+                       class="btn btn-travelasia-danger btn-lg me-3"
                        onclick="return confirm('¿Estás SEGURO de eliminar este itinerario? Esta acción no se puede deshacer.')">
                         <i class="fas fa-trash-alt me-2"></i>Eliminar Itinerario
                     </a>
-                    <button type="submit" class="btn btn-save btn-lg">
-                        <i class="fas fa-save me-2"></i>Guardar Todos los Cambios
+                    <button type="submit" class="btn btn-travelasia btn-lg">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
                     </button>
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-4">
+    <!-- FOOTER -->
+    <footer class="travelasia-footer">
         <div class="container">
-            <p class="mb-0">
-                <i class="fas fa-globe-asia me-1"></i>TravelAsia - 
+            <p class="mb-0 text-center">
+                <i class="fas fa-globe-asia me-1"></i>TRAVELASIA - 
                 Itinerario ID: {{ itinerario_id }} | 
                 Última modificación: {{ fecha_modificacion if fecha_modificacion else 'Nunca' }}
             </p>
@@ -574,50 +717,53 @@
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('form-editar-itinerario');
         const presupuestoInput = document.getElementById('presupuesto-total-input');
-        const errorElement = document.getElementById('error-presupuesto');
         
-        // Validar presupuesto en tiempo real
-        presupuestoInput.addEventListener('input', function() {
-            const value = parseFloat(this.value);
+        // Validar presupuesto
+        function validarPresupuesto() {
+            const value = parseFloat(presupuestoInput.value);
+            const isValid = !isNaN(value) && value >= 100;
             
-            if (isNaN(value) || value < 100) {
-                this.classList.add('is-invalid');
-                errorElement.textContent = 'El presupuesto mínimo es $100.00';
+            if (!isValid) {
+                presupuestoInput.style.borderColor = '#dc2626';
+                presupuestoInput.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
             } else {
-                this.classList.remove('is-invalid');
-                errorElement.textContent = '';
-                // Formatear a 2 decimales
-                this.value = value.toFixed(2);
+                presupuestoInput.style.borderColor = '#10b981';
+                presupuestoInput.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
+                presupuestoInput.value = value.toFixed(2);
             }
-        });
-        
-        // Validar al enviar el formulario
-        form.addEventListener('submit', function(event) {
-            const presupuestoValue = parseFloat(presupuestoInput.value);
             
-            if (isNaN(presupuestoValue) || presupuestoValue < 100) {
+            return isValid;
+        }
+        
+        // Validar al cambiar
+        presupuestoInput.addEventListener('input', validarPresupuesto);
+        
+        // Validar al enviar
+        form.addEventListener('submit', function(event) {
+            if (!validarPresupuesto()) {
                 event.preventDefault();
-                presupuestoInput.classList.add('is-invalid');
-                errorElement.textContent = 'Por favor ingresa un presupuesto válido (mínimo $100.00)';
+                alert('Por favor ingresa un presupuesto válido (mínimo $100.00)');
                 presupuestoInput.focus();
                 return false;
             }
             
-            // Confirmar envío
             if (!confirm('¿Guardar todos los cambios del itinerario?')) {
                 event.preventDefault();
                 return false;
             }
             
-            // Asegurar formato decimal
-            presupuestoInput.value = presupuestoValue.toFixed(2);
             return true;
         });
         
-        // Inicializar valor si está vacío o es 0
+        // Inicializar valor si está vacío
         if (!presupuestoInput.value || parseFloat(presupuestoInput.value) === 0) {
             presupuestoInput.value = "1000.00";
         }
+        
+        // Animación suave al cargar
+        document.querySelectorAll('.travelasia-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
     });
     </script>
 </body>

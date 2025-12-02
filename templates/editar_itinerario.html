@@ -23,7 +23,7 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #1f2937;
             line-height: 1.6;
-            padding-bottom: 50px;
+            padding-bottom: 120px; /* Espacio para los botones fijos */
         }
 
         /* HEADER STYLE */
@@ -95,7 +95,6 @@
             justify-content: space-between;
             align-items: center;
             gap: 15px;
-            margin-top: 40px;
             padding: 20px;
             background: white;
             border-radius: var(--card-radius);
@@ -105,6 +104,7 @@
             left: 0;
             right: 0;
             z-index: 1000;
+            border-top: 2px solid #e5e7eb;
         }
 
         .btn-cancelar {
@@ -121,12 +121,15 @@
             align-items: center;
             justify-content: center;
             min-width: 140px;
+            text-decoration: none;
         }
 
         .btn-cancelar:hover {
             background: #f8fafc;
             border-color: #d1d5db;
             transform: translateY(-2px);
+            color: #374151;
+            text-decoration: none;
         }
 
         .btn-cancelar i {
@@ -153,6 +156,7 @@
         .btn-eliminar:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
+            color: white;
         }
 
         .btn-eliminar i {
@@ -179,22 +183,23 @@
         .btn-guardar:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(26, 86, 219, 0.3);
+            color: white;
         }
 
         .btn-guardar i {
             margin-right: 10px;
         }
 
-        /* PREFERENCIAS SECTION - EXACTAMENTE COMO TU IMAGEN */
-        .preferencias-section {
+        /* SECCIONES DEL FORMULARIO */
+        .info-section {
             background: white;
             border-radius: var(--card-radius);
             box-shadow: var(--card-shadow);
             padding: 30px;
-            margin-bottom: 120px; /* Espacio para los botones fijos */
+            margin-bottom: 25px;
         }
 
-        .preferencias-title {
+        .section-title {
             color: #1e3c72;
             font-size: 1.5rem;
             font-weight: 700;
@@ -212,6 +217,7 @@
             color: #374151;
             margin-bottom: 10px;
             font-size: 1rem;
+            display: block;
         }
 
         .select-modern {
@@ -265,6 +271,7 @@
         .status-planning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
         .status-confirmed { background: linear-gradient(135deg, #10b981, #059669); color: white; }
         .status-in-progress { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+        .status-completed { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
 
         /* COUNTRY BADGES */
         .country-badge-modern {
@@ -291,11 +298,31 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
+        /* INPUT GROUPS */
+        .input-group-modern {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group-modern .form-control-modern {
+            flex: 1;
+        }
+
+        .input-group-modern .input-group-text {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-left: none;
+            padding: 12px 16px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .btn-container {
                 flex-direction: column;
                 padding: 15px;
+                gap: 10px;
             }
             
             .btn-cancelar,
@@ -303,12 +330,42 @@
             .btn-guardar {
                 width: 100%;
                 min-width: auto;
+                padding: 12px 20px;
             }
             
-            .preferencias-section {
+            .info-section {
                 padding: 20px;
-                margin-bottom: 180px;
+                margin-bottom: 20px;
             }
+            
+            body {
+                padding-bottom: 180px;
+            }
+        }
+
+        /* ANIMATIONS */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-top: -10px;
+            margin-left: -10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -331,6 +388,7 @@
                             {% if estado == 'planificando' %}status-planning
                             {% elif estado == 'confirmado' %}status-confirmed
                             {% elif estado == 'en_progreso' %}status-in-progress
+                            {% elif estado == 'completado' %}status-completed
                             {% else %}status-planning{% endif %}">
                             {% if estado %}{{ estado|title }}{% else %}Planificando{% endif %}
                         </span>
@@ -360,12 +418,78 @@
         <form action="/itinerario/editar/{{ itinerario_id }}" method="POST" id="form-editar-itinerario">
             <input type="hidden" name="itinerario_id" value="{{ itinerario_id }}">
             
-            <!-- RESTANTES SECCIONES (PAÍSES, DÍAS, ETC) -->
-            <!-- ... tu código existente para países y días ... -->
-            
+            <!-- SECCIÓN 1: INFORMACIÓN GENERAL -->
+            <div class="info-section">
+                <h2 class="section-title">Información General</h2>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="preferencia-label">Nombre del Itinerario *</label>
+                        <input type="text" class="form-control-modern" 
+                               name="nombre" 
+                               value="{{ nombre_itinerario }}" 
+                               placeholder="Ej: Aventura por el Sudeste Asiático"
+                               required>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <label class="preferencia-label">Duración Total *</label>
+                        <div class="input-group-modern">
+                            <input type="number" class="form-control-modern" 
+                                   name="duracion_total" 
+                                   value="{{ total_dias }}"
+                                   min="1" max="60" required>
+                            <span class="input-group-text">días</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <label class="preferencia-label">Presupuesto Total *</label>
+                        <div class="input-group-modern">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control-modern" id="presupuesto-total-input"
+                                   name="presupuesto_total" 
+                                   value="{{ "%.2f"|format(presupuesto_total) if presupuesto_total is defined else '1000.00' }}"
+                                   step="0.01" min="100" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="preferencia-label">Fecha de Inicio *</label>
+                        <input type="date" class="form-control-modern" 
+                               name="fecha_inicio" 
+                               value="{{ fecha_inicio }}"
+                               required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="preferencia-label">Fecha de Fin *</label>
+                        <input type="date" class="form-control-modern" 
+                               name="fecha_fin" 
+                               value="{{ fecha_fin }}"
+                               required>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="preferencia-label">Descripción</label>
+                    <textarea class="textarea-modern" name="descripcion" rows="3" 
+                              placeholder="Describe tu viaje, tus intereses, lo que esperas experimentar...">{{ descripcion }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="preferencia-label">Estado del Itinerario</label>
+                    <select class="select-modern" name="estado">
+                        <option value="planificando" {% if estado == 'planificando' %}selected{% endif %}>Planificando</option>
+                        <option value="confirmado" {% if estado == 'confirmado' %}selected{% endif %}>Confirmado</option>
+                        <option value="en_progreso" {% if estado == 'en_progreso' %}selected{% endif %}>En Progreso</option>
+                        <option value="completado" {% if estado == 'completado' %}selected{% endif %}>Completado</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- SECCIÓN PREFERENCIAS - EXACTAMENTE COMO TU IMAGEN -->
-            <div class="preferencias-section">
-                <h2 class="preferencias-title">Preferencias del Viajero</h2>
+            <div class="info-section">
+                <h2 class="section-title">Preferencias del Viajero</h2>
                 
                 <div class="preferencia-item">
                     <label class="preferencia-label">Tipo de Viaje Preferido</label>
@@ -401,22 +525,22 @@
                               placeholder="Cualquier otra información importante...">{{ notas_especiales if notas_especiales else '' }}</textarea>
                 </div>
             </div>
-            
-            <!-- BOTONES FIJOS EN LA PARTE INFERIOR -->
-            <div class="btn-container container">
-                <button type="button" class="btn-cancelar" id="btn-cancelar">
-                    <i class="fas fa-times"></i>Cancelar
-                </button>
-                
-                <button type="button" class="btn-eliminar" id="btn-eliminar">
-                    <i class="fas fa-trash-alt"></i>Eliminar Itinerario
-                </button>
-                
-                <button type="submit" class="btn-guardar" id="btn-guardar">
-                    <i class="fas fa-save"></i>Guardar Cambios
-                </button>
-            </div>
         </form>
+    </div>
+
+    <!-- BOTONES FIJOS EN LA PARTE INFERIOR -->
+    <div class="btn-container container">
+        <a href="/" class="btn-cancelar" id="btn-cancelar">
+            <i class="fas fa-times"></i>Cancelar
+        </a>
+        
+        <button type="button" class="btn-eliminar" id="btn-eliminar">
+            <i class="fas fa-trash-alt"></i>Eliminar Itinerario
+        </button>
+        
+        <button type="submit" class="btn-guardar" id="btn-guardar">
+            <i class="fas fa-save"></i>Guardar Cambios
+        </button>
     </div>
 
     <!-- Bootstrap JS -->
@@ -426,100 +550,147 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('form-editar-itinerario');
-        const presupuestoInput = document.querySelector('input[name="presupuesto_total"]') || 
-                                 document.getElementById('presupuesto-total-input');
+        const btnGuardar = document.getElementById('btn-guardar');
+        const btnEliminar = document.getElementById('btn-eliminar');
+        const btnCancelar = document.getElementById('btn-cancelar');
+        const presupuestoInput = document.getElementById('presupuesto-total-input');
         const itinerarioId = "{{ itinerario_id }}";
         
-        // 1. BOTÓN CANCELAR - Redirige a la página principal
-        document.getElementById('btn-cancelar').addEventListener('click', function() {
-            if (confirm('¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.')) {
-                window.location.href = '/';
-            }
-        });
-        
-        // 2. BOTÓN ELIMINAR - Elimina el itinerario
-        document.getElementById('btn-eliminar').addEventListener('click', function() {
-            if (confirm('¿Estás SEGURO de eliminar este itinerario?\n\nEsta acción no se puede deshacer y se perderán todos los datos del viaje.')) {
-                // Crear formulario para eliminar
-                const deleteForm = document.createElement('form');
-                deleteForm.method = 'POST';
-                deleteForm.action = `/itinerario/eliminar/${itinerarioId}`;
-                deleteForm.style.display = 'none';
-                
-                // Agregar token CSRF si es necesario
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrf_token';
-                csrfInput.value = '{{ csrf_token() if csrf_token else "" }}';
-                deleteForm.appendChild(csrfInput);
-                
-                document.body.appendChild(deleteForm);
-                deleteForm.submit();
-            }
-        });
-        
-        // 3. BOTÓN GUARDAR - Valida y envía el formulario
-        document.getElementById('btn-guardar').addEventListener('click', function() {
-            // Validar presupuesto si existe
-            if (presupuestoInput) {
-                const presupuestoValue = parseFloat(presupuestoInput.value);
-                if (isNaN(presupuestoValue) || presupuestoValue < 100) {
-                    alert('❌ Error: El presupuesto debe ser mínimo $100.00');
-                    presupuestoInput.focus();
-                    return false;
-                }
-                // Formatear a 2 decimales
-                presupuestoInput.value = presupuestoValue.toFixed(2);
-            }
+        // 1. BOTÓN GUARDAR - Funcionalidad completa
+        btnGuardar.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            // Validar fechas si existen
-            const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
-            const fechaFin = document.querySelector('input[name="fecha_fin"]');
-            
-            if (fechaInicio && fechaFin && fechaInicio.value && fechaFin.value) {
-                const inicio = new Date(fechaInicio.value);
-                const fin = new Date(fechaFin.value);
-                
-                if (fin < inicio) {
-                    alert('❌ Error: La fecha de fin no puede ser anterior a la fecha de inicio');
-                    fechaFin.focus();
-                    return false;
-                }
-            }
-            
-            // Validar nombre del itinerario
-            const nombreInput = document.querySelector('input[name="nombre"]');
-            if (nombreInput && !nombreInput.value.trim()) {
-                alert('❌ Error: El nombre del itinerario es obligatorio');
-                nombreInput.focus();
+            // Validación del formulario
+            if (!validarFormulario()) {
                 return false;
             }
             
             // Mostrar confirmación
             if (confirm('¿Guardar todos los cambios del itinerario?')) {
-                // Mostrar loading
-                const btnGuardar = document.getElementById('btn-guardar');
-                const originalText = btnGuardar.innerHTML;
-                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                // Mostrar estado de carga
+                btnGuardar.classList.add('btn-loading');
                 btnGuardar.disabled = true;
                 
-                // Enviar formulario después de 1 segundo (para ver el loading)
+                // Enviar formulario después de breve pausa
                 setTimeout(() => {
                     form.submit();
-                }, 1000);
+                }, 800);
             }
         });
         
-        // 4. VALIDACIÓN EN TIEMPO REAL DEL PRESUPUESTO
+        // 2. BOTÓN ELIMINAR - Con doble confirmación
+        btnEliminar.addEventListener('click', function() {
+            const confirmacion = confirm(
+                '⚠️ ADVERTENCIA ⚠️\n\n' +
+                '¿Estás SEGURO de eliminar este itinerario?\n\n' +
+                'Esta acción:\n' +
+                '• NO se puede deshacer\n' +
+                '• Eliminará todos los datos del viaje\n' +
+                '• Eliminará países y días asociados\n\n' +
+                'Escribe "ELIMINAR" para confirmar:'
+            );
+            
+            if (confirmacion) {
+                const respuesta = prompt('Escribe "ELIMINAR" para confirmar la eliminación:');
+                
+                if (respuesta === 'ELIMINAR') {
+                    // Mostrar loading en botón eliminar
+                    btnEliminar.classList.add('btn-loading');
+                    btnEliminar.disabled = true;
+                    
+                    // Redirigir a la ruta de eliminación
+                    setTimeout(() => {
+                        window.location.href = `/itinerario/eliminar/${itinerarioId}`;
+                    }, 1000);
+                } else {
+                    alert('Eliminación cancelada. El itinerario se mantendrá.');
+                }
+            }
+        });
+        
+        // 3. BOTÓN CANCELAR - Ya funciona con el enlace
+        // (El enlace <a href="/"> ya redirige a la página principal)
+        
+        // 4. VALIDACIÓN DEL FORMULARIO
+        function validarFormulario() {
+            let esValido = true;
+            let mensajeError = '';
+            
+            // Validar nombre
+            const nombreInput = document.querySelector('input[name="nombre"]');
+            if (!nombreInput.value.trim()) {
+                mensajeError += '• El nombre del itinerario es obligatorio\n';
+                nombreInput.style.borderColor = '#dc2626';
+                esValido = false;
+            } else {
+                nombreInput.style.borderColor = '#e5e7eb';
+            }
+            
+            // Validar presupuesto
+            if (presupuestoInput) {
+                const presupuestoValue = parseFloat(presupuestoInput.value);
+                if (isNaN(presupuestoValue) || presupuestoValue < 100) {
+                    mensajeError += '• El presupuesto mínimo es $100.00\n';
+                    presupuestoInput.style.borderColor = '#dc2626';
+                    esValido = false;
+                } else {
+                    presupuestoInput.style.borderColor = '#e5e7eb';
+                    // Formatear a 2 decimales
+                    presupuestoInput.value = presupuestoValue.toFixed(2);
+                }
+            }
+            
+            // Validar fechas
+            const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
+            const fechaFin = document.querySelector('input[name="fecha_fin"]');
+            
+            if (fechaInicio && fechaFin) {
+                if (!fechaInicio.value) {
+                    mensajeError += '• La fecha de inicio es obligatoria\n';
+                    fechaInicio.style.borderColor = '#dc2626';
+                    esValido = false;
+                } else {
+                    fechaInicio.style.borderColor = '#e5e7eb';
+                }
+                
+                if (!fechaFin.value) {
+                    mensajeError += '• La fecha de fin es obligatoria\n';
+                    fechaFin.style.borderColor = '#dc2626';
+                    esValido = false;
+                } else {
+                    fechaFin.style.borderColor = '#e5e7eb';
+                }
+                
+                // Validar que fecha fin sea mayor que fecha inicio
+                if (fechaInicio.value && fechaFin.value) {
+                    const inicio = new Date(fechaInicio.value);
+                    const fin = new Date(fechaFin.value);
+                    
+                    if (fin < inicio) {
+                        mensajeError += '• La fecha de fin debe ser posterior a la fecha de inicio\n';
+                        fechaFin.style.borderColor = '#dc2626';
+                        esValido = false;
+                    }
+                }
+            }
+            
+            // Mostrar errores si los hay
+            if (!esValido) {
+                alert('❌ ERRORES EN EL FORMULARIO:\n\n' + mensajeError + '\nPor favor, corrige los campos marcados.');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // 5. VALIDACIÓN EN TIEMPO REAL DEL PRESUPUESTO
         if (presupuestoInput) {
             presupuestoInput.addEventListener('input', function() {
                 const value = parseFloat(this.value);
                 if (!isNaN(value) && value >= 100) {
                     this.style.borderColor = '#10b981';
-                    this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
                 } else {
                     this.style.borderColor = '#dc2626';
-                    this.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
                 }
             });
             
@@ -529,37 +700,49 @@
             }
         }
         
-        // 5. PREVENIR ENVÍO POR ENTER EN TEXTAREAS
-        document.querySelectorAll('textarea').forEach(textarea => {
-            textarea.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter' && !event.shiftKey) {
+        // 6. PREVENIR ENVÍO ACCIDENTAL POR ENTER
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && event.target.type !== 'textarea') {
                     event.preventDefault();
                 }
             });
         });
         
-        // 6. MOSTRAR CONFIRMACIÓN AL SALIR SIN GUARDAR
+        // 7. DETECTAR CAMBIOS PARA ADVERTENCIA AL SALIR
         let cambiosSinGuardar = false;
-        
-        // Detectar cambios en los campos
         const inputs = form.querySelectorAll('input, select, textarea');
+        
         inputs.forEach(input => {
             input.addEventListener('input', function() {
                 cambiosSinGuardar = true;
             });
         });
         
-        // Advertencia al intentar salir
+        // Advertencia al intentar salir sin guardar
         window.addEventListener('beforeunload', function(event) {
             if (cambiosSinGuardar) {
                 event.preventDefault();
                 event.returnValue = 'Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?';
+                return 'Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?';
             }
         });
         
         // Marcar como guardado al enviar
         form.addEventListener('submit', function() {
             cambiosSinGuardar = false;
+        });
+        
+        // 8. HACER QUE EL BOTÓN CANCELAR RESPETE LA ADVERTENCIA
+        btnCancelar.addEventListener('click', function(e) {
+            if (cambiosSinGuardar) {
+                if (!confirm('Tienes cambios sin guardar. ¿Estás seguro de que quieres cancelar?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            // Si no hay cambios o el usuario confirma, permitir la navegación
+            return true;
         });
     });
     </script>
